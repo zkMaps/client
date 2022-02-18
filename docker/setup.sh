@@ -13,6 +13,8 @@ if [ "$1" = "start" ]; then
     -p 8545:8545 \
     -dt node:16 || docker restart SCAFFOLD_ETH
 
+  sysctl -w net.core.rmem_max=2500000
+
   docker exec -ti SCAFFOLD_ETH bash -c "yarn install"
   docker exec -dt SCAFFOLD_ETH bash -c "yarn chain"
   sleep 5
