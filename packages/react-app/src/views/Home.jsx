@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useContractReader } from "eth-hooks";
+import { utils } from "ffjavascript";
 import Map from "react-map-gl";
 import { Row, Button } from "antd";
 
 import { ethers } from "ethers";
+const { unstringifyBigInts } = utils;
+const snarkjs = require("snarkjs");
 
 /**
  * web3 props can be passed from '../App.jsx' into your local view component for use
@@ -12,20 +15,34 @@ import { ethers } from "ethers";
  * @param {*} readContracts contracts from current chain already pre-loaded using ethers contract module. More here https://docs.ethers.io/v5/api/contract/contract/
  * @returns react component
  **/
+
+// Constants
+// let wasmFile = "~/circuits/AtEthDenver/AtEthDenver.wasm";
+let wasmFile = "https://zk-maps.vercel.app/AtEthDenver.wasm";
+let zkeyFile = "https://zk-maps.vercel.app/AtEthDenver_0001.zkey";
+let verificationKey = "~/circuits/AtEthDenver/verification_key.json";
+let publicConstraint = "~/circuits/AtEthDenver/public.json";
+
 function Home({ yourLocalBalance, readContracts }) {
   // you can also use hooks locally in your component of choice
   // in this case, let's keep track of 'purpose' variable from our contract
   const purpose = useContractReader(readContracts, "YourContract", "purpose");
 
   // Hooks
-  const [viewState, setViewState] = React.useState({
-    latitude: 39.691566166669446,
-    longitude: -104.96286823094337,
+  const [viewState, setViewState] = useState({
+    latitude: 12973547807205025,
+    longitude: 7500977777251779,
     zoom: 15,
     // bearing: 0,
     // padding: { top: 0, bottom: 0, left: 0, right: 0 },
     // pitch: 0,
   });
+  const [proof, setProof] = useState("");
+  console.log("🚀 ~ file: Home.jsx ~ line 40 ~ Home ~ proof", proof);
+  const [signals, setSignals] = useState("");
+  const [isValid, setIsValid] = useState(false);
+
+  const { latitude, longitude } = viewState;
 
   // const newCenter = [viewState.longitude, viewState.latitude];
   // A circle of 5 mile radius of the Empire State Building
@@ -39,7 +56,78 @@ function Home({ yourLocalBalance, readContracts }) {
     // }
   }, []);
 
-  const createProof = () => {};
+  const zkeyExportSolidityCalldata = async (_proof, options) => {
+    const pub = unstringifyBigInts(publicConstraint);
+    const proof = unstringifyBigInts(_proof);
+
+    let res;
+    if (proof.protocol === "groth16") {
+      res = await snarkjs.groth16.exportSolidityCallData(proof, pub);
+    } else if (proof.protocol === "plonk") {
+      res = await snarkjs.plonk.exportSolidityCallData(proof, pub);
+    } else {
+      throw new Error("Invalid Protocol");
+    }
+    return res;
+  };
+
+  const makeProof = async (_proofInput, _wasm, _zkey) => {
+    const { proof, publicSignals } = await snarkjs.groth16.fullProve(_proofInput, _wasm, _zkey);
+    console.log("🚀 ~ file: Home.jsx ~ line 75 ~ makeProof ~ proof", proof);
+    return { proof, publicSignals };
+  };
+
+  //  const verifyProof = async (_verificationkey, signals, proof) => {
+  //     const vkey = await fetch(_verificationkey).then(function (res) {
+  //        return res.json();
+  //     });
+  //     console.log({ vkey });
+  //     console.log({ signals });
+  //     console.log({ proof });
+  //     const res = await snarkjs.groth16.verify(vkey, signals, proof);
+  //     return res;
+  //  };
+
+  const runProofs = () => {
+    // TODO: Check apps
+    // console.log(longitude.length);
+    // if (latitude.length == 0 || longitude.length == 0) {
+    //   return;
+    // }
+
+    try {
+      const proofInput = {
+        latitude,
+        longitude,
+      };
+      console.log("🚀 ~ file: Home.jsx ~ line 99 ~ runProofs ~ { latitude, longitude }", { latitude, longitude });
+      makeProof(proofInput, wasmFile, zkeyFile).then(async ({ proof: _proof, publicSignals: _signals }) => {
+        setProof(JSON.stringify(_proof, null, 2));
+        setSignals(JSON.stringify(_signals, null, 2));
+        //  console.log(_proof);
+        //  const contractCall = [
+        //     [_proof.pi_a[0], _proof.pi_a[1]],
+        //     [_proof.pi_b[0], _proof.pi_b[1]],
+        //     [_proof.pi_c[0], _proof.pi_c[1]],
+        //     [
+        //        "0x0000000000000000000000000000000000000000000000000000000000000001",
+        //        "0x000000000000000000000000000000000000000000000000002e1739f4f8b856",
+        //        "0x000000000000000000000000000000000000000000000000001aa65a9d52c5a8",
+        //     ],
+        //  ];
+        _proof.protocol = "groth16";
+
+        const callData = await zkeyExportSolidityCalldata(_proof, {});
+
+        console.log(callData);
+        //  verifyProof(verificationKey, _signals, _proof).then((_isValid) => {
+        //     setIsValid(_isValid);
+        //  });
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <div>
@@ -56,7 +144,7 @@ function Home({ yourLocalBalance, readContracts }) {
         style={{ position: "fixed", textAlign: "center", alignItems: "center", bottom: 20, padding: 10, width: "100%" }}
       >
         <Row align="middle" gutter={[4, 4]}>
-          <Button onClick={createProof} size="large" shape="round">
+          <Button onClick={runProofs} size="large" shape="round">
             <span style={{ marginRight: 8 }} role="img" aria-label="support"></span>
             Mint
           </Button>
