@@ -1,4 +1,4 @@
-import { Button, Col, Menu, Row } from "antd";
+import { Col, Menu, Row } from "antd";
 import "antd/dist/antd.css";
 import {
   useBalance,
@@ -16,9 +16,7 @@ import {
   Account,
   Contract,
   Faucet,
-  GasGauge,
   Header,
-  Ramp,
   ThemeSwitch,
   NetworkDisplay,
   FaucetHint,

@@ -4,10 +4,11 @@ import { useContractReader } from "eth-hooks";
 import { utils } from "ffjavascript";
 import Map from "react-map-gl";
 import { Row, Button } from "antd";
-
 import { ethers } from "ethers";
-const { unstringifyBigInts } = utils;
+
 const snarkjs = require("snarkjs");
+const { unstringifyBigInts } = utils;
+const withPrecision = false;
 
 /**
  * web3 props can be passed from '../App.jsx' into your local view component for use
@@ -20,7 +21,7 @@ const snarkjs = require("snarkjs");
 // let wasmFile = "~/circuits/AtEthDenver/AtEthDenver.wasm";
 let wasmFile = "https://zk-maps.vercel.app/AtEthDenver.wasm";
 let zkeyFile = "https://zk-maps.vercel.app/AtEthDenver_0001.zkey";
-let verificationKey = "~/circuits/AtEthDenver/verification_key.json";
+// let verificationKey = "~/circuits/AtEthDenver/verification_key.json";
 let publicConstraint = "~/circuits/AtEthDenver/public.json";
 
 function Home({ yourLocalBalance, readContracts }) {
@@ -30,21 +31,19 @@ function Home({ yourLocalBalance, readContracts }) {
 
   // Hooks
   const [viewState, setViewState] = useState({
-    latitude: 12973547807205025,
-    longitude: 7500977777251779,
-    zoom: 15,
+    latitude: 39.691566166669446,
+    longitude: -104.96286823094337,
+    zoom: 18,
     // bearing: 0,
     // padding: { top: 0, bottom: 0, left: 0, right: 0 },
     // pitch: 0,
   });
   const [proof, setProof] = useState("");
-  console.log("🚀 ~ file: Home.jsx ~ line 40 ~ Home ~ proof", proof);
   const [signals, setSignals] = useState("");
   const [isValid, setIsValid] = useState(false);
 
   const { latitude, longitude } = viewState;
 
-  // const newCenter = [viewState.longitude, viewState.latitude];
   // A circle of 5 mile radius of the Empire State Building
   // const GEOFENCE = turf.circle(newCenter, 5, { units: "miles" });
 
@@ -72,6 +71,7 @@ function Home({ yourLocalBalance, readContracts }) {
   };
 
   const makeProof = async (_proofInput, _wasm, _zkey) => {
+    console.log("🚀 ~ file: Home.jsx ~ line 76 ~ makeProof ~ _proofInput", _proofInput);
     const { proof, publicSignals } = await snarkjs.groth16.fullProve(_proofInput, _wasm, _zkey);
     console.log("🚀 ~ file: Home.jsx ~ line 75 ~ makeProof ~ proof", proof);
     return { proof, publicSignals };
@@ -88,6 +88,7 @@ function Home({ yourLocalBalance, readContracts }) {
   //     return res;
   //  };
 
+  // debugger;
   const runProofs = () => {
     // TODO: Check apps
     // console.log(longitude.length);
@@ -97,28 +98,19 @@ function Home({ yourLocalBalance, readContracts }) {
 
     try {
       const proofInput = {
-        latitude,
-        longitude,
+        // latitude: 12973547807205024 / 2,
+        // longitude: 7500977777251779 / 2,
+        longitude: withPrecision
+          ? Math.trunc((longitude + 180) * 1000)
+          : Math.trunc((longitude + 180) * Math.pow(10, 14)),
+        latitude: withPrecision ? Math.trunc((latitude + 90) * 1000) : Math.trunc((latitude + 90) * Math.pow(10, 14)),
       };
-      console.log("🚀 ~ file: Home.jsx ~ line 99 ~ runProofs ~ { latitude, longitude }", { latitude, longitude });
       makeProof(proofInput, wasmFile, zkeyFile).then(async ({ proof: _proof, publicSignals: _signals }) => {
         setProof(JSON.stringify(_proof, null, 2));
         setSignals(JSON.stringify(_signals, null, 2));
-        //  console.log(_proof);
-        //  const contractCall = [
-        //     [_proof.pi_a[0], _proof.pi_a[1]],
-        //     [_proof.pi_b[0], _proof.pi_b[1]],
-        //     [_proof.pi_c[0], _proof.pi_c[1]],
-        //     [
-        //        "0x0000000000000000000000000000000000000000000000000000000000000001",
-        //        "0x000000000000000000000000000000000000000000000000002e1739f4f8b856",
-        //        "0x000000000000000000000000000000000000000000000000001aa65a9d52c5a8",
-        //     ],
-        //  ];
         _proof.protocol = "groth16";
 
         const callData = await zkeyExportSolidityCalldata(_proof, {});
-
         console.log(callData);
         //  verifyProof(verificationKey, _signals, _proof).then((_isValid) => {
         //     setIsValid(_isValid);
