@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { ChakraProvider, extendTheme } from "@chakra-ui/react";
 import { RecoilRoot, useSetRecoilState } from "recoil";
 
@@ -39,6 +39,12 @@ export default App;
 
 const AppWithProviders = () => {
   const setLocalProviderAtom = useSetRecoilState(localProviderAtom);
+  useEffect(() => {
+    // eslint-disable-next-line no-restricted-globals
+    if (typeof screen?.orientation !== "undefined") {
+      // Set message to let users know that this is better used in mobile
+    }
+  }, []);
 
   return <GeneralNavigation />;
 };

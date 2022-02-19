@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
 import { useColorMode, Button, Alert, AlertIcon } from "@chakra-ui/react";
 import { useContractReader } from "eth-hooks";
 import { utils } from "ffjavascript";
