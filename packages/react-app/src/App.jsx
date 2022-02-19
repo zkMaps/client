@@ -79,6 +79,8 @@ function App(props) {
   const [selectedNetwork, setSelectedNetwork] = useState(networkOptions[0]);
   const location = useLocation();
 
+  // recent verification
+  const [isVerified, setVerified] = useState(false)
   const targetNetwork = NETWORKS[selectedNetwork];
 
   // 🔭 block explorer URL
@@ -166,7 +168,7 @@ function App(props) {
   ]);
 
   // keep track of a variable from the contract in the local React state:
-  const purpose = useContractReader(readContracts, "YourContract", "purpose");
+  // const purpose = useContractReader(readContracts, "Verifier", "purpose");
 
   /*
   const addressFromENS = useResolveName(mainnetProvider, "austingriffith.eth");
@@ -317,7 +319,7 @@ function App(props) {
             tx={tx}
             writeContracts={writeContracts}
             readContracts={readContracts}
-            purpose={purpose}
+            // purpose={purpose}
           />
         </Route>
         <Route path="/mainnetdai">
