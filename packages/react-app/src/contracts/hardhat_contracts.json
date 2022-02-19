@@ -218,5 +218,53 @@
         }
       }
     }
+  },
+  "1": {
+    "mainnet": {
+      "name": "mainnet",
+      "chainId": "1",
+      "contracts": {
+
+        "Verifier": {
+          "address": "0x2c2b1601ccb2e2d40812de8168737cc44a63ed61",
+          "abi": [
+            {
+              "inputs": [
+                {
+                  "internalType": "uint256[2]",
+                  "name": "a",
+                  "type": "uint256[2]"
+                },
+                {
+                  "internalType": "uint256[2][2]",
+                  "name": "b",
+                  "type": "uint256[2][2]"
+                },
+                {
+                  "internalType": "uint256[2]",
+                  "name": "c",
+                  "type": "uint256[2]"
+                },
+                {
+                  "internalType": "uint256[1]",
+                  "name": "input",
+                  "type": "uint256[1]"
+                }
+              ],
+              "name": "verifyProof",
+              "outputs": [
+                {
+                  "internalType": "bool",
+                  "name": "r",
+                  "type": "bool"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            }
+          ]
+        }
+      }
+    }
   }
 }
