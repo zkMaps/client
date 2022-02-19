@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Button } from "antd";
 import React from "react";
 import { useThemeSwitcher } from "react-css-theme-switcher";

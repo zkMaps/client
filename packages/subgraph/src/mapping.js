@@ -5,7 +5,7 @@ import {
 } from "../generated/YourContract/YourContract";
 import { Purpose, Sender } from "../generated/schema";
 
-export function handleSetPurpose(event: SetPurpose): void {
+export function handleSetPurpose(event) {
   let senderString = event.params.sender.toHexString();
 
   let sender = Sender.load(senderString);

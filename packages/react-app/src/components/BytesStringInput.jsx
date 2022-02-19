@@ -29,7 +29,7 @@ const { utils, constants } = require("ethers");
 
 export default function BytesStringInput(props) {
   const [mode, setMode] = useState("STRING");
-  const [display, setDisplay] = useState();
+  const [display, setDisplay] = useState('');
   const [value, setValue] = useState(constants.HashZero);
 
   // current value is the value in bytes32
