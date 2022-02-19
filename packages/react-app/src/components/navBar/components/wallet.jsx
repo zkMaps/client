@@ -8,7 +8,7 @@ import Web3Modal from "web3modal";
 import { RouteComponentProps } from "@reach/router";
 // import { Biconomy } from "@biconomy/mexa";
 
-import { Account } from "../..";
+import Account from "../../Account";
 import { INFURA_ID, NETWORK, NETWORKS } from "../../../constants";
 import { useGasPrice, useUserSigner } from "../../../hooks";
 import { useEventListener } from "eth-hooks/events/useEventListener";
@@ -121,9 +121,9 @@ const Wallet = (props: RouteComponentProps) => {
   const [biconomy, setBiconomy] = useState();
 
   // Recoil
-  const currentContract: any = useRecoilValue(contractAtom);
-  const [address, setAddress]: any = useRecoilState(addressAtom);
-  const [localprovider, setProvider]: any = useRecoilState(providerAtom);
+  const currentContract = useRecoilValue(contractAtom);
+  const [address, setAddress] = useRecoilState(addressAtom);
+  const [localprovider, setProvider] = useRecoilState(providerAtom);
   const [injectedProvider, setInjectedProvider] = useRecoilState(injectedProviderAtom);
   const label = currentContract?.label ? currentContract?.label : "";
 
@@ -349,7 +349,7 @@ const Wallet = (props: RouteComponentProps) => {
     const provider = await web3Modal.connect();
     setInjectedProvider(new ethers.providers.Web3Provider(provider));
 
-    provider.on("chainChanged", (chainId: number) => {
+    provider.on("chainChanged", chainId => {
       console.log(`chain changed to ${chainId}! updating providers`);
       setInjectedProvider(new ethers.providers.Web3Provider(provider));
     });
@@ -360,7 +360,7 @@ const Wallet = (props: RouteComponentProps) => {
     });
 
     // Subscribe to session disconnection
-    provider.on("disconnect", (code: number, reason: string) => {
+    provider.on("disconnect", (code, reason) => {
       console.log(code, reason);
       logoutOfWeb3Modal();
     });

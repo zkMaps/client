@@ -26,7 +26,7 @@ import Wallet from "./components/wallet";
 import contracts from "../../contracts/hardhat_contracts.json";
 // TODO: Maybe we should list contract addresses and whitelist that. Since the ABI will be the same for all transactions
 // TODO: Then we cann implement versioning (abi from v0.01, v0.02, etc)
-const contractsDetails: any = contracts["80001"]["mumbai"]["contracts"];
+const contractsDetails = contracts["80001"]["mumbai"]["contracts"];
 const whitelist = ["Fraternal", "YourCollectible"];
 
 export default function WithSubnavigation() {
@@ -44,7 +44,7 @@ export default function WithSubnavigation() {
   });
 
   return (
-    <Box>
+    <Box style={{ position: "absolute", backgroundColor: "transparent", zIndex: 100 }}>
       <Flex
         bg={useColorModeValue("white", "gray.800")}
         color={useColorModeValue("gray.600", "white")}
@@ -76,7 +76,7 @@ export default function WithSubnavigation() {
               fontFamily={"heading"}
               color={useColorModeValue("gray.800", "white")}
             >
-              🌀 Fraternal
+              🗺 zkMaps
             </Text>
           </Link>
 
@@ -140,7 +140,7 @@ const DesktopNav = () => {
   );
 };
 
-const DesktopSubNav = ({ label, href, subLabel }: NavItem) => {
+const DesktopSubNav = ({ label, href, subLabel }) => {
   return (
     <Link
       href={href}
@@ -183,7 +183,7 @@ const MobileNav = () => {
   );
 };
 
-const MobileNavItem = ({ label, children, href }: NavItem) => {
+const MobileNavItem = ({ label, children, href }) => {
   const { isOpen, onToggle } = useDisclosure();
 
   return (
@@ -233,26 +233,19 @@ const MobileNavItem = ({ label, children, href }: NavItem) => {
   );
 };
 
-interface NavItem {
-  label: string;
-  subLabel?: string;
-  children?: Array<NavItem>;
-  href?: string;
-}
-
-const NAV_ITEMS: Array<NavItem> = [
-  {
-    label: "Add Marker",
-    href: "mint",
-  },
-  {
-    label: "List",
-    href: "markers",
-  },
-  {
-    label: "Request Access",
-    href: "demiurge",
-  },
+const NAV_ITEMS = [
+  // {
+  //   label: "Add Marker",
+  //   href: "mint",
+  // },
+  // {
+  //   label: "List",
+  //   href: "markers",
+  // },
+  // {
+  //   label: "Request Access",
+  //   href: "demiurge",
+  // },
   // {
   //   label: 'Mint',
   //   children: [
