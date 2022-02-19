@@ -696,6 +696,9 @@ body {
 [tabindex="-1"]:focus {
   outline: 0 !important;
 }
+#root {
+  height: 100vh;
+}
 hr {
   box-sizing: content-box;
   height: 0;

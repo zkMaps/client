@@ -11,7 +11,7 @@ import Subgraph from "../../views/Subgraph";
 
 const GeneralNavigation = () => {
   return (
-    <div style={{ height: "100%", width: "100%", backgroundColor: "red" }}>
+    <div style={{ height: "100vh" }}>
       <NavBar />
       <Router>
         <Home path="/" />

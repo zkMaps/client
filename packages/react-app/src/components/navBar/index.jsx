@@ -44,9 +44,9 @@ export default function WithSubnavigation() {
   });
 
   return (
-    <Box style={{ position: "absolute", backgroundColor: "transparent", zIndex: 100 }}>
+    <Box style={{ position: "absolute", backgroundColor: "transparent", zIndex: 100, width: "100%" }}>
       <Flex
-        bg={useColorModeValue("white", "gray.800")}
+        // bg={useColorModeValue("white", "gray.800")}
         color={useColorModeValue("gray.600", "white")}
         minH={"60px"}
         py={{ base: 2 }}
@@ -56,15 +56,7 @@ export default function WithSubnavigation() {
         borderColor={useColorModeValue("gray.200", "gray.900")}
         align={"center"}
       >
-        <Flex flex={{ base: 1, md: "auto" }} ml={{ base: -2 }} display={{ base: "flex", md: "none" }}>
-          <IconButton
-            onClick={onToggle}
-            icon={isOpen ? <CloseIcon w={3} h={3} /> : <HamburgerIcon w={5} h={5} />}
-            variant={"ghost"}
-            aria-label={"Toggle Navigation"}
-          />
-        </Flex>
-        <Flex flex={{ base: 1 }} justify={{ base: "center", md: "start" }}>
+        <Flex flex={{ base: 1 }} justify={{ md: "start" }}>
           <Link
             href={"/"}
             _hover={{
@@ -83,6 +75,15 @@ export default function WithSubnavigation() {
           <Flex display={{ base: "none", md: "flex" }} ml={10}>
             <DesktopNav />
           </Flex>
+        </Flex>
+
+        <Flex flex={{ base: 1, md: "auto" }} ml={{ base: -2 }} display={{ base: "flex", md: "none" }}>
+          <IconButton
+            onClick={onToggle}
+            icon={isOpen ? <CloseIcon w={3} h={3} /> : <HamburgerIcon w={5} h={5} />}
+            variant={"ghost"}
+            aria-label={"Toggle Navigation"}
+          />
         </Flex>
         <Flex style={{ alignSelf: "flex-end" }}>
           <Wallet />

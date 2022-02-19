@@ -389,18 +389,18 @@ const Wallet = (props: RouteComponentProps) => {
       />
 
       <Flex style={{ alignItems: "center", alignContent: "center", justifyContent: "center" }}>
-        {networkDisplay}
-        {web3Modal && web3Modal.cachedProvider && (
-          <>
-            <Text fontSize="xs" mx={2}>
+        <Text fontSize="xs" mx={2}>
+          {networkDisplay}
+          {web3Modal && web3Modal.cachedProvider && (
+            <>
               {" "}
               |{" "}
-            </Text>
-            <Link onClick={logoutOfWeb3Modal} fontSize="xs">
-              disconnect
-            </Link>
-          </>
-        )}
+              <Link onClick={logoutOfWeb3Modal} fontSize="xs">
+                disconnect
+              </Link>
+            </>
+          )}
+        </Text>
       </Flex>
       {faucetHint}
     </div>
