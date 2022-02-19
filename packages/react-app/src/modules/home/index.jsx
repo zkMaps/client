@@ -3,9 +3,9 @@ import HomeMap from "../../views/Home";
 
 const Home = props => {
   return (
-    <div style={{ flex: 1 }}>
+    <>
       <HomeMap />
-    </div>
+    </>
   );
 };
 

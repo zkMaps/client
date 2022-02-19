@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { useColorMode } from "@chakra-ui/react";
+import { useColorMode, Button, Alert, AlertIcon } from "@chakra-ui/react";
 import { useContractReader } from "eth-hooks";
 import { utils } from "ffjavascript";
 import Map from "react-map-gl";
-import { Row, Button } from "antd";
+import { Row } from "antd";
+import { CheckCircleIcon } from "@chakra-ui/icons";
 
 const snarkjs = require("snarkjs");
 const { unstringifyBigInts } = utils;
@@ -41,6 +42,7 @@ function Home({ yourLocalBalance, readContracts }) {
   const [proof, setProof] = useState("");
   const [signals, setSignals] = useState("");
   const [isValid, setIsValid] = useState(false);
+  const [message, setMessage] = useState(null);
 
   const { colorMode } = useColorMode();
 
@@ -73,10 +75,19 @@ function Home({ yourLocalBalance, readContracts }) {
   };
 
   const makeProof = async (_proofInput, _wasm, _zkey) => {
-    console.log("🚀 ~ file: Home.jsx ~ line 76 ~ makeProof ~ _proofInput", _proofInput);
-    const { proof, publicSignals } = await snarkjs.groth16.fullProve(_proofInput, _wasm, _zkey);
-    console.log("🚀 ~ file: Home.jsx ~ line 75 ~ makeProof ~ proof", proof);
-    return { proof, publicSignals };
+    try {
+      console.log("🚀 ~ file: Home.jsx ~ line 76 ~ makeProof ~ _proofInput", _proofInput);
+      const { proof, publicSignals } = await snarkjs.groth16.fullProve(_proofInput, _wasm, _zkey);
+      console.log("🚀 ~ file: Home.jsx ~ line 75 ~ makeProof ~ proof", proof);
+      return { proof, publicSignals };
+    } catch (error) {
+      // console.error("=====>", error);
+      setMessage("You are outside of the proof zone.");
+      setTimeout(() => {
+        setMessage(null);
+      }, 5000);
+      throw error;
+    }
   };
 
   //  const verifyProof = async (_verificationkey, signals, proof) => {
@@ -124,11 +135,17 @@ function Home({ yourLocalBalance, readContracts }) {
   };
 
   return (
-    <>
+    <div>
+      {message && (
+        <Alert status="error">
+          <AlertIcon />
+          {message}
+        </Alert>
+      )}
       <Map
         attributionControl={false}
         mapboxAccessToken={process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}
-        style={{ flex: 1 }}
+        style={{ width: "100%", height: "100vh" }}
         mapStyle={
           colorMode === "light"
             ? "mapbox://styles/mapbox/streets-v9"
@@ -142,13 +159,17 @@ function Home({ yourLocalBalance, readContracts }) {
         style={{ position: "fixed", textAlign: "center", alignItems: "center", bottom: 20, padding: 10, width: "100%" }}
       >
         <Row align="middle" gutter={[4, 4]}>
-          <Button onClick={runProofs} size="large" shape="round">
-            <span style={{ marginRight: 8 }} role="img" aria-label="support"></span>
+          <Button
+            aria-label="Mint"
+            icon={<CheckCircleIcon />}
+            onClick={runProofs}
+            // background="transparent"
+          >
             Mint
           </Button>
         </Row>
       </div>
-    </>
+    </div>
   );
 }
 
