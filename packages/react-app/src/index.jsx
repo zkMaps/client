@@ -11,6 +11,8 @@ const themes = {
   light: `${process.env.PUBLIC_URL}/light-theme.css`,
 };
 
+document.body.style.overflow = "hidden";
+
 const prevTheme = window.localStorage.getItem("theme");
 
 const subgraphUri = "https://api.thegraph.com/subgraphs/name/ronerlih/zkmapsdev";
