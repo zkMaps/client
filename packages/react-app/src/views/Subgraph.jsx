@@ -126,7 +126,7 @@ const OwnerSubgraph = props => {
   return (
     <>
       <div style={{ width: 780, margin: "auto", paddingBottom: 64, marginTop: 40 }}>
-        <Typography.Title>Your past check-ins</Typography.Title>
+        <Typography.Title> <span alt="addmissions">🎫</span> All check-ins</Typography.Title>
         {props?.address && (
           <>
             <Typography.Paragraph>{props?.address}</Typography.Paragraph>
