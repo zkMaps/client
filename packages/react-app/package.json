@@ -1,8 +1,8 @@
 {
   "name": "@scaffold-eth/react-app",
   "version": "1.0.0",
-  "homepage": ".",
-  "browserslist": {
+  "homepage": "https://zkmaps.github.io/",
+    "browserslist": {
     "production": [
       ">0.2%",
       "not dead",
