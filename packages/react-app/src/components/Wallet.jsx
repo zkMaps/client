@@ -61,21 +61,22 @@ export default function Wallet(props) {
   const [pk, setPK] = useState();
 
   const providerSend = props.provider ? (
-    <Tooltip title="Wallet">
-      <WalletOutlined
-        onClick={() => {
-          setOpen(!open);
-        }}
-        rotate={-90}
-        style={{
-          padding: 7,
-          color: props.color ? props.color : "",
-          cursor: "pointer",
-          fontSize: 28,
-          verticalAlign: "middle",
-        }}
-      />
-    </Tooltip>
+    // <Tooltip title="Wallet">
+    //   <WalletOutlined
+    //     onClick={() => {
+    //       setOpen(!open);
+    //     }}
+    //     rotate={-90}
+    //     style={{
+    //       padding: 7,
+    //       color: props.color ? props.color : "",
+    //       cursor: "pointer",
+    //       fontSize: 28,
+    //       verticalAlign: "middle",
+    //     }}
+    //   />
+    // </Tooltip>
+    <></>
   ) : (
     ""
   );
