@@ -11,6 +11,9 @@ import markerBlack from "../logo-black.png";
 import groth16ExportSolidityCallData from "../utils/groth16_exportSolidityCallData";
 
 import ModalIntro from "../components/ModalIntro";
+
+const REACT_APP_MAPBOX_ACCESS_TOKEN =
+  "pk.eyJ1IjoiZnBldHJhIiwiYSI6ImNrdnhia3drdzBncDgyd3BhdGVsazZ4YzMifQ.vMhTAa15x-b6XOx71Wgb0A";
 const snarkjs = require("snarkjs");
 const { unstringifyBigInts } = utils;
 const withPrecision = false;
@@ -213,11 +216,16 @@ function Home({ writeContracts }) {
     <div>
       {message && <Alert message={message.text} type={message.type} style={{ padding: 20 }} />}
       {confetti && <Confetti width={window.innerWidth} height={window.innerHeight} />}
+      {true && (
+        <div style={{ position: "absolute", top: "50vh", width: "50vw" }}>
+          <Spin />
+        </div>
+      )}
 
       <ModalIntro />
       <Map
         ref={mapRef}
-        mapboxAccessToken={process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}
+        mapboxAccessToken={REACT_APP_MAPBOX_ACCESS_TOKEN}
         style={{ width: "100%", height: "100vh" }}
         mapStyle={
           currentTheme === "light"
@@ -241,12 +249,6 @@ function Home({ writeContracts }) {
         alt={"you are somewhere 🤷"}
         style={{ position: "absolute", top: "calc(50% - 50px)", left: "calc(50% - 50px)" }}
       />
-
-      {isVerifying && (
-        <div style={{ position: "absolute", top: "50vh", width: "50vw" }}>
-          <Spin />
-        </div>
-      )}
 
       <div
         style={{ position: "fixed", textAlign: "center", alignItems: "center", bottom: 20, padding: 10, width: "100%" }}

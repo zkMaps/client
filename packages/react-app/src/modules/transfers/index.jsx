@@ -1,4 +1,4 @@
-export {}
+export {};
 // import React, { useCallback, useEffect, useState } from "react";
 // import { Box, Grid,   List, ListItem, ListIcon, } from "@chakra-ui/react"
 // import { AddIcon } from '@chakra-ui/icons'
@@ -33,7 +33,6 @@ export {}
 
 // const { ethers } = require("ethers");
 
-
 // // Components
 
 // const targetNetwork = NETWORKS.mumbai; // <------- select your target frontend network (localhost, rinkeby, xdai, mainnet)
@@ -56,23 +55,20 @@ export {}
 // // The transactor wraps transactions and provides notificiations
 // const tx = Transactor(userSigner, gasPrice);
 
-
 // const Markers = (props) => {
 //   // Load in your local 📝 contract and read a value from it:
 //   const readContracts = useContractLoader(localProvider);
-  
+
 //   // If you want to make 🔐 write transactions to your contracts, use the userSigner:
 //   const writeContracts = useContractLoader(userSigner, { chainId: localChainId });
-  
+
 //   // keep track of a variable from the contract in the local React state:
 //   const balance = useContractReader(readContracts, "Fraternal", "balanceOf", [address]);
 //   console.log("🤗 balance:", balance);
-  
+
 //     // 📟 Listen for broadcast events
 //     const transferEvents = useEventListener(readContracts, "Fraternal", "Transfer", localProvider, 1);
 //     console.log("📟 Transfer events:", transferEvents);
-
-
 
 //   return (
 //     <Box textAlign="center" fontSize="xl">
@@ -82,9 +78,9 @@ export {}
 // name="Fraternal"
 // signer={userSigner}
 // provider={localProvider}
-// blockExplorer={blockExplorer} 
+// blockExplorer={blockExplorer}
 // // address={address}
-// customContract={undefined} account={undefined} gasPrice={undefined} show={undefined} price={undefined} chainId={undefined} 
+// customContract={undefined} account={undefined} gasPrice={undefined} show={undefined} price={undefined} chainId={undefined}
 // />
 
 //       </Grid>
