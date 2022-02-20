@@ -1,10 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useColorMode, Button, Alert, AlertIcon } from "@chakra-ui/react";
-import { useContractReader } from "eth-hooks";
+import { Alert, AlertIcon } from "@chakra-ui/react";
 import { utils } from "ffjavascript";
 import Map, { Marker } from "react-map-gl";
-import { Row } from "antd";
-import { CheckCircleIcon } from "@chakra-ui/icons";
+import { Row, Button } from "antd";
 import Confetti from "react-confetti";
 import { useThemeSwitcher } from "react-css-theme-switcher";
 
@@ -84,7 +82,7 @@ function Home({ yourLocalBalance, writeContracts }) {
   }, []);
 
   const flyTo = async inputs => {
-    console.log("🚀 ~ file: Home.jsx ~ line 81 ~ Home ~ flyTo", inputs);
+    // console.log("🚀 ~ file: Home.jsx ~ line 81 ~ Home ~ flyTo", inputs);
     await mapRef.current?.flyTo({
       center: [inputs.coords.longitude, inputs.coords.latitude],
       zoom: 18,
@@ -196,27 +194,7 @@ function Home({ yourLocalBalance, writeContracts }) {
         //     setIsValid(_isValid);
         //  });
 
-        const tx = await writeContracts.Verifier.verifyProof(
-          [
-            "0x1e2cdec01d32f0bd784efed35b3b724eb62e6a05b887e5eaf35af3049d5f850a",
-            "0x19445a36d4536a49c4323eff01647ca5cd4db4902b054a5cc5ee5c9383d54b35",
-          ],
-          [
-            [
-              "0x1bb8a138b2006f0f59c3bd4c73c9300f40d3e088a7c1c0b4e4f3e122f3c87603",
-              "0x1d79c23cfbe3693e50cac552872b37118fd3762c151d434c7d16fa422878bc76",
-            ],
-            [
-              "0x1046db7951e4412da7a15a2c4c9b63977d22657711bdc917df1806a27e203e84",
-              "0x1872793bfe4828dac60811ccbfd55fb8b5a3779c3c0a5b783263bae331fd79dd",
-            ],
-          ],
-          [
-            "0x3062a537e8d58d314c731118998a2a20c0eed60d7484933f65aaf87ef65ac1d6",
-            "0x1d417031d2a40b655b6e35e55b1aedca105fbc4a702b49c7ddd0fc4db90be877",
-          ],
-          ["0x0000000000000000000000000000000000000000000000000000000000000001"],
-        );
+        const tx = await writeContracts.Verifier.verifyProof(callData[0], callData[1], callData[2], callData[3]);
         console.log({ tx });
 
         const recipt = await tx.wait(1);
@@ -226,7 +204,6 @@ function Home({ yourLocalBalance, writeContracts }) {
       console.error(error);
     }
   };
-  console.log("🚀 ~ file: Home.jsx ~ line 225 ~ Home ~ longitude && latitude", longitude, latitude);
 
   return (
     <div>
@@ -263,9 +240,14 @@ function Home({ yourLocalBalance, writeContracts }) {
         style={{ position: "fixed", textAlign: "center", alignItems: "center", bottom: 20, padding: 10, width: "100%" }}
       >
         <Row align="middle" gutter={[4, 4]}>
-          <Button onClick={runProofs} size="large" shape="round">
-            <span style={{ marginRight: 8 }} role="img" aria-label="support"></span>
-            ZK proove your location
+          <Button
+            key="runProofs"
+            style={{ verticalAlign: "center", marginLeft: 8 }}
+            shape="round"
+            size="large"
+            onClick={runProofs}
+          >
+            ZK prove your location
           </Button>
         </Row>
       </div>
