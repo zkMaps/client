@@ -11,6 +11,8 @@ import markerBlack from "../logo-black.png";
 
 import { ethers } from "ethers";
 import groth16ExportSolidityCallData from "../utils/groth16_exportSolidityCallData";
+
+import ModalIntro from "../components/ModalIntro";
 const snarkjs = require("snarkjs");
 const { unstringifyBigInts } = utils;
 const withPrecision = false;
@@ -208,6 +210,7 @@ function Home({ yourLocalBalance, writeContracts }) {
 
   return (
     <div>
+      <ModalIntro />
       {message && (
         <Alert status="error">
           <AlertIcon />
