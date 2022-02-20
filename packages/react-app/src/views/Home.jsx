@@ -9,6 +9,8 @@ import { useThemeSwitcher } from "react-css-theme-switcher";
 import markerLight from "../logo-light.png";
 import markerBlack from "../logo-black.png";
 
+import { ethers } from "ethers";
+import groth16ExportSolidityCallData from "../utils/groth16_exportSolidityCallData";
 const snarkjs = require("snarkjs");
 const { unstringifyBigInts } = utils;
 const withPrecision = false;
@@ -127,7 +129,7 @@ function Home({ yourLocalBalance, writeContracts }) {
 
     let res;
     if (proof.protocol === "groth16") {
-      res = await snarkjs.groth16.exportSolidityCallData(proof, pub);
+      res = await groth16ExportSolidityCallData(proof, pub);
     } else if (proof.protocol === "plonk") {
       res = await snarkjs.plonk.exportSolidityCallData(proof, pub);
     } else {
@@ -189,12 +191,11 @@ function Home({ yourLocalBalance, writeContracts }) {
         // }, 7000);
 
         const callData = await zkeyExportSolidityCalldata(_proof, {});
-        console.log(callData);
         //  verifyProof(verificationKey, _signals, _proof).then((_isValid) => {
         //     setIsValid(_isValid);
         //  });
 
-        const tx = await writeContracts.Verifier.verifyProof(callData[0], callData[1], callData[2], callData[3]);
+        const tx = await writeContracts.Verifier.verifyProof(...JSON.parse(callData));
         console.log({ tx });
 
         const recipt = await tx.wait(1);
