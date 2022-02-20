@@ -64,7 +64,7 @@ export default function Account({
       modalButtons.push(
         <Button
           key="logoutbutton"
-          style={{ verticalAlign: "center", marginLeft: 8}}
+          style={{ verticalAlign: "center", marginLeft: 8 }}
           shape="round"
           size="large"
           onClick={logoutOfWeb3Modal}

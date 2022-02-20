@@ -1,11 +1,16 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import { useContractReader } from "eth-hooks";
+import React, { useState, useRef, useEffect } from "react";
+import { Alert, AlertIcon } from "@chakra-ui/react";
 import { utils } from "ffjavascript";
-import Map from "react-map-gl";
+import Map, { Marker } from "react-map-gl";
 import { Row, Button } from "antd";
+import Confetti from "react-confetti";
+import { useThemeSwitcher } from "react-css-theme-switcher";
+
+import markerLight from "../logo-light.png";
+import markerBlack from "../logo-black.png";
+
 import { ethers } from "ethers";
-import groth16ExportSolidityCallData from "../utils/groth16_exportSolidityCallData"
+import groth16ExportSolidityCallData from "../utils/groth16_exportSolidityCallData";
 const snarkjs = require("snarkjs");
 const { unstringifyBigInts } = utils;
 const withPrecision = false;
@@ -24,21 +29,46 @@ let zkeyFile = "https://zk-maps.vercel.app/AtEthDenver_0001.zkey";
 // let verificationKey = "~/circuits/AtEthDenver/verification_key.json";
 let publicConstraint = "~/circuits/AtEthDenver/public.json";
 
+const settings = {
+  // scrollZoom: true,
+  boxZoom: false,
+  dragRotate: false,
+  dragPan: false,
+  doubleClickZoom: false,
+  // keyboard: true,
+  // touchZoomRotate: true,
+  // touchPitch: true,
+  // minZoom: 0,
+  // maxZoom: 20,
+  // minPitch: 0,
+  // maxPitch: 85
+  showCompass: true,
+};
+
 function Home({ yourLocalBalance, writeContracts }) {
   // you can also use hooks locally in your component of choice
 
+  // Refs
+  const mapRef = useRef();
+
   // Hooks
   const [viewState, setViewState] = useState({
-    latitude: 39.691566166669446,
-    longitude: -104.96286823094337,
-    zoom: 18,
-    // bearing: 0,
+    latitude: 37.7751,
+    longitude: -122.4193,
+    zoom: 30,
+    bearing: 0,
+    pitch: 0,
     // padding: { top: 0, bottom: 0, left: 0, right: 0 },
-    // pitch: 0,
   });
   const [proof, setProof] = useState("");
   const [signals, setSignals] = useState("");
   const [isValid, setIsValid] = useState(false);
+  const [message, setMessage] = useState(null);
+  const [confetti, setConfetti] = useState(false);
+  console.log("🚀 ~ file: Home.jsx ~ line 52 ~ Home ~ viewState", viewState);
+
+  const { currentTheme } = useThemeSwitcher();
+  // const { colorMode } = useColorMode();
 
   const { latitude, longitude } = viewState;
 
@@ -49,9 +79,49 @@ function Home({ yourLocalBalance, writeContracts }) {
   const onMove = React.useCallback(current => {
     // Only update the view state if the center is inside the geofence
     // if (turf.booleanPointInPolygon(newCenter, GEOFENCE)) {
-    setViewState(current);
+    // setViewState(current);
     // }
   }, []);
+
+  const flyTo = async inputs => {
+    // console.log("🚀 ~ file: Home.jsx ~ line 81 ~ Home ~ flyTo", inputs);
+    await mapRef.current?.flyTo({
+      center: [inputs.coords.longitude, inputs.coords.latitude],
+      zoom: 18,
+      duration: 2000,
+    });
+    setViewState({
+      latitude: inputs.coords.latitude,
+      longitude: inputs.coords.longitude,
+      zoom: 18,
+    });
+  };
+
+  useEffect(async () => {
+    if (navigator.geolocation) {
+      await navigator.permissions.query({ name: "geolocation" }).then(function (result) {
+        if (result.state === "granted") {
+          console.log(result.state);
+          //If granted then you can directly call your function here
+          navigator.geolocation.getCurrentPosition(flyTo);
+          // } else if (result.state === "prompt") {
+          //   navigator.geolocation.getCurrentPosition(setViewState, null, null);
+        } else if (result.state === "denied") {
+          //If denied then you have to show instructions to enable location
+          setMessage("You need to enable geolocation to use this app.");
+          setTimeout(() => {
+            setMessage(null);
+          }, 5000);
+        }
+        result.onchange = function () {
+          console.log(result.state);
+        };
+      });
+    }
+  }, []);
+
+  navigator.geolocation.watchPosition(flyTo);
+  // navigator.geolocation.watchPosition(setCoords, error, options);
 
   const zkeyExportSolidityCalldata = async (_proof, options) => {
     const pub = unstringifyBigInts(publicConstraint);
@@ -69,10 +139,18 @@ function Home({ yourLocalBalance, writeContracts }) {
   };
 
   const makeProof = async (_proofInput, _wasm, _zkey) => {
-    console.log("🚀 ~ file: Home.jsx ~ line 76 ~ makeProof ~ _proofInput", _proofInput);
-    const { proof, publicSignals } = await snarkjs.groth16.fullProve(_proofInput, _wasm, _zkey);
-    console.log("🚀 ~ file: Home.jsx ~ line 75 ~ makeProof ~ proof", proof);
-    return { proof, publicSignals };
+    try {
+      console.log("🚀 ~ file: Home.jsx ~ line 76 ~ makeProof ~ _proofInput", _proofInput);
+      const { proof, publicSignals } = await snarkjs.groth16.fullProve(_proofInput, _wasm, _zkey);
+      console.log("🚀 ~ file: Home.jsx ~ line 75 ~ makeProof ~ proof", proof);
+      return { proof, publicSignals };
+    } catch (error) {
+      setMessage("You are outside of the proof zone.");
+      setTimeout(() => {
+        setMessage(null);
+      }, 5000);
+      throw error;
+    }
   };
 
   //  const verifyProof = async (_verificationkey, signals, proof) => {
@@ -96,17 +174,21 @@ function Home({ yourLocalBalance, writeContracts }) {
 
     try {
       const proofInput = {
-        latitude: 12973547807205024,
-        longitude: 7500977777251779,
-        // longitude: withPrecision
-        //   ? Math.trunc((longitude + 180) * 1000)
-        //   : Math.trunc((longitude + 180) * Math.pow(10, 14)),
-        // latitude: withPrecision ? Math.trunc((latitude + 90) * 1000) : Math.trunc((latitude + 90) * Math.pow(10, 14)),
+        // latitude: 12973547807205024,
+        // longitude: 7500977777251779,
+        longitude: withPrecision
+          ? Math.trunc((longitude + 180) * 1000)
+          : Math.trunc((longitude + 180) * Math.pow(10, 14)),
+        latitude: withPrecision ? Math.trunc((latitude + 90) * 1000) : Math.trunc((latitude + 90) * Math.pow(10, 14)),
       };
       makeProof(proofInput, wasmFile, zkeyFile).then(async ({ proof: _proof, publicSignals: _signals }) => {
         setProof(JSON.stringify(_proof, null, 2));
         setSignals(JSON.stringify(_signals, null, 2));
         _proof.protocol = "groth16";
+        // setConfetti(true);
+        // setTimeout(() => {
+        //   setConfetti(false);
+        // }, 7000);
 
         const callData = await zkeyExportSolidityCalldata(_proof, {});
         //  verifyProof(verificationKey, _signals, _proof).then((_isValid) => {
@@ -126,80 +208,49 @@ function Home({ yourLocalBalance, writeContracts }) {
 
   return (
     <div>
+      {message && (
+        <Alert status="error">
+          <AlertIcon />
+          {message}
+        </Alert>
+      )}
+      {confetti && <Confetti width={window.innerWidth} height={window.innerHeight} />}
       <Map
-        attributionControl={false}
+        ref={mapRef}
         mapboxAccessToken={process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}
-        style={{ width: "100%", height: 800 }}
-        mapStyle="mapbox://styles/mapbox/streets-v9"
-        {...viewState}
-        onMove={e => onMove(e)}
-      />
+        style={{ width: "100%", height: "100vh" }}
+        mapStyle={
+          currentTheme === "light"
+            ? "mapbox://styles/mapbox/streets-v9"
+            : "mapbox://styles/fpetra/ckvxbmc8b4lwx14s3zewfbr3d"
+        }
+        {...settings}
+        // {...viewState}
+        // onMove={e => onMove(e)}
+        attributionControl={false}
+      >
+        {console.log(viewState?.longitude)}
+        {Math.abs(longitude) && Math.abs(latitude) && (
+          <Marker longitude={viewState?.longitude} latitude={viewState?.latitude}>
+            <img src={currentTheme === "light" ? markerBlack : markerLight} alt="you are here" />
+          </Marker>
+        )}
+      </Map>
 
       <div
         style={{ position: "fixed", textAlign: "center", alignItems: "center", bottom: 20, padding: 10, width: "100%" }}
       >
         <Row align="middle" gutter={[4, 4]}>
-          <Button onClick={runProofs} size="large" shape="round">
-            <span style={{ marginRight: 8 }} role="img" aria-label="support"></span>
-            ZK proove your location
+          <Button
+            key="runProofs"
+            style={{ verticalAlign: "center", marginLeft: 8 }}
+            shape="round"
+            size="large"
+            onClick={runProofs}
+          >
+            ZK prove your location
           </Button>
         </Row>
-      </div>
-
-      <div style={{ margin: 32 }}>
-        <span style={{ marginRight: 8 }}>📝</span>
-        This Is Your App Home. You can start editing it in{" "}
-        <span
-          className="highlight"
-          style={{ marginLeft: 4, /* backgroundColor: "#f9f9f9", */ padding: 4, borderRadius: 4, fontWeight: "bolder" }}
-        >
-          packages/react-app/src/views/Home.jsx
-        </span>
-      </div>
-      <div style={{ margin: 32 }}>
-        <span style={{ marginRight: 8 }}>✏️</span>
-        Edit your smart contract{" "}
-        <span
-          className="highlight"
-          style={{ marginLeft: 4, /* backgroundColor: "#f9f9f9", */ padding: 4, borderRadius: 4, fontWeight: "bolder" }}
-        >
-          YourContract.sol
-        </span>{" "}
-        in{" "}
-        <span
-          className="highlight"
-          style={{ marginLeft: 4, /* backgroundColor: "#f9f9f9", */ padding: 4, borderRadius: 4, fontWeight: "bolder" }}
-        >
-          packages/hardhat/contracts
-        </span>
-      </div>
-
-      <div style={{ margin: 32 }}>
-        <span style={{ marginRight: 8 }}>🤖</span>
-        An example prop of your balance{" "}
-        <span style={{ fontWeight: "bold", color: "green" }}>({ethers.utils.formatEther(yourLocalBalance)})</span> was
-        passed into the
-        <span
-          className="highlight"
-          style={{ marginLeft: 4, /* backgroundColor: "#f9f9f9", */ padding: 4, borderRadius: 4, fontWeight: "bolder" }}
-        >
-          Home.jsx
-        </span>{" "}
-        component from
-        <span
-          className="highlight"
-          style={{ marginLeft: 4, /* backgroundColor: "#f9f9f9", */ padding: 4, borderRadius: 4, fontWeight: "bolder" }}
-        >
-          App.jsx
-        </span>
-      </div>
-      <div style={{ margin: 32 }}>
-        <span style={{ marginRight: 8 }}>💭</span>
-        Check out the <Link to="/hints">"Hints"</Link> tab for more tips.
-      </div>
-      <div style={{ margin: 32 }}>
-        <span style={{ marginRight: 8 }}>🛠</span>
-        Tinker with your smart contract using the <Link to="/debug">"Debug Contract"</Link> tab.
       </div>
     </div>
   );

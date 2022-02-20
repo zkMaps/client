@@ -72,7 +72,7 @@ const providers = [
 function App(props) {
   // specify all the chains your app is available on. Eg: ['localhost', 'mainnet', ...otherNetworks ]
   // reference './constants.js' for other networks
-  const networkOptions = [initialNetwork.name, "mainnet", "testnetHarmony"];
+  const networkOptions = [initialNetwork.name, "mumbai", "mainnetHarmony"];
 
   const [injectedProvider, setInjectedProvider] = useState();
   const [address, setAddress] = useState();
@@ -80,7 +80,7 @@ function App(props) {
   const location = useLocation();
 
   // recent verification
-  const [isVerified, setVerified] = useState(false)
+  const [isVerified, setVerified] = useState(false);
   const targetNetwork = NETWORKS[selectedNetwork];
 
   // 🔭 block explorer URL
@@ -231,9 +231,12 @@ function App(props) {
     // eslint-disable-next-line
   }, [setInjectedProvider]);
 
+  // const AppWithProviders = () => {
+  //   const setLocalProviderAtom = useSetRecoilState(localProviderAtom);
   useEffect(() => {
-    if (web3Modal.cachedProvider) {
-      loadWeb3Modal();
+    // eslint-disable-next-line no-restricted-globals
+    if (typeof screen?.orientation !== "undefined") {
+      // Set message to let users know that this is better used in mobile
     }
   }, [loadWeb3Modal]);
 
@@ -291,7 +294,7 @@ function App(props) {
 
       {/* 👨‍💼 Your account is in the top right with a wallet at connect options */}
       <div style={{ position: "fixed", textAlign: "right", right: 0, top: 0, padding: 10 }}>
-        <div style={{ display: "flex", flex: 1}}>
+        <div style={{ display: "flex", flex: 1 }}>
           {USE_NETWORK_SELECTOR && (
             <div style={{ marginRight: 10, marginTop: 4 }}>
               <NetworkSwitch
