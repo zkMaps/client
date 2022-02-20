@@ -1,6 +1,7 @@
-import { Button } from "antd";
+import { Button, Tooltip } from "antd";
 import React from "react";
 import { useThemeSwitcher } from "react-css-theme-switcher";
+import { LogoutOutlined } from "@ant-design/icons";
 
 import Address from "./Address";
 import Balance from "./Balance";
@@ -62,12 +63,21 @@ export default function Account({
   if (web3Modal) {
     if (web3Modal.cachedProvider) {
       modalButtons.push(
+        // <Tooltip title="logout">
+        //   <Button
+        //     type="primary"
+        //     shape="circle"
+        //     icon={<LogoutOutlined key="logoutbutton" />}
+        //     onPress={logoutOfWeb3Modal}
+        //   />
+        // </Tooltip>,
         <Button
           key="logoutbutton"
           style={{ verticalAlign: "center", marginLeft: 8 }}
           shape="round"
           size="large"
           onClick={logoutOfWeb3Modal}
+          type="primary"
         >
           logout
         </Button>,
@@ -101,7 +111,7 @@ export default function Account({
             signer={userSigner}
             ensProvider={mainnetProvider}
             price={price}
-            color={currentTheme === "light" ? "#1890ff" : "#2caad9"}
+            color={currentTheme === "dark" ? "#5F5CFF" : "#2caad9"}
           />
         </>
       ) : useBurner ? (

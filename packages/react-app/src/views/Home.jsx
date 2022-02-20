@@ -9,6 +9,8 @@ import markerLightSM from "./marker-light-sm.png";
 import markerBlack from "../logo-black.png";
 
 import groth16ExportSolidityCallData from "../utils/groth16_exportSolidityCallData";
+
+import ModalIntro from "../components/ModalIntro";
 const snarkjs = require("snarkjs");
 const { unstringifyBigInts } = utils;
 const withPrecision = false;
@@ -98,7 +100,7 @@ function Home({ writeContracts }) {
             //   navigator.geolocation.getCurrentPosition(setViewState, null, null);
           } else if (result.state === "denied") {
             //If denied then you have to show instructions to enable location
-            setMessage("You need to enable geolocation to use this app.");
+            setMessage({ text: "You need to enable geolocation to use this app.", type: "error" });
             setTimeout(() => {
               setMessage(null);
             }, 5000);
@@ -131,12 +133,10 @@ function Home({ writeContracts }) {
 
   const makeProof = async (_proofInput, _wasm, _zkey) => {
     try {
-      console.log("🚀 ~ file: Home.jsx ~ line 76 ~ makeProof ~ _proofInput", _proofInput);
       const { proof, publicSignals } = await snarkjs.groth16.fullProve(_proofInput, _wasm, _zkey);
-      console.log("🚀 ~ file: Home.jsx ~ line 75 ~ makeProof ~ proof", proof);
       return { proof, publicSignals };
     } catch (error) {
-      setMessage("You are outside of the proof zone.");
+      setMessage({ text: "You are outside of the proof zone.", type: "error" });
       setTimeout(() => {
         setMessage(null);
       }, 5000);
@@ -190,7 +190,13 @@ function Home({ writeContracts }) {
         console.log({ tx });
 
         const recipt = await tx.wait(1);
-        console.log({ recipt });
+        if (recipt?.event?.length > 0) {
+          setMessage({ text: "You have verified your location for Colorado", type: "success" });
+          setTimeout(() => {
+            setMessage(null);
+          }, 5000);
+        }
+        // console.log({ recipt.past});
       });
     } catch (error) {
       console.error(error);
@@ -199,8 +205,10 @@ function Home({ writeContracts }) {
 
   return (
     <div>
-      {message && <Alert message={message} type="error" />}
+      {message && <Alert message={message.text} type={message.type} style={{ padding: 20 }} />}
       {confetti && <Confetti width={window.innerWidth} height={window.innerHeight} />}
+
+      <ModalIntro />
       <Map
         ref={mapRef}
         mapboxAccessToken={process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}
@@ -234,6 +242,7 @@ function Home({ writeContracts }) {
             shape="round"
             size="large"
             onClick={runProofs}
+            type="primary"
           >
             ZK prove your location
           </Button>
