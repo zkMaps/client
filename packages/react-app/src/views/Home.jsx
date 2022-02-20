@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { utils } from "ffjavascript";
 import Map, { Marker } from "react-map-gl";
-import { Row, Button, Alert } from "antd";
+import { Row, Button, Alert, Spin } from "antd";
 import Confetti from "react-confetti";
 import { useThemeSwitcher } from "react-css-theme-switcher";
 
@@ -63,6 +63,7 @@ function Home({ writeContracts }) {
   const [signals, setSignals] = useState("");
   const [isValid, setIsValid] = useState(false);
   const [message, setMessage] = useState(null);
+  const [isVerifying, setIsVerifying] = useState(false);
   const [confetti, setConfetti] = useState(false);
 
   const { currentTheme } = useThemeSwitcher();
@@ -181,6 +182,8 @@ function Home({ writeContracts }) {
         //   setConfetti(false);
         // }, 7000);
 
+        setIsVerifying(true);
+
         const callData = await zkeyExportSolidityCalldata(_proof, {});
         //  verifyProof(verificationKey, _signals, _proof).then((_isValid) => {
         //     setIsValid(_isValid);
@@ -190,15 +193,18 @@ function Home({ writeContracts }) {
         console.log({ tx });
 
         const recipt = await tx.wait(1);
-        if (recipt?.event?.length > 0) {
+        console.log("🚀 ~ file: Home.jsx ~ line 193 ~ makeProof ~ recipt", recipt);
+        if (recipt?.events?.length > 0) {
+          setIsVerifying(false);
           setMessage({ text: "You have verified your location for Colorado", type: "success" });
           setTimeout(() => {
             setMessage(null);
-          }, 5000);
+          }, 200000);
         }
         // console.log({ recipt.past});
       });
     } catch (error) {
+      setIsVerifying(false);
       console.error(error);
     }
   };
@@ -230,7 +236,17 @@ function Home({ writeContracts }) {
           // </Marker>
         )} */}
       </Map>
-      <img src={markerLightSM} alt={"you are somewhere 🤷"} style={{position: "absolute", top: "calc(50% - 50px)", left: "calc(50% - 50px)"}}/>
+      <img
+        src={markerLightSM}
+        alt={"you are somewhere 🤷"}
+        style={{ position: "absolute", top: "calc(50% - 50px)", left: "calc(50% - 50px)" }}
+      />
+
+      {isVerifying && (
+        <div style={{ position: "absolute", top: "50vh", width: "50vw" }}>
+          <Spin />
+        </div>
+      )}
 
       <div
         style={{ position: "fixed", textAlign: "center", alignItems: "center", bottom: 20, padding: 10, width: "100%" }}

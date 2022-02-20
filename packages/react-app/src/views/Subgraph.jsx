@@ -4,7 +4,7 @@ import Blockies from "react-blockies";
 import VirtualList from "rc-virtual-list";
 
 import React from "react";
-import { Typography, List } from "antd";
+import { Typography, List, Spin } from "antd";
 import { gql, useQuery } from "@apollo/client";
 
 function Subgraph(props) {
@@ -44,10 +44,13 @@ function Subgraph(props) {
         <Typography.Title>Other user's check-ins</Typography.Title>
 
         {loading ? (
-          <div>loading</div>
+          <div>
+            {" "}
+            <Spin />
+          </div>
         ) : data?.logVerifieds ? (
           <List>
-            <VirtualList data={data?.logVerifieds} height={"40%"} itemHeight={60} itemKey="email" onScroll={onScroll}>
+            <VirtualList data={data?.logVerifieds} height={"40%"} itemHeight={60} itemKey="email">
               {item => <ListItem item={item} isOwner={false} />}
             </VirtualList>
           </List>
@@ -110,13 +113,19 @@ const OwnerSubgraph = props => {
   const VERIFIED_GQL = gql(VERIFY_USER);
   const { loading, data } = useQuery(VERIFIED_GQL, { pollInterval: 2500 });
 
-  const onScroll = e => {
-    // if (e.target.scrollHeight - e.target.scrollTop === ContainerHeight) {
-    // appendData();
-    // }
-  };
+  // const onScroll = e => {
+  //   // if (e.target.scrollHeight - e.target.scrollTop === ContainerHeight) {
+  //   // appendData();
+  //   // }
+  // };
 
-  if (loading) return <div>loading</div>;
+  if (loading)
+    return (
+      <div>
+        {" "}
+        <Spin />
+      </div>
+    );
   if (data) console.log("🌍 [subrapgh]: ", data);
   return (
     <>
@@ -126,10 +135,13 @@ const OwnerSubgraph = props => {
         <Blockies seed={props?.address?.toLowerCase()} size={8} scale={2} />
 
         {loading ? (
-          <div>loading</div>
+          <div>
+            {" "}
+            <Spin />
+          </div>
         ) : data?.logVerifieds ? (
           <List>
-            <VirtualList data={data?.logVerifieds} height={"40%"} itemHeight={60} itemKey="email" onScroll={onScroll}>
+            <VirtualList data={data?.logVerifieds} height={"40%"} itemHeight={60} itemKey="email">
               {item => <ListItem item={item} isOwner={false} />}
             </VirtualList>
           </List>
