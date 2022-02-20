@@ -174,12 +174,12 @@ function Home({ yourLocalBalance, writeContracts }) {
 
     try {
       const proofInput = {
-        latitude: 12973547807205024,
-        longitude: 7500977777251779,
-        // longitude: withPrecision
-        //   ? Math.trunc((longitude + 180) * 1000)
-        //   : Math.trunc((longitude + 180) * Math.pow(10, 14)),
-        // latitude: withPrecision ? Math.trunc((latitude + 90) * 1000) : Math.trunc((latitude + 90) * Math.pow(10, 14)),
+        // latitude: 12973547807205024,
+        // longitude: 7500977777251779,
+        longitude: withPrecision
+          ? Math.trunc((longitude + 180) * 1000)
+          : Math.trunc((longitude + 180) * Math.pow(10, 14)),
+        latitude: withPrecision ? Math.trunc((latitude + 90) * 1000) : Math.trunc((latitude + 90) * Math.pow(10, 14)),
       };
       makeProof(proofInput, wasmFile, zkeyFile).then(async ({ proof: _proof, publicSignals: _signals }) => {
         setProof(JSON.stringify(_proof, null, 2));
