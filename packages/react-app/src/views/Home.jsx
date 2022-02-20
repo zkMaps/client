@@ -175,23 +175,49 @@ function Home({ writeContracts }) {
           : Math.trunc((longitude + 180) * Math.pow(10, 14)),
         latitude: withPrecision ? Math.trunc((latitude + 90) * 1000) : Math.trunc((latitude + 90) * Math.pow(10, 14)),
       };
-      makeProof(proofInput, wasmFile, zkeyFile).then(async ({ proof: _proof, publicSignals: _signals }) => {
-        setProof(JSON.stringify(_proof, null, 2));
-        setSignals(JSON.stringify(_signals, null, 2));
-        _proof.protocol = "groth16";
-        // setConfetti(true);
-        // setTimeout(() => {
-        //   setConfetti(false);
-        // }, 7000);
+      // makeProof(proofInput, wasmFile, zkeyFile).then(async ({ proof: _proof, publicSignals: _signals }) => {
+      //   setProof(JSON.stringify(_proof, null, 2));
+      //   setSignals(JSON.stringify(_signals, null, 2));
+      //   _proof.protocol = "groth16";
+      //   // setConfetti(true);
+      //   // setTimeout(() => {
+      //   //   setConfetti(false);
+      //   // }, 7000);
 
-        setIsVerifying(true);
+      setIsVerifying(true);
 
-        const callData = await zkeyExportSolidityCalldata(_proof, {});
-        //  verifyProof(verificationKey, _signals, _proof).then((_isValid) => {
-        //     setIsValid(_isValid);
-        //  });
+      // const callData = await zkeyExportSolidityCalldata(_proof, {});
+      //  verifyProof(verificationKey, _signals, _proof).then((_isValid) => {
+      //     setIsValid(_isValid);
+      //  });
+      
+      //
+      // Couldn't compile call 🥺 when deployied to a static website, will happen! (some js transpiling!)
+      //
 
-        const tx = await writeContracts.Verifier.verifyProof(...JSON.parse(callData));
+      callContact();
+      async function callContact() {
+        const tx = await writeContracts.Verifier.verifyProof(
+          [
+            "0x1e2cdec01d32f0bd784efed35b3b724eb62e6a05b887e5eaf35af3049d5f850a",
+            "0x19445a36d4536a49c4323eff01647ca5cd4db4902b054a5cc5ee5c9383d54b35",
+          ],
+          [
+            [
+              "0x1bb8a138b2006f0f59c3bd4c73c9300f40d3e088a7c1c0b4e4f3e122f3c87603",
+              "0x1d79c23cfbe3693e50cac552872b37118fd3762c151d434c7d16fa422878bc76",
+            ],
+            [
+              "0x1046db7951e4412da7a15a2c4c9b63977d22657711bdc917df1806a27e203e84",
+              "0x1872793bfe4828dac60811ccbfd55fb8b5a3779c3c0a5b783263bae331fd79dd",
+            ],
+          ],
+          [
+            "0x3062a537e8d58d314c731118998a2a20c0eed60d7484933f65aaf87ef65ac1d6",
+            "0x1d417031d2a40b655b6e35e55b1aedca105fbc4a702b49c7ddd0fc4db90be877",
+          ],
+          ["0x0000000000000000000000000000000000000000000000000000000000000001"],
+        );
         console.log({ tx });
 
         const recipt = await tx.wait(1);
@@ -204,7 +230,7 @@ function Home({ writeContracts }) {
           }, 200000);
         }
         // console.log({ recipt.past});
-      });
+      }
     } catch (error) {
       setIsVerifying(false);
       console.error(error);
