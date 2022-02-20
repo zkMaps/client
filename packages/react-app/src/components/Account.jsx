@@ -64,7 +64,7 @@ export default function Account({
       modalButtons.push(
         <Button
           key="logoutbutton"
-          style={{ verticalAlign: "top", marginLeft: 8, marginTop: 4 }}
+          style={{ verticalAlign: "center", marginLeft: 8}}
           shape="round"
           size="large"
           onClick={logoutOfWeb3Modal}
@@ -94,7 +94,7 @@ export default function Account({
       {web3Modal && web3Modal.cachedProvider ? (
         <>
           {address && <Address address={address} ensProvider={mainnetProvider} blockExplorer={blockExplorer} />}
-          <Balance address={address} provider={localProvider} price={price} />
+          {/* <Balance address={address} provider={localProvider} price={price} /> */}
           <Wallet
             address={address}
             provider={localProvider}

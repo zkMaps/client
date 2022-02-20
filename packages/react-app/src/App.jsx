@@ -281,11 +281,8 @@ function App(props) {
       <Switch>
         <Route exact path="/">
           {/* pass in any web3 props to this Home component. For example, yourLocalBalance */}
-          <Home yourLocalBalance={yourLocalBalance} readContracts={readContracts} />
+          <Home yourLocalBalance={yourLocalBalance} writeContracts={writeContracts} />
         </Route>
-      
-       
-    
         <Route path="/subgraph">
           <Subgraph
             subgraphUri={props.subgraphUri}
@@ -300,9 +297,9 @@ function App(props) {
 
       {/* 👨‍💼 Your account is in the top right with a wallet at connect options */}
       <div style={{ position: "fixed", textAlign: "right", right: 0, top: 0, padding: 10 }}>
-        <div style={{ display: "flex", flex: 1, alignItems: "center" }}>
+        <div style={{ display: "flex", flex: 1}}>
           {USE_NETWORK_SELECTOR && (
-            <div style={{ marginRight: 20 }}>
+            <div style={{ marginRight: 10, marginTop: 4 }}>
               <NetworkSwitch
                 networkOptions={networkOptions}
                 selectedNetwork={selectedNetwork}
@@ -353,7 +350,7 @@ function App(props) {
             </Button>
           </Col>
         </Row> */}
-        <Button
+        {/* <Button
           onClick={async () => {
             const tx = await writeContracts.Verifier.verifyProof(
               [
@@ -384,7 +381,7 @@ function App(props) {
 
         >
           call
-        </Button>
+        </Button> */}
       </div>
     </div>
   );

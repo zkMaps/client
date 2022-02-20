@@ -24,10 +24,8 @@ let zkeyFile = "https://zk-maps.vercel.app/AtEthDenver_0001.zkey";
 // let verificationKey = "~/circuits/AtEthDenver/verification_key.json";
 let publicConstraint = "~/circuits/AtEthDenver/public.json";
 
-function Home({ yourLocalBalance, readContracts }) {
+function Home({ yourLocalBalance, writeContracts }) {
   // you can also use hooks locally in your component of choice
-  // in this case, let's keep track of 'purpose' variable from our contract
-  const purpose = useContractReader(readContracts, "YourContract", "purpose");
 
   // Hooks
   const [viewState, setViewState] = useState({
@@ -98,12 +96,12 @@ function Home({ yourLocalBalance, readContracts }) {
 
     try {
       const proofInput = {
-        // latitude: 12973547807205024 / 2,
-        // longitude: 7500977777251779 / 2,
-        longitude: withPrecision
-          ? Math.trunc((longitude + 180) * 1000)
-          : Math.trunc((longitude + 180) * Math.pow(10, 14)),
-        latitude: withPrecision ? Math.trunc((latitude + 90) * 1000) : Math.trunc((latitude + 90) * Math.pow(10, 14)),
+        latitude: 12973547807205024,
+        longitude: 7500977777251779,
+        // longitude: withPrecision
+        //   ? Math.trunc((longitude + 180) * 1000)
+        //   : Math.trunc((longitude + 180) * Math.pow(10, 14)),
+        // latitude: withPrecision ? Math.trunc((latitude + 90) * 1000) : Math.trunc((latitude + 90) * Math.pow(10, 14)),
       };
       makeProof(proofInput, wasmFile, zkeyFile).then(async ({ proof: _proof, publicSignals: _signals }) => {
         setProof(JSON.stringify(_proof, null, 2));
@@ -115,6 +113,32 @@ function Home({ yourLocalBalance, readContracts }) {
         //  verifyProof(verificationKey, _signals, _proof).then((_isValid) => {
         //     setIsValid(_isValid);
         //  });
+
+        const tx = await writeContracts.Verifier.verifyProof(
+          [
+            "0x1e2cdec01d32f0bd784efed35b3b724eb62e6a05b887e5eaf35af3049d5f850a",
+            "0x19445a36d4536a49c4323eff01647ca5cd4db4902b054a5cc5ee5c9383d54b35",
+          ],
+          [
+            [
+              "0x1bb8a138b2006f0f59c3bd4c73c9300f40d3e088a7c1c0b4e4f3e122f3c87603",
+              "0x1d79c23cfbe3693e50cac552872b37118fd3762c151d434c7d16fa422878bc76",
+            ],
+            [
+              "0x1046db7951e4412da7a15a2c4c9b63977d22657711bdc917df1806a27e203e84",
+              "0x1872793bfe4828dac60811ccbfd55fb8b5a3779c3c0a5b783263bae331fd79dd",
+            ],
+          ],
+          [
+            "0x3062a537e8d58d314c731118998a2a20c0eed60d7484933f65aaf87ef65ac1d6",
+            "0x1d417031d2a40b655b6e35e55b1aedca105fbc4a702b49c7ddd0fc4db90be877",
+          ],
+          ["0x0000000000000000000000000000000000000000000000000000000000000001"],
+        );
+        console.log({ tx });
+
+        const recipt = await tx.wait(1);
+        console.log({ recipt });
       });
     } catch (error) {
       console.error(error);
@@ -138,7 +162,7 @@ function Home({ yourLocalBalance, readContracts }) {
         <Row align="middle" gutter={[4, 4]}>
           <Button onClick={runProofs} size="large" shape="round">
             <span style={{ marginRight: 8 }} role="img" aria-label="support"></span>
-            Mint
+            ZK proove your location
           </Button>
         </Row>
       </div>
@@ -170,52 +194,6 @@ function Home({ yourLocalBalance, readContracts }) {
           packages/hardhat/contracts
         </span>
       </div>
-      {!purpose ? (
-        <div style={{ margin: 32 }}>
-          <span style={{ marginRight: 8 }}>👷‍♀️</span>
-          You haven't deployed your contract yet, run
-          <span
-            className="highlight"
-            style={{
-              marginLeft: 4,
-              /* backgroundColor: "#f9f9f9", */ padding: 4,
-              borderRadius: 4,
-              fontWeight: "bolder",
-            }}
-          >
-            yarn chain
-          </span>{" "}
-          and{" "}
-          <span
-            className="highlight"
-            style={{
-              marginLeft: 4,
-              /* backgroundColor: "#f9f9f9", */ padding: 4,
-              borderRadius: 4,
-              fontWeight: "bolder",
-            }}
-          >
-            yarn deploy
-          </span>{" "}
-          to deploy your first contract!
-        </div>
-      ) : (
-        <div style={{ margin: 32 }}>
-          <span style={{ marginRight: 8 }}>🤓</span>
-          The "purpose" variable from your contract is{" "}
-          <span
-            className="highlight"
-            style={{
-              marginLeft: 4,
-              /* backgroundColor: "#f9f9f9", */ padding: 4,
-              borderRadius: 4,
-              fontWeight: "bolder",
-            }}
-          >
-            {purpose}
-          </span>
-        </div>
-      )}
 
       <div style={{ margin: 32 }}>
         <span style={{ marginRight: 8 }}>🤖</span>
