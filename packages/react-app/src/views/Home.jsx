@@ -133,9 +133,7 @@ function Home({ writeContracts }) {
 
   const makeProof = async (_proofInput, _wasm, _zkey) => {
     try {
-      console.log("🚀 ~ file: Home.jsx ~ line 76 ~ makeProof ~ _proofInput", _proofInput);
       const { proof, publicSignals } = await snarkjs.groth16.fullProve(_proofInput, _wasm, _zkey);
-      console.log("🚀 ~ file: Home.jsx ~ line 75 ~ makeProof ~ proof", proof);
       return { proof, publicSignals };
     } catch (error) {
       setMessage("You are outside of the proof zone.");
@@ -203,6 +201,8 @@ function Home({ writeContracts }) {
     <div>
       {message && <Alert message={message} type="error" />}
       {confetti && <Confetti width={window.innerWidth} height={window.innerHeight} />}
+
+      <ModalIntro />
       <Map
         ref={mapRef}
         mapboxAccessToken={process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}
@@ -235,6 +235,7 @@ function Home({ writeContracts }) {
             shape="round"
             size="large"
             onClick={runProofs}
+            type="primary"
           >
             ZK prove your location
           </Button>
