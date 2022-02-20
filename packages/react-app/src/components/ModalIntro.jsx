@@ -7,7 +7,7 @@ const ModalIntro = props => {
 
   return (
     <>
-      <div style={{ position: "absolute", top: 10, left: 15, zIndex: 20 }}>
+      <div style={{ position: "absolute", bottom: 80, right: 15, zIndex: 20 }}>
         <Tooltip title="zkInfo">
           <Button shape="circle" icon={<InfoCircleFilled />} onClick={() => setVisible(true)} type="primary" />
         </Tooltip>
