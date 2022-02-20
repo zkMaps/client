@@ -243,8 +243,7 @@ function Home({ writeContracts }) {
       />
 
       {isVerifying && (
-        <div style={{ position: "absolute", top: "calc(50vh - 13px)";
-        width: "100vw" }}>
+        <div style={{ position: "absolute", top: "calc(50vh - 13px)", width: "100vw" }}>
           <Spin />
         </div>
       )}
