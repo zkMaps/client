@@ -15,6 +15,8 @@ const snarkjs = require("snarkjs");
 const { unstringifyBigInts } = utils;
 const withPrecision = false;
 
+const REACT_APP_MAPBOX_ACCESS_TOKEN =
+  "pk.eyJ1IjoiZnBldHJhIiwiYSI6ImNrdnhia3drdzBncDgyd3BhdGVsazZ4YzMifQ.vMhTAa15x-b6XOx71Wgb0A";
 /**
  * web3 props can be passed from '../App.jsx' into your local view component for use
  * @param {*} yourLocalBalance balance on current network
@@ -217,7 +219,7 @@ function Home({ writeContracts }) {
       <ModalIntro />
       <Map
         ref={mapRef}
-        mapboxAccessToken={process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}
+        mapboxAccessToken={REACT_APP_MAPBOX_ACCESS_TOKEN}
         style={{ width: "100%", height: "100vh" }}
         mapStyle={
           currentTheme === "light"
