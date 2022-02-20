@@ -117,7 +117,7 @@
 }
 @keyframes waveEffect {
   to {
-    box-shadow: 0 0 0 #1890ff;
+    box-shadow: 0 0 0 #5F5CFF;
     box-shadow: 0 0 0 6px var(--antd-wave-shadow-color);
   }
 }
