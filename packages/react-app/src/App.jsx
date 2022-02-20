@@ -79,6 +79,8 @@ function App(props) {
   const [selectedNetwork, setSelectedNetwork] = useState(networkOptions[0]);
   const location = useLocation();
 
+  // recent verification
+  const [isVerified, setVerified] = useState(false)
   const targetNetwork = NETWORKS[selectedNetwork];
 
   // 🔭 block explorer URL
@@ -166,14 +168,6 @@ function App(props) {
   // const myMainnetDAIBalance = useContractReader(mainnetContracts, "DAI", "balanceOf", [
   //   "0x34aA3F359A9D614239015126635CE7732c18fDF3",
   // ]);
-
-  // keep track of a variable from the contract in the local React state:
-  // const purpose = useContractReader(readContracts, "YourContract", "purpose");
-
-  /*
-  const addressFromENS = useResolveName(mainnetProvider, "austingriffith.eth");
-  console.log("🏷 Resolved austingriffith.eth as:",addressFromENS)
-  */
 
   //
   // 🧫 DEBUG 👨🏻‍🔬
