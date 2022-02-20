@@ -181,6 +181,25 @@
           "address": "0xB5217d3E37F12F89138113534953E1b9583e4F3B",
           "abi": [
             {
+              "anonymous": false,
+              "inputs": [
+                {
+                  "indexed": false,
+                  "internalType": "address",
+                  "name": "userAddress",
+                  "type": "address"
+                },
+                {
+                  "indexed": true,
+                  "internalType": "uint256",
+                  "name": "timestamp",
+                  "type": "uint256"
+                }
+              ],
+              "name": "LogVerified",
+              "type": "event"
+            },
+            {
               "inputs": [
                 {
                   "internalType": "uint256[2]",
@@ -211,7 +230,7 @@
                   "type": "bool"
                 }
               ],
-              "stateMutability": "view",
+              "stateMutability": "nonpayable",
               "type": "function"
             }
           ]

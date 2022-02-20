@@ -1,9 +1,9 @@
-import { Col, Menu, Row } from "antd";
+import { Button, Col, Menu, Row } from "antd";
 import "antd/dist/antd.css";
 import {
   useBalance,
   useContractLoader,
-  useContractReader,
+  // useContractReader,
   useGasPrice,
   useOnBlock,
   useUserProviderAndSigner,
@@ -106,7 +106,7 @@ function App(props) {
   };
 
   /* 💵 This hook will get the price of ETH from 🦄 Uniswap: */
-  const price = useExchangeEthPrice(targetNetwork, mainnetProvider);
+  // const price = useExchangeEthPrice(targetNetwork, mainnetProvider);
 
   /* 🔥 This hook will get the price of Gas from ⛽️ EtherGasStation */
   const gasPrice = useGasPrice(targetNetwork, "fast");
@@ -134,15 +134,17 @@ function App(props) {
   // The transactor wraps transactions and provides notificiations
   const tx = Transactor(userSigner, gasPrice);
 
+  // get contracts
+  // const contractConfig = useContractConfig();
+  const contractConfig = { deployedContracts: deployedContracts || {}, externalContracts: externalContracts || {} };
+
+  // const contracts = useContractLoader(userProviderAndSigner, contractConfig, selectedChainId);
+  // console.log({ contracts });
   // 🏗 scaffold-eth is full of handy hooks like this one to get your balance:
   const yourLocalBalance = useBalance(localProvider, address);
 
   // Just plug in different 🛰 providers to get your balance on different chains:
   const yourMainnetBalance = useBalance(mainnetProvider, address);
-
-  // const contractConfig = useContractConfig();
-
-  const contractConfig = { deployedContracts: deployedContracts || {}, externalContracts: externalContracts || {} };
 
   // Load in your local 📝 contract and read a value from it:
   const readContracts = useContractLoader(localProvider, contractConfig);
@@ -161,12 +163,12 @@ function App(props) {
   });
 
   // Then read your DAI balance like:
-  const myMainnetDAIBalance = useContractReader(mainnetContracts, "DAI", "balanceOf", [
-    "0x34aA3F359A9D614239015126635CE7732c18fDF3",
-  ]);
+  // const myMainnetDAIBalance = useContractReader(mainnetContracts, "DAI", "balanceOf", [
+  //   "0x34aA3F359A9D614239015126635CE7732c18fDF3",
+  // ]);
 
   // keep track of a variable from the contract in the local React state:
-  const purpose = useContractReader(readContracts, "YourContract", "purpose");
+  // const purpose = useContractReader(readContracts, "YourContract", "purpose");
 
   /*
   const addressFromENS = useResolveName(mainnetProvider, "austingriffith.eth");
@@ -197,7 +199,7 @@ function App(props) {
       console.log("💵 yourMainnetBalance", yourMainnetBalance ? ethers.utils.formatEther(yourMainnetBalance) : "...");
       console.log("📝 readContracts", readContracts);
       console.log("🌍 DAI contract on mainnet:", mainnetContracts);
-      console.log("💵 yourMainnetDAIBalance", myMainnetDAIBalance);
+      // console.log("💵 yourMainnetDAIBalance", myMainnetDAIBalance);
       console.log("🔐 writeContracts", writeContracts);
     }
   }, [
@@ -210,7 +212,7 @@ function App(props) {
     writeContracts,
     mainnetContracts,
     localChainId,
-    myMainnetDAIBalance,
+    // myMainnetDAIBalance,
   ]);
 
   const loadWeb3Modal = useCallback(async () => {
@@ -288,26 +290,25 @@ function App(props) {
                 and give you a form to interact with it locally
             */}
 
-          <Contract
+          {/* <Contract
             name="Verifier"
-            price={price}
             signer={userSigner}
             provider={localProvider}
             address={address}
             blockExplorer={blockExplorer}
             contractConfig={contractConfig}
-          />
+          /> */}
         </Route>
-        <Route path="/hints">
+        {/* <Route path="/hints">
           <Hints
             address={address}
             yourLocalBalance={yourLocalBalance}
             mainnetProvider={mainnetProvider}
             price={price}
           />
-        </Route>
+        </Route> */}
         <Route path="/exampleui">
-          <ExampleUI
+          {/* <ExampleUI
             address={address}
             userSigner={userSigner}
             mainnetProvider={mainnetProvider}
@@ -318,7 +319,7 @@ function App(props) {
             writeContracts={writeContracts}
             readContracts={readContracts}
             purpose={purpose}
-          />
+          /> */}
         </Route>
         <Route path="/mainnetdai">
           <Contract
@@ -366,7 +367,7 @@ function App(props) {
               />
             </div>
           )}
-          <Account
+          {/* <Account
             useBurner={USE_BURNER_WALLET}
             address={address}
             localProvider={localProvider}
@@ -377,7 +378,7 @@ function App(props) {
             loadWeb3Modal={loadWeb3Modal}
             logoutOfWeb3Modal={logoutOfWeb3Modal}
             blockExplorer={blockExplorer}
-          />
+          /> */}
         </div>
         {yourLocalBalance.lte(ethers.BigNumber.from("0")) && (
           <FaucetHint localProvider={localProvider} targetNetwork={targetNetwork} address={address} />
@@ -409,19 +410,38 @@ function App(props) {
             </Button>
           </Col>
         </Row> */}
+        <Button
+          onClick={async () => {
+            const tx = await writeContracts.Verifier.verifyProof(
+              [
+                "0x1e2cdec01d32f0bd784efed35b3b724eb62e6a05b887e5eaf35af3049d5f850a",
+                "0x19445a36d4536a49c4323eff01647ca5cd4db4902b054a5cc5ee5c9383d54b35",
+              ],
+              [
+                [
+                  "0x1bb8a138b2006f0f59c3bd4c73c9300f40d3e088a7c1c0b4e4f3e122f3c87603",
+                  "0x1d79c23cfbe3693e50cac552872b37118fd3762c151d434c7d16fa422878bc76",
+                ],
+                [
+                  "0x1046db7951e4412da7a15a2c4c9b63977d22657711bdc917df1806a27e203e84",
+                  "0x1872793bfe4828dac60811ccbfd55fb8b5a3779c3c0a5b783263bae331fd79dd",
+                ],
+              ],
+              [
+                "0x3062a537e8d58d314c731118998a2a20c0eed60d7484933f65aaf87ef65ac1d6",
+                "0x1d417031d2a40b655b6e35e55b1aedca105fbc4a702b49c7ddd0fc4db90be877",
+              ],
+              ["0x0000000000000000000000000000000000000000000000000000000000000001"],
+            );
+            console.log({ tx });
 
-        <Row align="middle" gutter={[4, 4]}>
-          <Col span={24}>
-            {
-              /*  if the local provider has a signer, let's show the faucet:  */
-              faucetAvailable ? (
-                <Faucet localProvider={localProvider} price={price} ensProvider={mainnetProvider} />
-              ) : (
-                ""
-              )
-            }
-          </Col>
-        </Row>
+            const recipt = await tx.wait(1);
+            console.log({recipt})
+          }}
+
+        >
+          call
+        </Button>
       </div>
     </div>
   );
