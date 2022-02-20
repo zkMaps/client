@@ -249,8 +249,8 @@ function App(props) {
         USE_NETWORK_SELECTOR={USE_NETWORK_SELECTOR}
       />
 
-      <div style={{ position: "absolute", top: 10, left: 15, zIndex: 20 }}>
-        <Tooltip title="zkInfo">
+      <div style={{ position: "absolute", bottom: 30, right: 15, zIndex: 20 }}>
+        <Tooltip title="zkHistory">
           <Button shape="circle" icon={<ClockCircleFilled />} onClick={() => history.push("/history")} type="primary" />
         </Tooltip>
       </div>
