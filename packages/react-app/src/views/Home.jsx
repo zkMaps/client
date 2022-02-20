@@ -5,7 +5,7 @@ import { Row, Button, Alert } from "antd";
 import Confetti from "react-confetti";
 import { useThemeSwitcher } from "react-css-theme-switcher";
 
-import markerLight from "../logo-light.png";
+import markerLightSM from "./marker-light-sm.png";
 import markerBlack from "../logo-black.png";
 
 import groth16ExportSolidityCallData from "../utils/groth16_exportSolidityCallData";
@@ -224,12 +224,13 @@ function Home({ writeContracts }) {
         attributionControl={false}
       >
         {console.log(viewState?.longitude)}
-        {Math.abs(longitude) && Math.abs(latitude) && (
-          <Marker longitude={viewState?.longitude} latitude={viewState?.latitude}>
-            <img src={currentTheme === "light" ? markerBlack : markerLight} alt="you are here" />
-          </Marker>
-        )}
+        {/* {Math.abs(longitude) && Math.abs(latitude) && (
+          // <Marker longitude={viewState?.longitude} latitude={viewState?.latitude}>
+          //   <img src={currentTheme === "light" ? markerBlack : markerLightSM} alt="you are here" />
+          // </Marker>
+        )} */}
       </Map>
+      <img src={markerLightSM} alt={"you are somewhere 🤷"} style={{position: "absolute", top: "calc(50% - 50px)", left: "calc(50% - 50px)"}}/>
 
       <div
         style={{ position: "fixed", textAlign: "center", alignItems: "center", bottom: 20, padding: 10, width: "100%" }}
