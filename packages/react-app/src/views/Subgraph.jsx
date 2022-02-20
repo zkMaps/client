@@ -58,9 +58,6 @@ function Subgraph(props) {
           <div>no data...</div>
         )}
       </div>
-      {/* dataSource={data?.logVerifieds} renderItem={item => <ListItem item={item} />} /> */}
-
-      <div style={{ padding: 64 }}>...</div>
     </div>
   );
 }
@@ -98,7 +95,6 @@ const ListItem = ({ item, isOwner = true }) => {
 };
 
 const OwnerSubgraph = props => {
-  console.log("🚀 ~ file: Subgraph.jsx ~ line 95 ~ logVerifieds ~ props?.address", props?.address);
   const VERIFY_USER = `
   {
     logVerifieds(where:{userAddress: "${props?.address}" }) {
@@ -131,8 +127,12 @@ const OwnerSubgraph = props => {
     <>
       <div style={{ width: 780, margin: "auto", paddingBottom: 64, marginTop: 40 }}>
         <Typography.Title>Your past check-ins</Typography.Title>
-        <Typography.Paragraph>{props?.address}</Typography.Paragraph>
-        <Blockies seed={props?.address?.toLowerCase()} size={8} scale={2} />
+        {props?.address && (
+          <>
+            <Typography.Paragraph>{props?.address}</Typography.Paragraph>
+            <Blockies seed={props?.address?.toLowerCase()} size={8} scale={2} />
+          </>
+        )}
 
         {loading ? (
           <div>
