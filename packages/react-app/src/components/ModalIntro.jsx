@@ -35,11 +35,11 @@ In this case validating - (with a contract generated with circom) that the user 
 We are excited about contributing-developing a this Proof-Of-Locatoin-Protocol which can be used for validating for POAPs DAOs for programatic funds dispersion, proving privately a location within a state or a city. Car hailing, location proximity matching, gaming and minting NFTs based on location and many more creative uses and utilities.
 
 moreover we are excited about the development of tools for providing ZKproofs on the client and verifying them using smart contracts. We are thankful, and would love to PR our small addition to the ZKsnark library, and to the scoffold-ETH project, to be able to facilitate these proof generation on the client (and perhaps appropriate react hooks)
+
 </p>
 <p>
  <strong> 🚀 Next steps</strong> 
 - In our next steps we are excited to incorporate the FOAM protocol and trusted zone to avoid location-spoofing, or perhaps Helium or other solutions.
-- host the Dapp on IPFS/Filecoin 
 - automated schedule P-O-L-P (proof of location protocol ?) minting with chainlink keeper
 </p>  
 <p>
@@ -58,6 +58,12 @@ And we would love to see this utilized in the next ETHdenver, to programmaticall
 
 <li>🗺️ subgraphs: https://github.com/zkMaps/zkmaps-subgraph</li>
         </p>
+
+<p><h3>🙏</h3>
+<img height="100" src={"https://iden3.io/img/logos/iden3.svg"} alt="iden3" />
+<img height="100" src={"https://upload.wikimedia.org/wikipedia/commons/1/18/Ipfs-logo-1024-ice-text.png"} alt="IPFS" />
+<img height="100" src={"https://seeklogo.com/images/T/the-graph-grt-logo-B6802F6411-seeklogo.com.png"} alt="theGraph" />
+</p>
       </Modal>
     </>
   );

@@ -51,6 +51,7 @@
     "framer-motion": "4.1.17",
     "graphiql": "^1.4.7",
     "graphql": "^15.3.0",
+    "ipfs-http-client": "^56.0.1",
     "isomorphic-fetch": "^3.0.0",
     "mapbox-gl": "^2.7.0",
     "node-watch": "^0.7.1",
