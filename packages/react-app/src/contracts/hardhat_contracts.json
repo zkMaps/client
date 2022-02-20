@@ -285,5 +285,71 @@
         }
       }
     }
+  },
+  "1666700000": {
+    "mumbai": {
+      "name": "testnetHarmony",
+      "chainId": "1666700000",
+      "contracts": {
+        "Verifier": {
+          "address": "0x801d67C424709428Ed0eCf5507ddA3040Cd84835",
+          "abi": [
+            {
+              "anonymous": false,
+              "inputs": [
+                {
+                  "indexed": false,
+                  "internalType": "address",
+                  "name": "userAddress",
+                  "type": "address"
+                },
+                {
+                  "indexed": true,
+                  "internalType": "uint256",
+                  "name": "timestamp",
+                  "type": "uint256"
+                }
+              ],
+              "name": "LogVerified",
+              "type": "event"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "uint256[2]",
+                  "name": "a",
+                  "type": "uint256[2]"
+                },
+                {
+                  "internalType": "uint256[2][2]",
+                  "name": "b",
+                  "type": "uint256[2][2]"
+                },
+                {
+                  "internalType": "uint256[2]",
+                  "name": "c",
+                  "type": "uint256[2]"
+                },
+                {
+                  "internalType": "uint256[1]",
+                  "name": "input",
+                  "type": "uint256[1]"
+                }
+              ],
+              "name": "verifyProof",
+              "outputs": [
+                {
+                  "internalType": "bool",
+                  "name": "r",
+                  "type": "bool"
+                }
+              ],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            }
+          ]
+        }
+      }
+    }
   }
 }
