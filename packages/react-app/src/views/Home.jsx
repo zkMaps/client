@@ -1,10 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useColorMode, Button, Alert, AlertIcon } from "@chakra-ui/react";
 import { useContractReader } from "eth-hooks";
 import { utils } from "ffjavascript";
-import Map from "react-map-gl";
+import Map, { Marker } from "react-map-gl";
 import { Row } from "antd";
 import { CheckCircleIcon } from "@chakra-ui/icons";
+import Confetti from "react-confetti";
+
+import markerLight from "../logo-light.png";
+import markerBlack from "../logo-black.png";
 
 const snarkjs = require("snarkjs");
 const { unstringifyBigInts } = utils;
@@ -24,24 +28,45 @@ let zkeyFile = "https://zk-maps.vercel.app/AtEthDenver_0001.zkey";
 // let verificationKey = "~/circuits/AtEthDenver/verification_key.json";
 let publicConstraint = "~/circuits/AtEthDenver/public.json";
 
+const settings = {
+  // scrollZoom: true,
+  boxZoom: false,
+  dragRotate: false,
+  dragPan: false,
+  doubleClickZoom: false,
+  // keyboard: true,
+  // touchZoomRotate: true,
+  // touchPitch: true,
+  // minZoom: 0,
+  // maxZoom: 20,
+  // minPitch: 0,
+  // maxPitch: 85
+  showCompass: true,
+};
+
 function Home({ yourLocalBalance, readContracts }) {
   // you can also use hooks locally in your component of choice
   // in this case, let's keep track of 'purpose' variable from our contract
   const purpose = useContractReader(readContracts, "YourContract", "purpose");
 
+  // Refs
+  const mapRef = useRef();
+
   // Hooks
   const [viewState, setViewState] = useState({
-    latitude: 39.691566166669446,
-    longitude: -104.96286823094337,
-    zoom: 18,
-    // bearing: 0,
+    latitude: 37.7751,
+    longitude: -122.4193,
+    zoom: 30,
+    bearing: 0,
+    pitch: 0,
     // padding: { top: 0, bottom: 0, left: 0, right: 0 },
-    // pitch: 0,
   });
   const [proof, setProof] = useState("");
   const [signals, setSignals] = useState("");
   const [isValid, setIsValid] = useState(false);
   const [message, setMessage] = useState(null);
+  const [confetti, setConfetti] = useState(false);
+  console.log("🚀 ~ file: Home.jsx ~ line 52 ~ Home ~ viewState", viewState);
 
   const { colorMode } = useColorMode();
 
@@ -54,9 +79,49 @@ function Home({ yourLocalBalance, readContracts }) {
   const onMove = React.useCallback(current => {
     // Only update the view state if the center is inside the geofence
     // if (turf.booleanPointInPolygon(newCenter, GEOFENCE)) {
-    setViewState(current);
+    // setViewState(current);
     // }
   }, []);
+
+  const flyTo = async inputs => {
+    console.log("🚀 ~ file: Home.jsx ~ line 81 ~ Home ~ flyTo", inputs);
+    await mapRef.current?.flyTo({
+      center: [inputs.coords.longitude, inputs.coords.latitude],
+      zoom: 18,
+      duration: 2000,
+    });
+    setViewState({
+      latitude: inputs.coords.latitude,
+      longitude: inputs.coords.longitude,
+      zoom: 18,
+    });
+  };
+
+  useEffect(async () => {
+    if (navigator.geolocation) {
+      await navigator.permissions.query({ name: "geolocation" }).then(function (result) {
+        if (result.state === "granted") {
+          console.log(result.state);
+          //If granted then you can directly call your function here
+          navigator.geolocation.getCurrentPosition(flyTo);
+          // } else if (result.state === "prompt") {
+          //   navigator.geolocation.getCurrentPosition(setViewState, null, null);
+        } else if (result.state === "denied") {
+          //If denied then you have to show instructions to enable location
+          setMessage("You need to enable geolocation to use this app.");
+          setTimeout(() => {
+            setMessage(null);
+          }, 5000);
+        }
+        result.onchange = function () {
+          console.log(result.state);
+        };
+      });
+    }
+  }, []);
+
+  navigator.geolocation.watchPosition(flyTo);
+  // navigator.geolocation.watchPosition(setCoords, error, options);
 
   const zkeyExportSolidityCalldata = async (_proof, options) => {
     const pub = unstringifyBigInts(publicConstraint);
@@ -80,7 +145,6 @@ function Home({ yourLocalBalance, readContracts }) {
       console.log("🚀 ~ file: Home.jsx ~ line 75 ~ makeProof ~ proof", proof);
       return { proof, publicSignals };
     } catch (error) {
-      // console.error("=====>", error);
       setMessage("You are outside of the proof zone.");
       setTimeout(() => {
         setMessage(null);
@@ -121,6 +185,10 @@ function Home({ yourLocalBalance, readContracts }) {
         setProof(JSON.stringify(_proof, null, 2));
         setSignals(JSON.stringify(_signals, null, 2));
         _proof.protocol = "groth16";
+        setConfetti(true);
+        setTimeout(() => {
+          setConfetti(false);
+        }, 7000);
 
         const callData = await zkeyExportSolidityCalldata(_proof, {});
         console.log(callData);
@@ -132,6 +200,7 @@ function Home({ yourLocalBalance, readContracts }) {
       console.error(error);
     }
   };
+  console.log("🚀 ~ file: Home.jsx ~ line 225 ~ Home ~ longitude && latitude", longitude, latitude);
 
   return (
     <div>
@@ -141,8 +210,9 @@ function Home({ yourLocalBalance, readContracts }) {
           {message}
         </Alert>
       )}
+      {confetti && <Confetti width={window.innerWidth} height={window.innerHeight} />}
       <Map
-        attributionControl={false}
+        ref={mapRef}
         mapboxAccessToken={process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}
         style={{ width: "100%", height: "100vh" }}
         mapStyle={
@@ -150,9 +220,18 @@ function Home({ yourLocalBalance, readContracts }) {
             ? "mapbox://styles/mapbox/streets-v9"
             : "mapbox://styles/fpetra/ckvxbmc8b4lwx14s3zewfbr3d"
         }
-        {...viewState}
-        onMove={e => onMove(e)}
-      />
+        {...settings}
+        // {...viewState}
+        // onMove={e => onMove(e)}
+        attributionControl={false}
+      >
+        {console.log(viewState?.longitude)}
+        {Math.abs(longitude) && Math.abs(latitude) && (
+          <Marker longitude={viewState?.longitude} latitude={viewState?.latitude}>
+            <img src={colorMode === "light" ? markerBlack : markerLight} alt="you are here" />
+          </Marker>
+        )}
+      </Map>
 
       <div
         style={{ position: "fixed", textAlign: "center", alignItems: "center", bottom: 20, padding: 10, width: "100%" }}
