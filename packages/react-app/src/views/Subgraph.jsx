@@ -4,7 +4,7 @@ import Blockies from "react-blockies";
 import VirtualList from "rc-virtual-list";
 
 import React from "react";
-import { Typography, List } from "antd";
+import { Typography, List, Spin } from "antd";
 import { gql, useQuery } from "@apollo/client";
 
 function Subgraph(props) {
@@ -44,7 +44,10 @@ function Subgraph(props) {
         <Typography.Title>Other user's check-ins</Typography.Title>
 
         {loading ? (
-          <div>loading</div>
+          <div>
+            {" "}
+            <Spin />
+          </div>
         ) : data?.logVerifieds ? (
           <List>
             <VirtualList data={data?.logVerifieds} height={"40%"} itemHeight={60} itemKey="email">
@@ -116,7 +119,13 @@ const OwnerSubgraph = props => {
   //   // }
   // };
 
-  if (loading) return <div>loading</div>;
+  if (loading)
+    return (
+      <div>
+        {" "}
+        <Spin />
+      </div>
+    );
   if (data) console.log("🌍 [subrapgh]: ", data);
   return (
     <>
@@ -126,7 +135,10 @@ const OwnerSubgraph = props => {
         <Blockies seed={props?.address?.toLowerCase()} size={8} scale={2} />
 
         {loading ? (
-          <div>loading</div>
+          <div>
+            {" "}
+            <Spin />
+          </div>
         ) : data?.logVerifieds ? (
           <List>
             <VirtualList data={data?.logVerifieds} height={"40%"} itemHeight={60} itemKey="email">
