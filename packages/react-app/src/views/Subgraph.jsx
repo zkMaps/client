@@ -47,7 +47,7 @@ function Subgraph(props) {
           <div>loading</div>
         ) : data?.logVerifieds ? (
           <List>
-            <VirtualList data={data?.logVerifieds} height={"40%"} itemHeight={60} itemKey="email" onScroll={onScroll}>
+            <VirtualList data={data?.logVerifieds} height={"40%"} itemHeight={60} itemKey="email">
               {item => <ListItem item={item} isOwner={false} />}
             </VirtualList>
           </List>
@@ -110,11 +110,11 @@ const OwnerSubgraph = props => {
   const VERIFIED_GQL = gql(VERIFY_USER);
   const { loading, data } = useQuery(VERIFIED_GQL, { pollInterval: 2500 });
 
-  const onScroll = e => {
-    // if (e.target.scrollHeight - e.target.scrollTop === ContainerHeight) {
-    // appendData();
-    // }
-  };
+  // const onScroll = e => {
+  //   // if (e.target.scrollHeight - e.target.scrollTop === ContainerHeight) {
+  //   // appendData();
+  //   // }
+  // };
 
   if (loading) return <div>loading</div>;
   if (data) console.log("🌍 [subrapgh]: ", data);
@@ -129,7 +129,7 @@ const OwnerSubgraph = props => {
           <div>loading</div>
         ) : data?.logVerifieds ? (
           <List>
-            <VirtualList data={data?.logVerifieds} height={"40%"} itemHeight={60} itemKey="email" onScroll={onScroll}>
+            <VirtualList data={data?.logVerifieds} height={"40%"} itemHeight={60} itemKey="email">
               {item => <ListItem item={item} isOwner={false} />}
             </VirtualList>
           </List>
