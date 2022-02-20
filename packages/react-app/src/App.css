@@ -2,3 +2,6 @@
   text-align: center;
   padding-left: calc(100vw - 100%);
 }
+.ipfs-scroll, .ipfs-scroll * {
+  overflow: scroll!important;
+}

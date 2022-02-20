@@ -303,7 +303,7 @@ function App(props) {
       <div style={{ position: "fixed", textAlign: "right", right: 0, top: 0, padding: 10 }}>
         <div style={{ display: "flex", flex: 1 }}>
           {USE_NETWORK_SELECTOR && (
-            <div style={{ marginRight: 10, marginTop: 4 }}>
+            <div style={{ marginRight: 10, marginTop: 6 }}>
               <NetworkSwitch
                 networkOptions={networkOptions}
                 selectedNetwork={selectedNetwork}

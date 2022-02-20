@@ -38,10 +38,10 @@ function Subgraph(props) {
 
   if (data) console.log("🌍 [subrapgh]: ", data);
   return (
-    <div>
+    <div className="ipfs-scroll">
       {props?.address && <OwnerSubgraph {...props} />}
       <div style={{ width: 780, margin: "auto", paddingBottom: 64, marginTop: 40 }}>
-        <Typography.Title>Other user's check-ins</Typography.Title>
+        <Typography.Title>All check-ins</Typography.Title>
 
         {loading ? (
           <div>
