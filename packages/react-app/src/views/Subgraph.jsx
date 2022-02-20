@@ -141,7 +141,7 @@ const OwnerSubgraph = props => {
           </div>
         ) : data?.logVerifieds ? (
           <List>
-            <VirtualList data={data?.logVerifieds} height={"40%"} itemHeight={60} itemKey="email">
+            <VirtualList data={data?.logVerifieds} height={"40%"}  itemKey="email">
               {item => <ListItem item={item} isOwner={false} />}
             </VirtualList>
           </List>
