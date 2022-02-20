@@ -1,15 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Alert, AlertIcon } from "@chakra-ui/react";
 import { utils } from "ffjavascript";
 import Map, { Marker } from "react-map-gl";
-import { Row, Button } from "antd";
+import { Row, Button, Alert } from "antd";
 import Confetti from "react-confetti";
 import { useThemeSwitcher } from "react-css-theme-switcher";
 
 import markerLight from "../logo-light.png";
 import markerBlack from "../logo-black.png";
 
-import { ethers } from "ethers";
 import groth16ExportSolidityCallData from "../utils/groth16_exportSolidityCallData";
 const snarkjs = require("snarkjs");
 const { unstringifyBigInts } = utils;
@@ -23,11 +21,10 @@ const withPrecision = false;
  **/
 
 // Constants
-// let wasmFile = "~/circuits/AtEthDenver/AtEthDenver.wasm";
-let wasmFile = "https://zk-maps.vercel.app/AtEthDenver.wasm";
-let zkeyFile = "https://zk-maps.vercel.app/AtEthDenver_0001.zkey";
+let wasmFile = "https://zk-maps.vercel.app/InColorado.wasm";
+let zkeyFile = "https://zk-maps.vercel.app/InColorado_0001.zkey";
 // let verificationKey = "~/circuits/AtEthDenver/verification_key.json";
-let publicConstraint = "~/circuits/AtEthDenver/public.json";
+let publicConstraint = "~/circuits/public.json";
 
 const settings = {
   // scrollZoom: true,
@@ -45,7 +42,7 @@ const settings = {
   showCompass: true,
 };
 
-function Home({ yourLocalBalance, writeContracts }) {
+function Home({ writeContracts }) {
   // you can also use hooks locally in your component of choice
 
   // Refs
@@ -65,7 +62,6 @@ function Home({ yourLocalBalance, writeContracts }) {
   const [isValid, setIsValid] = useState(false);
   const [message, setMessage] = useState(null);
   const [confetti, setConfetti] = useState(false);
-  console.log("🚀 ~ file: Home.jsx ~ line 52 ~ Home ~ viewState", viewState);
 
   const { currentTheme } = useThemeSwitcher();
   // const { colorMode } = useColorMode();
@@ -76,13 +72,6 @@ function Home({ yourLocalBalance, writeContracts }) {
   // const GEOFENCE = turf.circle(newCenter, 5, { units: "miles" });
 
   // Handlers
-  const onMove = React.useCallback(current => {
-    // Only update the view state if the center is inside the geofence
-    // if (turf.booleanPointInPolygon(newCenter, GEOFENCE)) {
-    // setViewState(current);
-    // }
-  }, []);
-
   const flyTo = async inputs => {
     // console.log("🚀 ~ file: Home.jsx ~ line 81 ~ Home ~ flyTo", inputs);
     await mapRef.current?.flyTo({
@@ -97,27 +86,29 @@ function Home({ yourLocalBalance, writeContracts }) {
     });
   };
 
-  useEffect(async () => {
-    if (navigator.geolocation) {
-      await navigator.permissions.query({ name: "geolocation" }).then(function (result) {
-        if (result.state === "granted") {
-          console.log(result.state);
-          //If granted then you can directly call your function here
-          navigator.geolocation.getCurrentPosition(flyTo);
-          // } else if (result.state === "prompt") {
-          //   navigator.geolocation.getCurrentPosition(setViewState, null, null);
-        } else if (result.state === "denied") {
-          //If denied then you have to show instructions to enable location
-          setMessage("You need to enable geolocation to use this app.");
-          setTimeout(() => {
-            setMessage(null);
-          }, 5000);
-        }
-        result.onchange = function () {
-          console.log(result.state);
-        };
-      });
-    }
+  useEffect(() => {
+    (async () => {
+      if (navigator.geolocation) {
+        await navigator.permissions.query({ name: "geolocation" }).then(function (result) {
+          if (result.state === "granted") {
+            console.log(result.state);
+            //If granted then you can directly call your function here
+            navigator.geolocation.getCurrentPosition(flyTo);
+            // } else if (result.state === "prompt") {
+            //   navigator.geolocation.getCurrentPosition(setViewState, null, null);
+          } else if (result.state === "denied") {
+            //If denied then you have to show instructions to enable location
+            setMessage("You need to enable geolocation to use this app.");
+            setTimeout(() => {
+              setMessage(null);
+            }, 5000);
+          }
+          result.onchange = function () {
+            console.log(result.state);
+          };
+        });
+      }
+    })();
   }, []);
 
   navigator.geolocation.watchPosition(flyTo);
@@ -208,12 +199,7 @@ function Home({ yourLocalBalance, writeContracts }) {
 
   return (
     <div>
-      {message && (
-        <Alert status="error">
-          <AlertIcon />
-          {message}
-        </Alert>
-      )}
+      {message && <Alert message={message} type="error" />}
       {confetti && <Confetti width={window.innerWidth} height={window.innerHeight} />}
       <Map
         ref={mapRef}
