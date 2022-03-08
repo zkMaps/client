@@ -1,7 +1,6 @@
 import "antd/dist/antd.css";
 import "graphiql/graphiql.min.css";
 import Blockies from "react-blockies";
-import VirtualList from "rc-virtual-list";
 
 import React from "react";
 import { Typography, List, Spin } from "antd";
@@ -38,7 +37,7 @@ function Subgraph(props) {
 
   if (data) console.log("🌍 [subrapgh]: ", data);
   return (
-    <div className="ipfs-scroll">
+    <div>
       {props?.address && <OwnerSubgraph {...props} />}
       <div style={{ width: 780, margin: "auto", paddingBottom: 64, marginTop: 40 }}>
         <Typography.Title>All check-ins</Typography.Title>
@@ -50,9 +49,9 @@ function Subgraph(props) {
           </div>
         ) : data?.logVerifieds ? (
           <List>
-            <VirtualList data={data?.logVerifieds} height={"40%"} itemHeight={60} itemKey="email">
-              {item => <ListItem item={item} isOwner={false} />}
-            </VirtualList>
+            {data?.logVerifieds.map(item => (
+              <ListItem key={item.transactionHash} item={item} isOwner={false} />
+            ))}
           </List>
         ) : (
           <div>no data...</div>
@@ -70,13 +69,13 @@ const ListItem = ({ item, isOwner = true }) => {
   const address = `https://polygonscan.com/address/${item?.userAddress}`;
 
   return (
-    <List.Item style={{ width: "100%", padding: "30" }}>
+    <List.Item style={{ width: "100%" }}>
       {/* <Card title={item?.userAddress} sub>Card content</Card> */}
       <List.Item.Meta
         avatar={
           isOwner ? null : (
             <a href={address}>
-              <Blockies seed={item?.userAddress?.toLowerCase()} size={8} scale={2} />
+              <Blockies seed={item?.userAddress?.toLowerCase()} size={8} scale={4} />
             </a>
           )
         }
@@ -126,7 +125,10 @@ const OwnerSubgraph = props => {
   return (
     <>
       <div style={{ width: 780, margin: "auto", paddingBottom: 64, marginTop: 40 }}>
-        <Typography.Title> <span alt="addmissions">🎫</span> All check-ins</Typography.Title>
+        <Typography.Title>
+          {" "}
+          <span alt="addmissions">🎫</span> All check-ins
+        </Typography.Title>
         {props?.address && (
           <>
             <Typography.Paragraph>{props?.address}</Typography.Paragraph>
@@ -141,9 +143,9 @@ const OwnerSubgraph = props => {
           </div>
         ) : data?.logVerifieds ? (
           <List>
-            <VirtualList data={data?.logVerifieds} height={"40%"}  itemKey="email">
-              {item => <ListItem item={item} isOwner={false} />}
-            </VirtualList>
+            {data?.logVerifieds.map(item => (
+              <ListItem key={item.transactionHash} item={item} isOwner={false} />
+            ))}
           </List>
         ) : (
           <div>no data...</div>
