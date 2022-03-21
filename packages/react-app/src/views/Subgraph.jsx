@@ -132,7 +132,7 @@ const OwnerSubgraph = props => {
         {props?.address && (
           <>
             <Typography.Paragraph>{props?.address}</Typography.Paragraph>
-            <Blockies seed={props?.address?.toLowerCase()} size={8} scale={2} />
+            <Blockies seed={props?.address?.toLowerCase()} size={8} scale={5} />
           </>
         )}
 
@@ -144,7 +144,7 @@ const OwnerSubgraph = props => {
         ) : data?.logVerifieds ? (
           <List>
             {data?.logVerifieds.map(item => (
-              <ListItem key={item.transactionHash} item={item} isOwner={false} />
+              <ListItem key={item.transactionHash} item={item} isOwner={true} />
             ))}
           </List>
         ) : (

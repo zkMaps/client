@@ -9340,7 +9340,7 @@ chalk@^4.0.0, chalk@^4.1.0:
     ansi-styles "^4.1.0"
     supports-color "^7.1.0"
 
-chalk@^4.1.2:
+chalk@^4.0.2, chalk@^4.1.2:
   version "4.1.2"
   resolved "https://registry.yarnpkg.com/chalk/-/chalk-4.1.2.tgz#aac4e2b7734a740867aeb16bf02aad556a1e7a01"
   integrity sha512-oKnbhFyRIXpUuez8iBMmyEa4nbj4IOQyuhc/wy9kY7/WVPcwIO9VA668Pu8RkO7+0G76SLROeyw9CpQ061i4mA==
@@ -15693,12 +15693,12 @@ iterable-ndjson@^1.1.0:
     string_decoder "^1.2.0"
 
 jake@^10.6.1:
-  version "10.8.2"
-  resolved "https://registry.yarnpkg.com/jake/-/jake-10.8.2.tgz#ebc9de8558160a66d82d0eadc6a2e58fbc500a7b"
-  integrity sha512-eLpKyrfG3mzvGE2Du8VoPbeSkRry093+tyNjdYaBbJS9v17knImYGNXQCUV0gLxQtF82m3E8iRb/wdSQZLoq7A==
+  version "10.8.4"
+  resolved "https://registry.yarnpkg.com/jake/-/jake-10.8.4.tgz#f6a8b7bf90c6306f768aa82bb7b98bf4ca15e84a"
+  integrity sha512-MtWeTkl1qGsWUtbl/Jsca/8xSoK3x0UmS82sNbjqxxG/de/M/3b1DntdjHgPMC50enlTNwXOCRqPXLLt5cCfZA==
   dependencies:
     async "0.9.x"
-    chalk "^2.4.2"
+    chalk "^4.0.2"
     filelist "^1.0.1"
     minimatch "^3.0.4"
 
@@ -21098,13 +21098,6 @@ react-clientside-effect@^1.2.5:
   dependencies:
     "@babel/runtime" "^7.12.13"
 
-react-confetti@^6.0.1:
-  version "6.0.1"
-  resolved "https://registry.yarnpkg.com/react-confetti/-/react-confetti-6.0.1.tgz#d4f57b5a021dd908a6243b8f63b6009b00818d10"
-  integrity sha512-ZpOTBrqSNhWE4rRXCZ6E6U+wGd7iYHF5MGrqwikoiBpgBq9Akdu0DcLW+FdFnLjyZYC+VfAiV2KeFgYRMyMrkA==
-  dependencies:
-    tween-functions "^1.2.0"
-
 react-css-theme-switcher@^0.2.2:
   version "0.2.3"
   resolved "https://registry.yarnpkg.com/react-css-theme-switcher/-/react-css-theme-switcher-0.2.3.tgz#1de02aa5624790ec44ff51824a142de35ca008f4"
@@ -22692,10 +22685,10 @@ snapdragon@^0.8.1:
     source-map-resolve "^0.5.0"
     use "^3.1.0"
 
-snarkjs@^0.4.14:
-  version "0.4.14"
-  resolved "https://registry.yarnpkg.com/snarkjs/-/snarkjs-0.4.14.tgz#b3fceb23c1674fc8c9d0cd6aff056c5100602937"
-  integrity sha512-DkYYlSG98ZOcXADDOMegxYC/Lp1GcUpllq2ASH25MpyW3CWx43Lvo8eCALuK10agEzSfDFYsKnXTr89emIPA8A==
+snarkjs@^0.4.15:
+  version "0.4.15"
+  resolved "https://registry.yarnpkg.com/snarkjs/-/snarkjs-0.4.15.tgz#b7808188a9b92e819ee68cc5b98a0f5c763c5e6f"
+  integrity sha512-nyjzLKiNKEnq87RpwnSA/QxjYgIQNFq/IBNmesfPM2ijs/evROvmgM+wjVsdd6UxKc0UDgWbdFJxTffOjftJPg==
   dependencies:
     "@iden3/binfileutils" "0.0.10"
     blake2b-wasm "^2.4.0"
@@ -24133,11 +24126,6 @@ turf-jsts@*:
   version "1.2.3"
   resolved "https://registry.yarnpkg.com/turf-jsts/-/turf-jsts-1.2.3.tgz#59757f542afbff9a577bbf411f183b8f48d38aa4"
   integrity sha512-Ja03QIJlPuHt4IQ2FfGex4F4JAr8m3jpaHbFbQrgwr7s7L6U8ocrHiF3J1+wf9jzhGKxvDeaCAnGDot8OjGFyA==
-
-tween-functions@^1.2.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/tween-functions/-/tween-functions-1.2.0.tgz#1ae3a50e7c60bb3def774eac707acbca73bbc3ff"
-  integrity sha1-GuOlDnxguz3vd06scHrLynO7w/8=
 
 tweetnacl-util@^0.15.0:
   version "0.15.1"
