@@ -11,11 +11,10 @@ import mapboxgl from "mapbox-gl";
 import markerLightSM from "./marker-light-sm.png";
 // import markerBlack from "../logo-black.png";
 
-// Utils
-import groth16ExportSolidityCallData from "../utils/groth16_exportSolidityCallData";
-
 // Components
 import ModalIntro from "../components/ModalIntro";
+
+const { ethers } = require("ethers");
 
 const { unstringifyBigInts } = utils;
 const withPrecision = false;
@@ -46,6 +45,7 @@ let publicConstraint =
   "https://gateway.pinata.cloud/ipfs/QmdrjaYAXtW59WMLEDoi6fGRDoQWNgMJzxGcs8N4Y6efvG?filename=public.json";
 let verification_key =
   "https://gateway.pinata.cloud/ipfs/QmNtP68qhqvDNLMdSFkfNi5D3LYfWSyyUb8XPUPqdWuSA4?filename=verification_key.json";
+const proofInput = { a: 3, b: 10 };
 
 /* AtEthDenver */
 // let wasmFile =
@@ -53,6 +53,10 @@ let verification_key =
 // let zkeyFile =
 //   "https://gateway.pinata.cloud/ipfs/QmPyfF2k7wTKGibSKnh6eW3ibVhZDYoTUS1GdqcxVoZ3GX?filename=AtEthDenver_0001.zkey";
 // let publicConstraint = "https://gateway.pinata.cloud/ipfs/QmdCe5TJW3nAcXYbnXqLf9JGyodSgek6mKwSK9mxzn6ejx";
+// const proofInput = {
+//     latitude: 12973547807205024,
+//     longitude: 7500977777251779,
+//  };
 
 /* AtColorado */
 // let wasmFile =
@@ -156,13 +160,14 @@ function Home({ writeContracts, address }) {
   navigator.geolocation.watchPosition(flyTo);
   // navigator.geolocation.watchPosition(setCoords, error, options);
 
-  const zkeyExportSolidityCalldata = async (_proof, options) => {
-    const pub = unstringifyBigInts(publicConstraint);
+  const zkeyExportSolidityCalldata = async (_proof, options, _publicConstraint) => {
+    const pub = unstringifyBigInts(_publicConstraint);
     const proof = unstringifyBigInts(_proof);
 
     let res;
     if (proof.protocol === "groth16") {
-      res = await groth16ExportSolidityCallData(proof, pub);
+      // res = await groth16ExportSolidityCallData(proof, pub);
+      res = await window.snarkjs.groth16.exportSolidityCallData(proof, pub);
     } else if (proof.protocol === "plonk") {
       res = await window.snarkjs.plonk.exportSolidityCallData(proof, pub);
     } else {
@@ -193,46 +198,56 @@ function Home({ writeContracts, address }) {
         }, 5000);
         return;
       }
-      const proofInput = { a: 2, b: 11 };
       // const proofInput = {
-      //   latitude: 12973547807205024,
-      //   longitude: 7500977777251779,
       //   // longitude: withPrecision
       //   //   ? Math.trunc((longitude + 180) * 1000)
       //   //   : Math.trunc((longitude + 180) * Math.pow(10, 14)),
       //   // latitude: withPrecision ? Math.trunc((latitude + 90) * 1000) : Math.trunc((latitude + 90) * Math.pow(10, 14)),
       // };
-      const { proof: _proof, publicSignals: _signals } = await makeProof(proofInput, wasmFile, zkeyFile);
+      const { proof: _proof, publicSignals: _public } = await makeProof(proofInput, wasmFile, zkeyFile);
 
       setIsVerifying(true);
 
       _proof.protocol = "groth16";
       setProof(JSON.stringify(_proof, null, 2));
-      setSignals(JSON.stringify(_signals, null, 2));
-      const pf = JSON.stringify(_proof, null, 2);
+      setSignals(JSON.stringify(_public, null, 2));
 
       const vkey = await fetch(verification_key).then(res => {
         return res.json();
       });
-      console.log("🚀 ~ file: Home.jsx ~ line 217 ~ runProofs ~ _proof", _proof);
-      const localVerification = await window.snarkjs.groth16.verify(vkey, _signals, pf);
-      console.log("localVerification====>", localVerification, proofInput);
 
-      const callData = await zkeyExportSolidityCalldata(_proof, {});
-      const tx = await writeContracts.Verifier.verifyProof(...JSON.parse(callData));
-      console.log({ tx });
+      // const pub = ["33"];
+      const pub = await fetch(publicConstraint).then(res => {
+        return res.json();
+      });
 
-      const recipt = await tx.wait(1);
-      console.log("🚀 ~ file: Home.jsx ~ line 193 ~ makeProof ~ recipt", recipt);
-      if (recipt?.events?.length > 0 && localVerification) {
-        setIsVerifying(false);
-        setIsValid(true);
-        setMessage({ text: "You have verified your location for Colorado", type: "success" });
-        setTimeout(() => {
-          setMessage(null);
-        }, 5000);
+      const localVerification = true; //await window.snarkjs.groth16.verify(vkey, pub, _proof);
+      // TODO: Test what happens with AtEthDenver and InColorado
+      // const localVerification = await window.snarkjs.groth16.verify(vkey, _public, _proof);
+
+      if (localVerification) {
+        const callData = await zkeyExportSolidityCalldata(_proof, {}, pub);
+        const callDataFormatted = JSON.parse("[" + callData.replace(/}{/g, "},{") + "]");
+
+        console.log("🚀 ~ file: Home.jsx ~ line 234 ~ runProofs ~ callDataFormatted", callDataFormatted);
+        const tx = await writeContracts.Verifier.verifyProof(...callDataFormatted);
+        await tx.wait(1);
+        console.log("🚀 ~ file: Home.jsx ~ line 236 ~ runProofs ~ tx.data", tx.data);
+        const decodeOutput = ethers.utils.defaultAbiCoder.decode(["bool"], tx.data);
+        // const decodeOutput = ethers.utils.defaultAbiCoder.decode(["bool"], ethers.utils.hexDataSlice(tx.data, 4));
+        console.log("🚀 ~ file: Home.jsx ~ line 237 ~ runProofs ~ decodeOutput", decodeOutput);
+        if (decodeOutput[0] && localVerification) {
+          setIsVerifying(false);
+          setIsValid(true);
+          setMessage({ text: "You have verified your location!", type: "success" });
+          setTimeout(() => {
+            setMessage(null);
+          }, 5000);
+        } else {
+          forgetProofs();
+        }
       } else {
-        forgetProofs();
+        setMessage({ text: "Your location doesn't meet the requirements. Try again.", type: "error" });
       }
       // console.log({ recipt.past});
     } catch (error) {
@@ -286,14 +301,17 @@ function Home({ writeContracts, address }) {
         alt={"you are somewhere 🤷"}
         style={{ position: "absolute", top: "calc(50% - 50px)", left: "calc(50% - 50px)" }}
       />
-
       <div
         style={{ position: "fixed", textAlign: "center", alignItems: "center", bottom: 20, padding: 10, width: "100%" }}
       >
         <Row align="middle" gutter={[4, 4]}>
           <Button
             key="runProofs"
-            style={{ verticalAlign: "center", marginLeft: 8, backgroundColor: isValid ? "green" : "null" }}
+            style={{
+              verticalAlign: "center",
+              marginLeft: 8,
+              backgroundColor: isCtaHovered && isValid ? "red" : isValid ? "green" : "transparent",
+            }}
             shape="round"
             size="large"
             onClick={() => {
