@@ -10,11 +10,52 @@ import mapboxgl from "mapbox-gl";
 // Constants
 import markerLightSM from "./marker-light-sm.png";
 // import markerBlack from "../logo-black.png";
+// import contracts from "../contracts/hardhat_contracts.json";
 
 // Components
 import ModalIntro from "../components/ModalIntro";
 
-const { ethers } = require("ethers");
+const abiDecoder = require("abi-decoder");
+
+const Verifier = [
+  {
+    inputs: [
+      {
+        internalType: "uint256[2]",
+        name: "a",
+        type: "uint256[2]",
+      },
+      {
+        internalType: "uint256[2][2]",
+        name: "b",
+        type: "uint256[2][2]",
+      },
+      {
+        internalType: "uint256[2]",
+        name: "c",
+        type: "uint256[2]",
+      },
+      {
+        internalType: "uint256[1]",
+        name: "input",
+        type: "uint256[1]",
+      },
+    ],
+    name: "verifyProof",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "r",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+];
+
+// abiDecoder.addABI(contracts["80001"].mumbai.contracts.Verifier.abi);
+abiDecoder.addABI(Verifier);
 
 const { unstringifyBigInts } = utils;
 const withPrecision = false;
@@ -82,7 +123,7 @@ const settings = {
   showCompass: true,
 };
 
-function Home({ writeContracts, address }) {
+function Home({ writeContracts, address, injectedProvider }) {
   // you can also use hooks locally in your component of choice
 
   // Refs
@@ -229,13 +270,14 @@ function Home({ writeContracts, address }) {
         const callData = await zkeyExportSolidityCalldata(_proof, {}, pub);
         const callDataFormatted = JSON.parse("[" + callData.replace(/}{/g, "},{") + "]");
 
-        console.log("🚀 ~ file: Home.jsx ~ line 234 ~ runProofs ~ callDataFormatted", callDataFormatted);
         const tx = await writeContracts.Verifier.verifyProof(...callDataFormatted);
-        await tx.wait(1);
-        console.log("🚀 ~ file: Home.jsx ~ line 236 ~ runProofs ~ tx.data", tx.data);
-        const decodeOutput = ethers.utils.defaultAbiCoder.decode(["bool"], tx.data);
+
+        const recipt = await tx.wait(1);
+        console.log("🚀 ~ xxxxx recipt.logs", recipt.logs);
         // const decodeOutput = ethers.utils.defaultAbiCoder.decode(["bool"], ethers.utils.hexDataSlice(tx.data, 4));
-        console.log("🚀 ~ file: Home.jsx ~ line 237 ~ runProofs ~ decodeOutput", decodeOutput);
+        const decodeOutput = abiDecoder.decodeLogs(recipt.logs);
+        console.log("🚀 ~ decodeOutput", decodeOutput);
+
         if (decodeOutput[0] && localVerification) {
           setIsVerifying(false);
           setIsValid(true);
@@ -244,10 +286,13 @@ function Home({ writeContracts, address }) {
             setMessage(null);
           }, 5000);
         } else {
+          setIsVerifying(false);
+          setMessage({ text: "Your location doesn't meet the requirements. Try again.", type: "error" });
           forgetProofs();
         }
       } else {
         setMessage({ text: "Your location doesn't meet the requirements. Try again.", type: "error" });
+        setIsVerifying(false);
       }
       // console.log({ recipt.past});
     } catch (error) {

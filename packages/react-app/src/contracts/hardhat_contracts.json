@@ -178,7 +178,7 @@
           ]
         },
         "Verifier": {
-          "address": "0xB5217d3E37F12F89138113534953E1b9583e4F3B",
+          "address": "0xfFdb60E666AE25FE5d79Ff66680C828902De90cC",
           "abi": [
             {
               "anonymous": false,
