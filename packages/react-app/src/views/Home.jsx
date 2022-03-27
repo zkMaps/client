@@ -15,8 +15,10 @@ import markerLightSM from "./marker-light-sm.png";
 // Components
 import ModalIntro from "../components/ModalIntro";
 
-const abiDecoder = require("abi-decoder");
+const { ethers } = require("ethers");
 
+// Original: 0xB5217d3E37F12F89138113534953E1b9583e4F3B
+// https://mumbai.polygonscan.com/address/0xffdb60e666ae25fe5d79ff66680c828902de90cc
 const Verifier = [
   {
     inputs: [
@@ -54,9 +56,6 @@ const Verifier = [
   },
 ];
 
-// abiDecoder.addABI(contracts["80001"].mumbai.contracts.Verifier.abi);
-abiDecoder.addABI(Verifier);
-
 const { unstringifyBigInts } = utils;
 const withPrecision = false;
 
@@ -86,7 +85,7 @@ let publicConstraint =
   "https://gateway.pinata.cloud/ipfs/QmdrjaYAXtW59WMLEDoi6fGRDoQWNgMJzxGcs8N4Y6efvG?filename=public.json";
 let verification_key =
   "https://gateway.pinata.cloud/ipfs/QmNtP68qhqvDNLMdSFkfNi5D3LYfWSyyUb8XPUPqdWuSA4?filename=verification_key.json";
-const proofInput = { a: 3, b: 10 };
+const proofInput = { a: 3, b: 11 };
 
 /* AtEthDenver */
 // let wasmFile =
@@ -123,7 +122,7 @@ const settings = {
   showCompass: true,
 };
 
-function Home({ writeContracts, address, injectedProvider }) {
+function Home({ writeContracts, address, injectedProvider, readContracts, userSigner }) {
   // you can also use hooks locally in your component of choice
 
   // Refs
@@ -250,6 +249,7 @@ function Home({ writeContracts, address, injectedProvider }) {
       setIsVerifying(true);
 
       _proof.protocol = "groth16";
+      console.log("🚀 ~ file: Home.jsx ~ line 257 ~ runProofs ~ _proof", _proof);
       setProof(JSON.stringify(_proof, null, 2));
       setSignals(JSON.stringify(_public, null, 2));
 
@@ -262,21 +262,20 @@ function Home({ writeContracts, address, injectedProvider }) {
         return res.json();
       });
 
-      const localVerification = true; //await window.snarkjs.groth16.verify(vkey, pub, _proof);
       // TODO: Test what happens with AtEthDenver and InColorado
-      // const localVerification = await window.snarkjs.groth16.verify(vkey, _public, _proof);
+      const localVerification = await window.snarkjs.groth16.verify(vkey, pub, _proof);
 
       if (localVerification) {
         const callData = await zkeyExportSolidityCalldata(_proof, {}, pub);
         const callDataFormatted = JSON.parse("[" + callData.replace(/}{/g, "},{") + "]");
 
-        const tx = await writeContracts.Verifier.verifyProof(...callDataFormatted);
-
-        const recipt = await tx.wait(1);
-        console.log("🚀 ~ xxxxx recipt.logs", recipt.logs);
+        // const tx = await readContracts.Verifier.verifyProof(...callDataFormatted);
+        // const recipt = await tx?.wait(2);
         // const decodeOutput = ethers.utils.defaultAbiCoder.decode(["bool"], ethers.utils.hexDataSlice(tx.data, 4));
-        const decodeOutput = abiDecoder.decodeLogs(recipt.logs);
-        console.log("🚀 ~ decodeOutput", decodeOutput);
+
+        let iface = new ethers.utils.Interface(Verifier);
+        let verifier = new ethers.Contract("0xffdb60e666ae25fe5d79ff66680c828902de90cc", iface, userSigner);
+        let decodeOutput = await verifier.verifyProof(...callDataFormatted);
 
         if (decodeOutput[0] && localVerification) {
           setIsVerifying(false);

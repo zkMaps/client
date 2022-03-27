@@ -147,7 +147,8 @@ function App(props) {
   const yourMainnetBalance = useBalance(mainnetProvider, address);
 
   // Load in your local 📝 contract and read a value from it:
-  const readContracts = useContractLoader(localProvider, contractConfig);
+  // const readContracts = useContractLoader(localProvider, contractConfig);
+  const readContracts = useContractLoader(userSigner, contractConfig);
 
   // If you want to make 🔐 write transactions to your contracts, use the userSigner:
   const writeContracts = useContractLoader(userSigner, contractConfig, localChainId);
@@ -273,8 +274,10 @@ function App(props) {
           <Home
             yourLocalBalance={yourLocalBalance}
             writeContracts={writeContracts}
+            readContracts={readContracts}
             address={address}
             injectedProvider={injectedProvider}
+            userSigner={userSigner}
           />
         </Route>
         <Route path="/history">
