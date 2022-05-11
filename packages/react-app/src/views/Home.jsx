@@ -1,22 +1,72 @@
 import React, { useState, useRef, useEffect } from "react";
 import { utils } from "ffjavascript";
 import Map, { Marker } from "react-map-gl";
-import { Row, Button, Alert, Spin } from "antd";
-import Confetti from "react-confetti";
+import { Row, Button, Alert } from "antd";
 import { useThemeSwitcher } from "react-css-theme-switcher";
+// added the following 6 lines.
+import mapboxgl from "mapbox-gl";
+// import { groth16, plonk } from "snarkjs";
 
+// Constants
 import markerLightSM from "./marker-light-sm.png";
-import markerBlack from "../logo-black.png";
+// import markerBlack from "../logo-black.png";
+// import contracts from "../contracts/hardhat_contracts.json";
 
-import groth16ExportSolidityCallData from "../utils/groth16_exportSolidityCallData";
-
+// Components
 import ModalIntro from "../components/ModalIntro";
-const snarkjs = require("snarkjs");
+
+const { ethers } = require("ethers");
+
+// Original: 0xB5217d3E37F12F89138113534953E1b9583e4F3B
+// https://mumbai.polygonscan.com/address/0xffdb60e666ae25fe5d79ff66680c828902de90cc
+const Verifier = [
+  {
+    inputs: [
+      {
+        internalType: "uint256[2]",
+        name: "a",
+        type: "uint256[2]",
+      },
+      {
+        internalType: "uint256[2][2]",
+        name: "b",
+        type: "uint256[2][2]",
+      },
+      {
+        internalType: "uint256[2]",
+        name: "c",
+        type: "uint256[2]",
+      },
+      {
+        internalType: "uint256[1]",
+        name: "input",
+        type: "uint256[1]",
+      },
+    ],
+    name: "verifyProof",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "r",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+];
+
 const { unstringifyBigInts } = utils;
 const withPrecision = false;
 
-const REACT_APP_MAPBOX_ACCESS_TOKEN =
-  "pk.eyJ1IjoiZnBldHJhIiwiYSI6ImNrdnhia3drdzBncDgyd3BhdGVsazZ4YzMifQ.vMhTAa15x-b6XOx71Wgb0A";
+// The following is required to stop "npm build" from transpiling mapbox code.
+// notice the exclamation point in the import.
+// @ts-ignore
+// eslint-disable-next-line import/no-webpack-loader-syntax, import/no-unresolved
+mapboxgl.workerClass = require("worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker").default;
+
+const REACT_APP_MAPBOX_ACCESS_TOKEN = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
+
 /**
  * web3 props can be passed from '../App.jsx' into your local view component for use
  * @param {*} yourLocalBalance balance on current network
@@ -25,10 +75,36 @@ const REACT_APP_MAPBOX_ACCESS_TOKEN =
  **/
 
 // Constants
-let wasmFile = "https://zk-maps.vercel.app/InColorado.wasm";
-let zkeyFile = "https://zk-maps.vercel.app/InColorado_0001.zkey";
-// let verificationKey = "~/circuits/AtEthDenver/verification_key.json";
-let publicConstraint = "~/circuits/public.json";
+
+/* Circon multiplier example */
+let wasmFile =
+  "https://gateway.pinata.cloud/ipfs/QmdBE3yZahaVbVXmHJHQnHvGQL8JtevJToTP1g6WkJ1hQP?filename=multiplier2.wasm";
+let zkeyFile =
+  "https://gateway.pinata.cloud/ipfs/Qmb4KF1F6UjYFH2c9ehvqiM4q5jMdCB8FmGUDjztRYLa8Z?filename=multiplier2_0001.zkey";
+let publicConstraint =
+  "https://gateway.pinata.cloud/ipfs/QmdrjaYAXtW59WMLEDoi6fGRDoQWNgMJzxGcs8N4Y6efvG?filename=public.json";
+let verification_key =
+  "https://gateway.pinata.cloud/ipfs/QmNtP68qhqvDNLMdSFkfNi5D3LYfWSyyUb8XPUPqdWuSA4?filename=verification_key.json";
+const proofInput = { a: 3, b: 11 };
+
+/* AtEthDenver */
+// let wasmFile =
+//   "https://gateway.pinata.cloud/ipfs/QmPyAbDi2EwesWSNWyYSresj4ZwRLsVoQXagoD7eDQbBDv?filename=AtEthDenver.wasm";
+// let zkeyFile =
+//   "https://gateway.pinata.cloud/ipfs/QmPyfF2k7wTKGibSKnh6eW3ibVhZDYoTUS1GdqcxVoZ3GX?filename=AtEthDenver_0001.zkey";
+// let publicConstraint = "https://gateway.pinata.cloud/ipfs/QmdCe5TJW3nAcXYbnXqLf9JGyodSgek6mKwSK9mxzn6ejx";
+// const proofInput = {
+//     latitude: 12973547807205024,
+//     longitude: 7500977777251779,
+//  };
+
+/* AtColorado */
+// let wasmFile =
+//   "https://gateway.pinata.cloud/ipfs/QmaKTiHhWWGLhgX3s8rjqy8TQT7i34Cz6f9voG8H7YdUrJ?filename=InColorado.wasm";
+// let zkeyFile =
+//   "https://gateway.pinata.cloud/ipfs/QmRDFEoFJbp9VuFbiVacF5B1PPVmDaJiczTcy43t4HX9ep?filename=InColorado_0001.zkey";
+// let publicConstraint =
+//   "https://gateway.pinata.cloud/ipfs/QmVhhVZj2wT2ZhFr8JPqM69ZPEM8AqaSEdgGNCKsXP6GS2?filename=InColoradoPublic.json";
 
 const settings = {
   // scrollZoom: true,
@@ -46,7 +122,7 @@ const settings = {
   showCompass: true,
 };
 
-function Home({ writeContracts }) {
+function Home({ writeContracts, address, injectedProvider, readContracts, userSigner }) {
   // you can also use hooks locally in your component of choice
 
   // Refs
@@ -64,17 +140,14 @@ function Home({ writeContracts }) {
   const [proof, setProof] = useState("");
   const [signals, setSignals] = useState("");
   const [isValid, setIsValid] = useState(false);
+  const [isCtaHovered, setIsCtaHovered] = useState(false);
   const [message, setMessage] = useState(null);
   const [isVerifying, setIsVerifying] = useState(false);
-  const [confetti, setConfetti] = useState(false);
 
   const { currentTheme } = useThemeSwitcher();
   // const { colorMode } = useColorMode();
 
   const { latitude, longitude } = viewState;
-
-  // A circle of 5 mile radius of the Empire State Building
-  // const GEOFENCE = turf.circle(newCenter, 5, { units: "miles" });
 
   // Handlers
   const flyTo = async inputs => {
@@ -116,18 +189,27 @@ function Home({ writeContracts }) {
     })();
   }, []);
 
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  });
+
   navigator.geolocation.watchPosition(flyTo);
   // navigator.geolocation.watchPosition(setCoords, error, options);
 
-  const zkeyExportSolidityCalldata = async (_proof, options) => {
-    const pub = unstringifyBigInts(publicConstraint);
+  const zkeyExportSolidityCalldata = async (_proof, options, _publicConstraint) => {
+    const pub = unstringifyBigInts(_publicConstraint);
     const proof = unstringifyBigInts(_proof);
 
     let res;
     if (proof.protocol === "groth16") {
-      res = await groth16ExportSolidityCallData(proof, pub);
+      // res = await groth16ExportSolidityCallData(proof, pub);
+      res = await window.snarkjs.groth16.exportSolidityCallData(proof, pub);
     } else if (proof.protocol === "plonk") {
-      res = await snarkjs.plonk.exportSolidityCallData(proof, pub);
+      res = await window.snarkjs.plonk.exportSolidityCallData(proof, pub);
     } else {
       throw new Error("Invalid Protocol");
     }
@@ -136,7 +218,7 @@ function Home({ writeContracts }) {
 
   const makeProof = async (_proofInput, _wasm, _zkey) => {
     try {
-      const { proof, publicSignals } = await snarkjs.groth16.fullProve(_proofInput, _wasm, _zkey);
+      const { proof, publicSignals } = await window.snarkjs.groth16.fullProve(_proofInput, _wasm, _zkey);
       return { proof, publicSignals };
     } catch (error) {
       setMessage({ text: "You are outside of the proof zone.", type: "error" });
@@ -147,100 +229,95 @@ function Home({ writeContracts }) {
     }
   };
 
-  //  const verifyProof = async (_verificationkey, signals, proof) => {
-  //     const vkey = await fetch(_verificationkey).then(function (res) {
-  //        return res.json();
-  //     });
-  //     console.log({ vkey });
-  //     console.log({ signals });
-  //     console.log({ proof });
-  //     const res = await snarkjs.groth16.verify(vkey, signals, proof);
-  //     return res;
-  //  };
-
-  // debugger;
-  const runProofs = () => {
-    // TODO: Check apps
-    // console.log(longitude.length);
-    // if (latitude.length == 0 || longitude.length == 0) {
-    //   return;
-    // }
-
+  const runProofs = async () => {
     try {
-      const proofInput = {
-        // latitude: 12973547807205024,
-        // longitude: 7500977777251779,
-        longitude: withPrecision
-          ? Math.trunc((longitude + 180) * 1000)
-          : Math.trunc((longitude + 180) * Math.pow(10, 14)),
-        latitude: withPrecision ? Math.trunc((latitude + 90) * 1000) : Math.trunc((latitude + 90) * Math.pow(10, 14)),
-      };
-      // makeProof(proofInput, wasmFile, zkeyFile).then(async ({ proof: _proof, publicSignals: _signals }) => {
-      //   setProof(JSON.stringify(_proof, null, 2));
-      //   setSignals(JSON.stringify(_signals, null, 2));
-      //   _proof.protocol = "groth16";
-      //   // setConfetti(true);
-      //   // setTimeout(() => {
-      //   //   setConfetti(false);
-      //   // }, 7000);
+      if (!address) {
+        setMessage({ text: "You need to connect your account.", type: "error" });
+        setTimeout(() => {
+          setMessage(null);
+        }, 5000);
+        return;
+      }
+      // const proofInput = {
+      //   // longitude: withPrecision
+      //   //   ? Math.trunc((longitude + 180) * 1000)
+      //   //   : Math.trunc((longitude + 180) * Math.pow(10, 14)),
+      //   // latitude: withPrecision ? Math.trunc((latitude + 90) * 1000) : Math.trunc((latitude + 90) * Math.pow(10, 14)),
+      // };
+      const { proof: _proof, publicSignals: _public } = await makeProof(proofInput, wasmFile, zkeyFile);
 
       setIsVerifying(true);
 
-      // const callData = await zkeyExportSolidityCalldata(_proof, {});
-      //  verifyProof(verificationKey, _signals, _proof).then((_isValid) => {
-      //     setIsValid(_isValid);
-      //  });
-      
-      //
-      // Couldn't compile call 🥺 when deployied to a static website, will happen! (some js transpiling!)
-      //
+      _proof.protocol = "groth16";
+      console.log("🚀 ~ file: Home.jsx ~ line 257 ~ runProofs ~ _proof", _proof);
+      setProof(JSON.stringify(_proof, null, 2));
+      setSignals(JSON.stringify(_public, null, 2));
 
-      callContact();
-      async function callContact() {
-        const tx = await writeContracts.Verifier.verifyProof(
-          [
-            "0x1e2cdec01d32f0bd784efed35b3b724eb62e6a05b887e5eaf35af3049d5f850a",
-            "0x19445a36d4536a49c4323eff01647ca5cd4db4902b054a5cc5ee5c9383d54b35",
-          ],
-          [
-            [
-              "0x1bb8a138b2006f0f59c3bd4c73c9300f40d3e088a7c1c0b4e4f3e122f3c87603",
-              "0x1d79c23cfbe3693e50cac552872b37118fd3762c151d434c7d16fa422878bc76",
-            ],
-            [
-              "0x1046db7951e4412da7a15a2c4c9b63977d22657711bdc917df1806a27e203e84",
-              "0x1872793bfe4828dac60811ccbfd55fb8b5a3779c3c0a5b783263bae331fd79dd",
-            ],
-          ],
-          [
-            "0x3062a537e8d58d314c731118998a2a20c0eed60d7484933f65aaf87ef65ac1d6",
-            "0x1d417031d2a40b655b6e35e55b1aedca105fbc4a702b49c7ddd0fc4db90be877",
-          ],
-          ["0x0000000000000000000000000000000000000000000000000000000000000001"],
-        );
-        console.log({ tx });
+      const vkey = await fetch(verification_key).then(res => {
+        return res.json();
+      });
 
-        const recipt = await tx.wait(1);
-        console.log("🚀 ~ file: Home.jsx ~ line 193 ~ makeProof ~ recipt", recipt);
-        if (recipt?.events?.length > 0) {
+      // const pub = ["33"];
+      const pub = await fetch(publicConstraint).then(res => {
+        return res.json();
+      });
+
+      // TODO: Test what happens with AtEthDenver and InColorado
+      const localVerification = await window.snarkjs.groth16.verify(vkey, pub, _proof);
+
+      if (localVerification) {
+        const callData = await zkeyExportSolidityCalldata(_proof, {}, pub);
+        const callDataFormatted = JSON.parse("[" + callData.replace(/}{/g, "},{") + "]");
+
+        // const tx = await readContracts.Verifier.verifyProof(...callDataFormatted);
+        // const recipt = await tx?.wait(2);
+        // const decodeOutput = ethers.utils.defaultAbiCoder.decode(["bool"], ethers.utils.hexDataSlice(tx.data, 4));
+
+        let iface = new ethers.utils.Interface(Verifier);
+        let verifier = new ethers.Contract("0xffdb60e666ae25fe5d79ff66680c828902de90cc", iface, userSigner);
+        let decodeOutput = await verifier.verifyProof(...callDataFormatted);
+
+        if (decodeOutput[0] && localVerification) {
           setIsVerifying(false);
-          setMessage({ text: "You have verified your location for Colorado", type: "success" });
+          setIsValid(true);
+          setMessage({ text: "You have verified your location!", type: "success" });
           setTimeout(() => {
             setMessage(null);
-          }, 200000);
+          }, 5000);
+        } else {
+          setIsVerifying(false);
+          setMessage({ text: "Your location doesn't meet the requirements. Try again.", type: "error" });
+          forgetProofs();
         }
-        // console.log({ recipt.past});
+      } else {
+        setMessage({ text: "Your location doesn't meet the requirements. Try again.", type: "error" });
+        setIsVerifying(false);
       }
+      // console.log({ recipt.past});
     } catch (error) {
       setIsVerifying(false);
+      forgetProofs();
       console.error(error);
     }
+  };
+
+  const forgetProofs = async () => {
+    setProof(null);
+    setSignals(null);
+    setIsValid(false);
+  };
+
+  const hoverCTA = () => {
+    setIsCtaHovered(true);
+  };
+
+  const unhoverCTA = () => {
+    setIsCtaHovered(false);
   };
 
   return (
     <div>
       {message && <Alert message={message.text} type={message.type} style={{ padding: 20 }} />}
-      {confetti && <Confetti width={window.innerWidth} height={window.innerHeight} />}
 
       <ModalIntro />
       <Map
@@ -257,7 +334,6 @@ function Home({ writeContracts }) {
         // onMove={e => onMove(e)}
         attributionControl={false}
       >
-        {console.log(viewState?.longitude)}
         {/* {Math.abs(longitude) && Math.abs(latitude) && (
           // <Marker longitude={viewState?.longitude} latitude={viewState?.latitude}>
           //   <img src={currentTheme === "light" ? markerBlack : markerLightSM} alt="you are here" />
@@ -269,26 +345,34 @@ function Home({ writeContracts }) {
         alt={"you are somewhere 🤷"}
         style={{ position: "absolute", top: "calc(50% - 50px)", left: "calc(50% - 50px)" }}
       />
-
-      {isVerifying && (
-        <div style={{ position: "absolute", top: "calc(50vh - 13px)", width: "100vw" }}>
-          <Spin />
-        </div>
-      )}
-
       <div
         style={{ position: "fixed", textAlign: "center", alignItems: "center", bottom: 20, padding: 10, width: "100%" }}
       >
         <Row align="middle" gutter={[4, 4]}>
           <Button
             key="runProofs"
-            style={{ verticalAlign: "center", marginLeft: 8 }}
+            style={{
+              verticalAlign: "center",
+              marginLeft: 8,
+              backgroundColor: isCtaHovered && isValid ? "red" : isValid ? "green" : "transparent",
+            }}
             shape="round"
             size="large"
-            onClick={runProofs}
+            onClick={() => {
+              isCtaHovered && isValid ? forgetProofs() : runProofs();
+            }}
             type="primary"
+            loading={isVerifying}
+            onMouseEnter={hoverCTA}
+            onMouseLeave={unhoverCTA}
           >
-            ZK prove your location
+            {isCtaHovered && isValid
+              ? "Forget proof"
+              : isValid
+              ? "Verified"
+              : isVerifying
+              ? "verifying proof"
+              : `ZK prove your location`}
           </Button>
         </Row>
       </div>
