@@ -18,7 +18,7 @@ import externalContracts from "./contracts/external_contracts";
 // contracts
 import deployedContracts from "./contracts/hardhat_contracts.json";
 import { Transactor, Web3ModalSetup } from "./helpers";
-import { Home, ExampleUI, Hints, Subgraph } from "./views";
+import { Home, Subgraph } from "./views";
 import { useStaticJsonRPC } from "./hooks";
 import { ClockCircleFilled, BackwardFilled } from "@ant-design/icons";
 
@@ -43,6 +43,12 @@ const { ethers } = require("ethers");
 */
 
 /// 📡 What chain are your contracts deployed to?
+
+/* eslint-disable */
+// mapboxgl.workerClass = require("worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker").default;
+/* eslint-enable */
+
+// ...
 
 const initialNetwork = NETWORKS.mumbai; // <------- select your target frontend network (localhost, rinkeby, xdai, mainnet)
 
@@ -141,7 +147,8 @@ function App(props) {
   const yourMainnetBalance = useBalance(mainnetProvider, address);
 
   // Load in your local 📝 contract and read a value from it:
-  const readContracts = useContractLoader(localProvider, contractConfig);
+  // const readContracts = useContractLoader(localProvider, contractConfig);
+  const readContracts = useContractLoader(userSigner, contractConfig);
 
   // If you want to make 🔐 write transactions to your contracts, use the userSigner:
   const writeContracts = useContractLoader(userSigner, contractConfig, localChainId);
@@ -260,31 +267,18 @@ function App(props) {
           />
         </Tooltip>
       </div>
-      {/* <Menu style={{ textAlign: "center", marginTop: 40 }} selectedKeys={[location.pathname]} mode="horizontal">
-        <Menu.Item key="/">
-          <Link to="/">App Home</Link>
-        </Menu.Item>
-        <Menu.Item key="/debug">
-          <Link to="/debug">Debug Contracts</Link>
-        </Menu.Item>
-        <Menu.Item key="/hints">
-          <Link to="/hints">Hints</Link>
-        </Menu.Item>
-        <Menu.Item key="/exampleui">
-          <Link to="/exampleui">ExampleUI</Link>
-        </Menu.Item>
-        <Menu.Item key="/mainnetdai">
-          <Link to="/mainnetdai">Mainnet DAI</Link>
-        </Menu.Item>
-        <Menu.Item key="/subgraph">
-          <Link to="/subgraph">Subgraph</Link>
-        </Menu.Item>
-      </Menu> */}
 
       <Switch>
         <Route exact path="/">
           {/* pass in any web3 props to this Home component. For example, yourLocalBalance */}
-          <Home yourLocalBalance={yourLocalBalance} writeContracts={writeContracts} />
+          <Home
+            yourLocalBalance={yourLocalBalance}
+            writeContracts={writeContracts}
+            readContracts={readContracts}
+            address={address}
+            injectedProvider={injectedProvider}
+            userSigner={userSigner}
+          />
         </Route>
         <Route path="/history">
           <Subgraph

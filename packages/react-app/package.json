@@ -1,10 +1,10 @@
 {
   "name": "@scaffold-eth/react-app",
   "version": "1.0.0",
-  "homepage": ".",
-  "browserslist": {
+  "homepage": "https://zkmaps.github.io/",
+    "browserslist": {
     "production": [
-      ">0.2%",
+      ">0.2% and supports es6-class",
       "not dead",
       "not op_mini all"
     ],
@@ -34,6 +34,7 @@
     "@uniswap/sdk": "^3.0.3",
     "@uniswap/v2-periphery": "^1.1.0-beta.0",
     "@walletconnect/web3-provider": "^1.5.2",
+    "abi-decoder": "^2.4.0",
     "antd": "4.16.0",
     "apollo-boost": "^0.4.9",
     "apollo-client": "^2.6.10",
@@ -57,10 +58,8 @@
     "node-watch": "^0.7.1",
     "postcss": "^8.2.6",
     "qrcode.react": "^1.0.0",
-    "rc-virtual-list": "^3.4.2",
     "react": "^17.0.2",
     "react-blockies": "^1.4.1",
-    "react-confetti": "^6.0.1",
     "react-css-theme-switcher": "^0.2.2",
     "react-dom": "^17.0.2",
     "react-map-gl": "^7.0.6",
@@ -70,7 +69,7 @@
     "recoil": "^0.6.1",
     "recoil-persist": "^4.0.0",
     "searchico": "^1.2.1",
-    "snarkjs": "0.4.13",
+    "snarkjs": "^0.4.15",
     "styled-components": "^5.3.3",
     "walletlink": "^2.1.5",
     "web3modal": "^1.9.1"
@@ -93,7 +92,8 @@
     "less-plugin-npm-import": "^2.1.0",
     "prettier": "^2.0.5",
     "s3-folder-upload": "^2.3.1",
-    "surge": "^0.21.5"
+    "surge": "^0.21.5",
+    "worker-loader": "^3.0.8"
   },
   "eslintConfig": {
     "extends": [
