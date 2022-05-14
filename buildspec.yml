@@ -7,7 +7,7 @@ phases:
    
     commands:
         # install npm dependencies
-        - yarn
+        - yarn && cd packages/react-app yarn cd ../..
        
   build:
     commands:
