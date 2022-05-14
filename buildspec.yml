@@ -6,14 +6,14 @@ phases:
       nodejs: 16
    
     commands:
-        # install npm
-        - npm install
+        # install npm dependencies
+        - yarn
        
   build:
     commands:
         # run build script
-        # - npm run-script build
-        - npm run-script react-app:build
+        - yarn build
+        # - yarn start
      
 artifacts:
   # include all files required to run application
