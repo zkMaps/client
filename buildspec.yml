@@ -12,14 +12,15 @@ phases:
   build:
     commands:
         # run build script
-        - npm run-script build
+        # - npm run-script build
+        - npm run-script react-app:build
      
 artifacts:
   # include all files required to run application
   # notably excluded is node_modules, as this will cause overwrite error on deploy
   files:
-    - public/**/*
-    - src/**/*
-    - package.json
-    - appspec.yml
-    - scripts/**/*
+    - packages/react-app/public/**/*
+    - packages/react-app/src/**/*
+    - packages/react-app/package.json
+    # - packages/react-app/appspec.yml
+    - packages/react-app/scripts/**/*
