@@ -57,10 +57,10 @@
     "node-watch": "^0.7.1",
     "postcss": "^8.2.6",
     "qrcode.react": "^1.0.0",
-    "react": "^18.0.0",
+    "react": "^17.0.2",
     "react-blockies": "^1.4.1",
     "react-css-theme-switcher": "^0.2.2",
-    "react-dom": "18.0.0",
+    "react-dom": "^17.0.2",
     "react-map-gl": "^7.0.6",
     "react-qr-reader": "^2.2.1",
     "react-router-dom": "^5.2.0",
@@ -117,5 +117,7 @@
     "watch": "node ./scripts/watch.js",
     "prettier": "npx prettier --write . '!(node_module|build)/**/*'"
   },
-  "engines": { "node" : "16.0.0" }
+  "engines": {
+    "node": "16.6.0"
+  }
 }
