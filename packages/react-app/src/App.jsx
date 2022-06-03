@@ -18,11 +18,15 @@ import externalContracts from "./contracts/external_contracts";
 // contracts
 import deployedContracts from "./contracts/hardhat_contracts.json";
 import { Transactor, Web3ModalSetup } from "./helpers";
-import { Home, Subgraph } from "./views";
+import { Home, Subgraph, Polygons } from "./views";
 import { useStaticJsonRPC } from "./hooks";
 import { ClockCircleFilled, BackwardFilled } from "@ant-design/icons";
 
+// Map
+// import "node_modules/leaflet-draw/dist/leaflet.draw.css";
+
 const { ethers } = require("ethers");
+
 /*
     Welcome to 🏗 scaffold-eth !
 
@@ -258,7 +262,7 @@ function App(props) {
       />
 
       <div style={{ position: "absolute", bottom: 30, right: 15, zIndex: 20 }}>
-        <Tooltip title="zkHistory">
+        <Tooltip title={isHome ? "zkHistory" : "Home"}>
           <Button
             shape="circle"
             icon={isHome ? <ClockCircleFilled /> : <BackwardFilled />}
@@ -272,6 +276,17 @@ function App(props) {
         <Route exact path="/">
           {/* pass in any web3 props to this Home component. For example, yourLocalBalance */}
           <Home
+            yourLocalBalance={yourLocalBalance}
+            writeContracts={writeContracts}
+            readContracts={readContracts}
+            address={address}
+            injectedProvider={injectedProvider}
+            userSigner={userSigner}
+          />
+        </Route>
+        <Route exact path="/polygons">
+          {/* pass in any web3 props to this Home component. For example, yourLocalBalance */}
+          <Polygons
             yourLocalBalance={yourLocalBalance}
             writeContracts={writeContracts}
             readContracts={readContracts}
