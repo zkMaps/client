@@ -1,8 +1,7 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { utils } from "ffjavascript";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import { Row, Button, Alert } from "antd";
-import mapboxgl from "mapbox-gl";
 import L from "leaflet";
 
 import "leaflet/dist/leaflet.css";
@@ -63,15 +62,6 @@ const Verifier = [
 ];
 
 const { unstringifyBigInts } = utils;
-const withPrecision = false;
-
-// The following is required to stop "npm build" from transpiling mapbox code.
-// notice the exclamation point in the import.
-// @ts-ignore
-// eslint-disable-next-line import/no-webpack-loader-syntax, import/no-unresolved
-mapboxgl.workerClass = require("worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker").default;
-
-const REACT_APP_MAPBOX_ACCESS_TOKEN = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 
 /**
  * web3 props can be passed from '../App.jsx' into your local view component for use
