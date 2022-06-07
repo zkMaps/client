@@ -1,21 +1,25 @@
 import React, { useState, useRef, useEffect } from "react";
 import { utils } from "ffjavascript";
-import { MapContainer } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import { Row, Button, Alert } from "antd";
-import { useThemeSwitcher } from "react-css-theme-switcher";
 import mapboxgl from "mapbox-gl";
+import L from "leaflet";
+
 import "leaflet/dist/leaflet.css";
+
+// Hooks
+import useFlyTo from "../hooks/FlyTo";
 
 // Components
 import CornerButtons from "../components/CornerButtons";
+import ModalIntro from "../components/ModalIntro";
 
 // Constants
-import markerLightSM from "./marker-light-sm.png";
-// import markerBlack from "../logo-black.png";
-// import contracts from "../contracts/hardhat_contracts.json";
-
-// Components
-import ModalIntro from "../components/ModalIntro";
+import marker from "../logo-black.png";
+var customMarkerIcon = L.icon({
+  iconUrl: marker,
+  iconSize: [30, 60], // size of the icon// point from which the popup should open relative to the iconAnchor
+});
 
 const { ethers } = require("ethers");
 
@@ -127,14 +131,11 @@ const settings = {
 function Home({ writeContracts, address, injectedProvider, readContracts, userSigner }) {
   // you can also use hooks locally in your component of choice
 
-  // Refs
-  const mapRef = useRef();
-
   // Hooks
   const [viewState, setViewState] = useState({
-    latitude: 37.7751,
-    longitude: -122.4193,
-    zoom: 30,
+    latitude: 0,
+    longitude: 0,
+    zoom: 3,
     bearing: 0,
     pitch: 0,
     // padding: { top: 0, bottom: 0, left: 0, right: 0 },
@@ -147,7 +148,8 @@ function Home({ writeContracts, address, injectedProvider, readContracts, userSi
   const [isVerifying, setIsVerifying] = useState(false);
   const [map, setMap] = useState(null);
 
-  // Handlers
+  // custom hooks
+  useFlyTo(map, setViewState);
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -157,6 +159,7 @@ function Home({ writeContracts, address, injectedProvider, readContracts, userSi
     };
   });
 
+  // Handlers
   const zkeyExportSolidityCalldata = async (_proof, options, _publicConstraint) => {
     const pub = unstringifyBigInts(_publicConstraint);
     const proof = unstringifyBigInts(_proof);
@@ -285,18 +288,14 @@ function Home({ writeContracts, address, injectedProvider, readContracts, userSi
         zoom={viewState.zoom}
         scrollWheelZoom={false}
       >
-        {/* {Math.abs(longitude) && Math.abs(latitude) && (
-          // <Marker longitude={viewState?.longitude} latitude={viewState?.latitude}>
-          //   <img src={currentTheme === "light" ? markerBlack : markerLightSM} alt="you are here" />
-          // </Marker>
-        )} */}
+        {/* https://stamen-tiles.a.ssl.fastly.net/toner/{z}/{x}/{y}.png */}
+        <TileLayer attribution="" url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+        <Marker position={[viewState?.latitude, viewState?.longitude]} icon={customMarkerIcon}>
+          <Popup>
+            You are here. <br /> Press "zk Proof your location" button to verify where you are maintaining your privacy.
+          </Popup>
+        </Marker>
       </MapContainer>
-
-      <img
-        src={markerLightSM}
-        alt={"you are somewhere 🤷"}
-        style={{ position: "absolute", top: "calc(50% - 50px)", left: "calc(50% - 50px)" }}
-      />
       <div
         style={{ position: "fixed", textAlign: "center", alignItems: "center", bottom: 20, padding: 10, width: "100%" }}
       >

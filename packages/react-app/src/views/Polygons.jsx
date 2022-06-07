@@ -48,7 +48,8 @@ function Polygons({ writeContracts, address, injectedProvider, readContracts, us
         zoom={viewState.zoom}
         scrollWheelZoom={false}
       >
-        <TileLayer attribution="" url="https://stamen-tiles.a.ssl.fastly.net/toner/{z}/{x}/{y}.png" />
+        {/* TODO: Implement dark mode https://stamen-tiles.a.ssl.fastly.net/toner/{z}/{x}/{y}.png not working */}
+        <TileLayer attribution="" url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
         <DrawTools />
       </MapContainer>
       <div

@@ -6,7 +6,7 @@ export default function useFlyTo(map, setViewState) {
     setViewState({
       latitude: inputs.coords.latitude,
       longitude: inputs.coords.longitude,
-      zoom: 18,
+      zoom: 13,
     });
     if (map) map.flyTo([inputs.coords.latitude, inputs.coords.longitude], 18);
   };
