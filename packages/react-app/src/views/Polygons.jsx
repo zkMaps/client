@@ -3,6 +3,9 @@ import { MapContainer, TileLayer } from "react-leaflet";
 import { Alert } from "antd";
 import "leaflet/dist/leaflet.css";
 
+// Hooks
+import useFlyTo from "../hooks/FlyTo";
+
 // Components
 import DrawTools from "../components/DrawTools";
 
@@ -24,43 +27,8 @@ function Polygons({ writeContracts, address, injectedProvider, readContracts, us
   const [message, setMessage] = useState(null);
   const [map, setMap] = useState(null);
 
-  // Handlers
-  // TODO: Convert into hook
-  const flyTo = async inputs => {
-    setViewState({
-      latitude: inputs.coords.latitude,
-      longitude: inputs.coords.longitude,
-      zoom: 18,
-    });
-    if (map) map.flyTo([inputs.coords.latitude, inputs.coords.longitude], 18);
-  };
-
-  useEffect(() => {
-    (async () => {
-      if (navigator.geolocation) {
-        await navigator.permissions.query({ name: "geolocation" }).then(function (result) {
-          if (result.state === "granted") {
-            console.log(result.state);
-            //If granted then you can directly call your function here
-            navigator.geolocation.getCurrentPosition(flyTo);
-            // } else if (result.state === "prompt") {
-            //   navigator.geolocation.getCurrentPosition(setViewState, null, null);
-          } else if (result.state === "denied") {
-            //If denied then you have to show instructions to enable location
-            // setMessage({ text: "You need to enable geolocation to use this app.", type: "error" });
-            // setTimeout(() => {
-            //   setMessage(null);
-            // }, 5000);
-          }
-          result.onchange = function () {
-            console.log(result.state);
-          };
-        });
-      }
-    })();
-  }, []);
-
-  navigator.geolocation.watchPosition(flyTo);
+  // custom hooks
+  useFlyTo(map, setViewState);
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
