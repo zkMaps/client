@@ -104,7 +104,6 @@ function Polygons({ writeContracts, address, injectedProvider, readContracts, us
     <div>
       {message && <Alert message={message.text} type={message.type} style={{ padding: 20 }} />}
 
-      <ModalIntro />
       {/* <Map
         ref={mapRef}
         mapboxAccessToken={REACT_APP_MAPBOX_ACCESS_TOKEN}

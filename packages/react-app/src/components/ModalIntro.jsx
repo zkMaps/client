@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Modal, Button, Tooltip } from "antd";
 import { InfoCircleFilled } from "@ant-design/icons";
-import { position } from "@chakra-ui/react";
 
 const ModalIntro = props => {
   const [visible, setVisible] = useState(false);
@@ -15,7 +14,7 @@ const ModalIntro = props => {
       </div>
 
       <Modal
-        title="😶🗺️ zkMaps"
+        title="🗺️ zkMaps"
         style={{ padding: 10 }}
         visible={visible}
         // onOk={() => setVisible(false)}
@@ -62,7 +61,7 @@ const ModalIntro = props => {
           <li>🗺️ subgraphs: https://github.com/zkMaps/zkmaps-subgraph</li>
         </p>
 
-{/* <p><h2>🙏</h2>
+        {/* <p><h2>🙏</h2>
 <img height="30" src={"https://iden3.io/img/logos/iden3.svg"} alt="iden3" />
 <img height="0" src={"https://upload.wikimedia.org/wikipedia/commons/1/18/Ipfs-logo-1024-ice-text.png"} alt="IPFS" />
 <img height="100" src={"https://seeklogo.com/images/T/the-graph-grt-logo-B6802F6411-seeklogo.com.png"} alt="theGraph" />

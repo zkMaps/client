@@ -3,9 +3,10 @@ import { utils } from "ffjavascript";
 import Map, { Marker } from "react-map-gl";
 import { Row, Button, Alert } from "antd";
 import { useThemeSwitcher } from "react-css-theme-switcher";
-// added the following 6 lines.
 import mapboxgl from "mapbox-gl";
-// import { groth16, plonk } from "snarkjs";
+
+// Components
+import CornerButtons from "../components/CornerButtons";
 
 // Constants
 import markerLightSM from "./marker-light-sm.png";
@@ -374,6 +375,7 @@ function Home({ writeContracts, address, injectedProvider, readContracts, userSi
               ? "verifying proof"
               : `ZK prove your location`}
           </Button>
+          <CornerButtons />
         </Row>
       </div>
     </div>
