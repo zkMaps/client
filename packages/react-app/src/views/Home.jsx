@@ -199,7 +199,6 @@ function Home({ writeContracts, address, injectedProvider, readContracts, userSi
   });
 
   navigator.geolocation.watchPosition(flyTo);
-  // navigator.geolocation.watchPosition(setCoords, error, options);
 
   const zkeyExportSolidityCalldata = async (_proof, options, _publicConstraint) => {
     const pub = unstringifyBigInts(_publicConstraint);
