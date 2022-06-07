@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { MapContainer } from "react-leaflet";
+import { MapContainer, TileLayer } from "react-leaflet";
 import { Alert } from "antd";
 import "leaflet/dist/leaflet.css";
 
@@ -25,6 +25,7 @@ function Polygons({ writeContracts, address, injectedProvider, readContracts, us
   const [map, setMap] = useState(null);
 
   // Handlers
+  // TODO: Convert into hook
   const flyTo = async inputs => {
     setViewState({
       latitude: inputs.coords.latitude,
@@ -72,7 +73,6 @@ function Polygons({ writeContracts, address, injectedProvider, readContracts, us
   return (
     <div>
       {message && <Alert message={message.text} type={message.type} style={{ padding: 20 }} />}
-
       <MapContainer
         ref={setMap}
         style={{ width: "100%", height: "100vh", zIndex: 0 }}
@@ -80,6 +80,7 @@ function Polygons({ writeContracts, address, injectedProvider, readContracts, us
         zoom={viewState.zoom}
         scrollWheelZoom={false}
       >
+        <TileLayer attribution="" url="https://stamen-tiles.a.ssl.fastly.net/toner/{z}/{x}/{y}.png" />
         <DrawTools />
       </MapContainer>
       <div

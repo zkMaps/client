@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Card } from "antd";
-import { TileLayer, FeatureGroup } from "react-leaflet";
+import { FeatureGroup } from "react-leaflet";
 import L from "leaflet";
 import { EditControl } from "react-leaflet-draw";
 // work around broken icons when using webpack, see https://github.com/PaulLeCam/react-leaflet/issues/255
@@ -109,7 +109,6 @@ const DrawTools = () => {
 
   return (
     <>
-      <TileLayer attribution="" url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
       <FeatureGroup
         ref={reactFGref => {
           _onFeatureGroupReady(reactFGref);

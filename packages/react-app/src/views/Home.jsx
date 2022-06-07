@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect } from "react";
 import { utils } from "ffjavascript";
-import Map, { Marker } from "react-map-gl";
+import { MapContainer } from "react-leaflet";
 import { Row, Button, Alert } from "antd";
 import { useThemeSwitcher } from "react-css-theme-switcher";
 import mapboxgl from "mapbox-gl";
+import "leaflet/dist/leaflet.css";
 
 // Components
 import CornerButtons from "../components/CornerButtons";
@@ -144,51 +145,9 @@ function Home({ writeContracts, address, injectedProvider, readContracts, userSi
   const [isCtaHovered, setIsCtaHovered] = useState(false);
   const [message, setMessage] = useState(null);
   const [isVerifying, setIsVerifying] = useState(false);
-
-  const { currentTheme } = useThemeSwitcher();
-  // const { colorMode } = useColorMode();
-
-  const { latitude, longitude } = viewState;
+  const [map, setMap] = useState(null);
 
   // Handlers
-  const flyTo = async inputs => {
-    // console.log("🚀 ~ file: Home.jsx ~ line 81 ~ Home ~ flyTo", inputs);
-    await mapRef.current?.flyTo({
-      center: [inputs.coords.longitude, inputs.coords.latitude],
-      zoom: 18,
-      duration: 2000,
-    });
-    setViewState({
-      latitude: inputs.coords.latitude,
-      longitude: inputs.coords.longitude,
-      zoom: 18,
-    });
-  };
-
-  useEffect(() => {
-    (async () => {
-      if (navigator.geolocation) {
-        await navigator.permissions.query({ name: "geolocation" }).then(function (result) {
-          if (result.state === "granted") {
-            console.log(result.state);
-            //If granted then you can directly call your function here
-            navigator.geolocation.getCurrentPosition(flyTo);
-            // } else if (result.state === "prompt") {
-            //   navigator.geolocation.getCurrentPosition(setViewState, null, null);
-          } else if (result.state === "denied") {
-            //If denied then you have to show instructions to enable location
-            setMessage({ text: "You need to enable geolocation to use this app.", type: "error" });
-            setTimeout(() => {
-              setMessage(null);
-            }, 5000);
-          }
-          result.onchange = function () {
-            console.log(result.state);
-          };
-        });
-      }
-    })();
-  }, []);
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -197,8 +156,6 @@ function Home({ writeContracts, address, injectedProvider, readContracts, userSi
       document.body.style.overflow = "auto";
     };
   });
-
-  navigator.geolocation.watchPosition(flyTo);
 
   const zkeyExportSolidityCalldata = async (_proof, options, _publicConstraint) => {
     const pub = unstringifyBigInts(_publicConstraint);
@@ -320,26 +277,21 @@ function Home({ writeContracts, address, injectedProvider, readContracts, userSi
       {message && <Alert message={message.text} type={message.type} style={{ padding: 20 }} />}
 
       <ModalIntro />
-      <Map
-        ref={mapRef}
-        mapboxAccessToken={REACT_APP_MAPBOX_ACCESS_TOKEN}
-        style={{ width: "100%", height: "100vh" }}
-        mapStyle={
-          currentTheme === "light"
-            ? "mapbox://styles/mapbox/streets-v9"
-            : "mapbox://styles/fpetra/ckvxbmc8b4lwx14s3zewfbr3d"
-        }
-        {...settings}
-        // {...viewState}
-        // onMove={e => onMove(e)}
-        attributionControl={false}
+
+      <MapContainer
+        ref={setMap}
+        style={{ width: "100%", height: "100vh", zIndex: 0 }}
+        center={[viewState?.latitude, viewState?.longitude]}
+        zoom={viewState.zoom}
+        scrollWheelZoom={false}
       >
         {/* {Math.abs(longitude) && Math.abs(latitude) && (
           // <Marker longitude={viewState?.longitude} latitude={viewState?.latitude}>
           //   <img src={currentTheme === "light" ? markerBlack : markerLightSM} alt="you are here" />
           // </Marker>
         )} */}
-      </Map>
+      </MapContainer>
+
       <img
         src={markerLightSM}
         alt={"you are somewhere 🤷"}
