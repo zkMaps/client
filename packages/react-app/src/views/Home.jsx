@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { utils } from "ffjavascript";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import { Row, Button, Alert } from "antd";
-import L from "leaflet";
+import { icon } from "leaflet";
 
 import "leaflet/dist/leaflet.css";
 
@@ -15,7 +15,7 @@ import ModalIntro from "../components/ModalIntro";
 
 // Constants
 import marker from "../logo-black.png";
-var customMarkerIcon = L.icon({
+var customMarkerIcon = icon({
   iconUrl: marker,
   iconSize: [30, 60], // size of the icon// point from which the popup should open relative to the iconAnchor
 });
