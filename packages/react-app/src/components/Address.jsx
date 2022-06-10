@@ -1,12 +1,8 @@
-import { Skeleton, Typography } from "antd";
+import { Skeleton } from "antd";
 import React from "react";
 import { useThemeSwitcher } from "react-css-theme-switcher";
 import Blockies from "react-blockies";
 import { useLookupAddress } from "eth-hooks/dapps/ens";
-
-// changed value={address} to address={address}
-
-const { Text } = Typography;
 
 /** 
   ~ What it does? ~

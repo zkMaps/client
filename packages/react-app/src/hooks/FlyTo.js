@@ -1,7 +1,6 @@
-import { useCallback, useState, useEffect } from "react";
+import { useEffect } from "react";
 
 export default function useFlyTo(map, setViewState) {
-  // TODO: Convert into hook
   const flyTo = async inputs => {
     setViewState({
       latitude: inputs.coords.latitude,
@@ -19,9 +18,10 @@ export default function useFlyTo(map, setViewState) {
             console.log(result.state);
             //If granted then you can directly call your function here
             navigator.geolocation.getCurrentPosition(flyTo);
-            // } else if (result.state === "prompt") {
-            //   navigator.geolocation.getCurrentPosition(setViewState, null, null);
+          } else if (result.state === "prompt") {
+            navigator.geolocation.getCurrentPosition(setViewState, null, null);
           } else if (result.state === "denied") {
+            // TODO: Add alert
             //If denied then you have to show instructions to enable location
             // setMessage({ text: "You need to enable geolocation to use this app.", type: "error" });
             // setTimeout(() => {

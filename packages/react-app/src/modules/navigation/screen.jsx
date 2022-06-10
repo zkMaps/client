@@ -11,12 +11,12 @@ const GeneralNavigation = () => {
   return (
     <div style={{ height: "100vh" }}>
       <NavBar />
-        <Home path="/" />
-        {/* <Markers path="markers"/> */}
-        {/* <Transfers path="transfers" /> */}
-        {/* <Profile path="profile" /> */}
-        {/* TODO: make available only when testing */}
-        <Subgraph path="subgraph" />
+      <Home path="/" />
+      {/* <Markers path="markers"/> */}
+      {/* <Transfers path="transfers" /> */}
+      {/* <Profile path="profile" /> */}
+      {/* TODO: make available only when testing */}
+      <Subgraph path="subgraph" />
     </div>
   );
 };

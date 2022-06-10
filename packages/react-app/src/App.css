@@ -2,7 +2,3 @@
   text-align: center;
   padding-left: calc(100vw - 100%);
 }
-
-.sr-only {
-  display: none;
-}

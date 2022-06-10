@@ -12,6 +12,12 @@ function NetworkDisplay({
   logoutOfWeb3Modal,
 }) {
   let networkDisplay = "";
+  console.log(
+    "🚀 ~ file: NetworkDisplay.jsx ~ line 16 ~ NETWORKCHECK && localChainId && selectedChainId && localChainId !== selectedChainId",
+    NETWORKCHECK,
+    localChainId,
+    selectedChainId,
+  );
   if (NETWORKCHECK && localChainId && selectedChainId && localChainId !== selectedChainId) {
     const networkSelected = NETWORK(selectedChainId);
     const networkLocal = NETWORK(localChainId);

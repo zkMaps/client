@@ -35,6 +35,7 @@ function Subgraph(props) {
   if (data) console.log("🌍 [subrapgh]: ", data);
   return (
     <div>
+      <CornerButtons />
       {props?.address && <OwnerSubgraph {...props} />}
       <div style={{ width: 780, margin: "auto", paddingBottom: 64, marginTop: 40 }}>
         <Typography.Title>All check-ins</Typography.Title>
@@ -149,7 +150,6 @@ const OwnerSubgraph = props => {
           <div>no data...</div>
         )}
       </div>
-
       <div style={{ padding: 64 }}>...</div>
     </>
   );

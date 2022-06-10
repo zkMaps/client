@@ -207,10 +207,14 @@ function App(props) {
     }
   }, [loadWeb3Modal]);
 
+  useEffect(() => {
+    if (web3Modal.cachedProvider) {
+      loadWeb3Modal();
+    }
+  }, [loadWeb3Modal]);
+
   return (
     <div className="App">
-      {/* ✏️ Edit the header and change the title to your project name */}
-      {/* <Header /> */}
       <NetworkDisplay
         NETWORKCHECK={NETWORKCHECK}
         localChainId={localChainId}
@@ -255,7 +259,7 @@ function App(props) {
       </Switch>
 
       {/* 👨‍💼 Your account is in the top right with a wallet at connect options */}
-      <div style={{ position: "fixed", textAlign: "right", right: 0, top: 0, padding: 10 }}>
+      <div style={{ position: "fixed", textAlign: "right", right: 0, top: 0, padding: 10, zIndex: 999 }}>
         <div style={{ display: "flex", flex: 1 }}>
           {USE_NETWORK_SELECTOR && (
             <div style={{ marginRight: 10, marginTop: 6 }}>

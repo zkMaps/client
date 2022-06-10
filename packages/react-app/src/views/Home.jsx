@@ -315,9 +315,9 @@ function Home({ writeContracts, address, injectedProvider, readContracts, userSi
               ? "verifying proof"
               : `ZK prove your location`}
           </Button>
-          <CornerButtons />
         </Row>
       </div>
+      <CornerButtons />
     </div>
   );
 }

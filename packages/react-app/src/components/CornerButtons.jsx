@@ -11,7 +11,7 @@ export default function CornerButtons() {
 
   return (
     <>
-      <div style={{ position: "absolute", bottom: 30, right: 15, zIndex: 20 }}>
+      <div style={{ position: "absolute", top: isHome ? 130 : 30, left: 11, zIndex: 200 }}>
         <Tooltip title={isHome ? "zkHistory" : "Home"}>
           <Button
             shape="circle"
