@@ -6,6 +6,9 @@ import React from "react";
 import { Typography, List, Spin } from "antd";
 import { gql, useQuery } from "@apollo/client";
 
+// Components
+import CornerButtons from "../components/CornerButtons";
+
 function Subgraph(props) {
   // function graphQLFetcher(graphQLParams) {
   //   return fetch(props.subgraphUri, {
@@ -26,18 +29,13 @@ function Subgraph(props) {
   }
   `;
 
-  const onScroll = e => {
-    // if (e.target.scrollHeight - e.target.scrollTop === ContainerHeight) {
-    // appendData();
-    // }
-  };
-
   const VERIFIED_GQL = gql(VERIFY_USER);
   const { loading, data } = useQuery(VERIFIED_GQL, { pollInterval: 2500 });
 
   if (data) console.log("🌍 [subrapgh]: ", data);
   return (
     <div>
+      <CornerButtons />
       {props?.address && <OwnerSubgraph {...props} />}
       <div style={{ width: 780, margin: "auto", paddingBottom: 64, marginTop: 40 }}>
         <Typography.Title>All check-ins</Typography.Title>
@@ -124,6 +122,7 @@ const OwnerSubgraph = props => {
   if (data) console.log("🌍 [subrapgh]: ", data);
   return (
     <>
+      <CornerButtons />
       <div style={{ width: 780, margin: "auto", paddingBottom: 64, marginTop: 40 }}>
         <Typography.Title>
           {" "}
@@ -151,7 +150,6 @@ const OwnerSubgraph = props => {
           <div>no data...</div>
         )}
       </div>
-
       <div style={{ padding: 64 }}>...</div>
     </>
   );

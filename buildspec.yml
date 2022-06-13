@@ -3,17 +3,17 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      nodejs: 16
+      nodejs: 16.6.0
    
     commands:
-        # install npm
-        - npm install
+        # install npm dependencies
+        - yarn && cd packages/react-app yarn cd ../..
        
   build:
     commands:
         # run build script
-        # - npm run-script build
-        - npm run-script react-app:build
+        - yarn build
+        # - yarn start
      
 artifacts:
   # include all files required to run application

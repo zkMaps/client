@@ -1,19 +1,24 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { utils } from "ffjavascript";
-import Map, { Marker } from "react-map-gl";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import { Row, Button, Alert } from "antd";
-import { useThemeSwitcher } from "react-css-theme-switcher";
-// added the following 6 lines.
-import mapboxgl from "mapbox-gl";
-// import { groth16, plonk } from "snarkjs";
+import { icon } from "leaflet";
 
-// Constants
-import markerLightSM from "./marker-light-sm.png";
-// import markerBlack from "../logo-black.png";
-// import contracts from "../contracts/hardhat_contracts.json";
+import "leaflet/dist/leaflet.css";
+
+// Hooks
+import useFlyTo from "../hooks/FlyTo";
 
 // Components
+import CornerButtons from "../components/CornerButtons";
 import ModalIntro from "../components/ModalIntro";
+
+// Constants
+import marker from "../logo-black.png";
+var customMarkerIcon = icon({
+  iconUrl: marker,
+  iconSize: [30, 60], // size of the icon// point from which the popup should open relative to the iconAnchor
+});
 
 const { ethers } = require("ethers");
 
@@ -57,15 +62,6 @@ const Verifier = [
 ];
 
 const { unstringifyBigInts } = utils;
-const withPrecision = false;
-
-// The following is required to stop "npm build" from transpiling mapbox code.
-// notice the exclamation point in the import.
-// @ts-ignore
-// eslint-disable-next-line import/no-webpack-loader-syntax, import/no-unresolved
-mapboxgl.workerClass = require("worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker").default;
-
-const REACT_APP_MAPBOX_ACCESS_TOKEN = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 
 /**
  * web3 props can be passed from '../App.jsx' into your local view component for use
@@ -125,14 +121,11 @@ const settings = {
 function Home({ writeContracts, address, injectedProvider, readContracts, userSigner }) {
   // you can also use hooks locally in your component of choice
 
-  // Refs
-  const mapRef = useRef();
-
   // Hooks
   const [viewState, setViewState] = useState({
-    latitude: 37.7751,
-    longitude: -122.4193,
-    zoom: 30,
+    latitude: 0,
+    longitude: 0,
+    zoom: 3,
     bearing: 0,
     pitch: 0,
     // padding: { top: 0, bottom: 0, left: 0, right: 0 },
@@ -143,51 +136,10 @@ function Home({ writeContracts, address, injectedProvider, readContracts, userSi
   const [isCtaHovered, setIsCtaHovered] = useState(false);
   const [message, setMessage] = useState(null);
   const [isVerifying, setIsVerifying] = useState(false);
+  const [map, setMap] = useState(null);
 
-  const { currentTheme } = useThemeSwitcher();
-  // const { colorMode } = useColorMode();
-
-  const { latitude, longitude } = viewState;
-
-  // Handlers
-  const flyTo = async inputs => {
-    // console.log("🚀 ~ file: Home.jsx ~ line 81 ~ Home ~ flyTo", inputs);
-    await mapRef.current?.flyTo({
-      center: [inputs.coords.longitude, inputs.coords.latitude],
-      zoom: 18,
-      duration: 2000,
-    });
-    setViewState({
-      latitude: inputs.coords.latitude,
-      longitude: inputs.coords.longitude,
-      zoom: 18,
-    });
-  };
-
-  useEffect(() => {
-    (async () => {
-      if (navigator.geolocation) {
-        await navigator.permissions.query({ name: "geolocation" }).then(function (result) {
-          if (result.state === "granted") {
-            console.log(result.state);
-            //If granted then you can directly call your function here
-            navigator.geolocation.getCurrentPosition(flyTo);
-            // } else if (result.state === "prompt") {
-            //   navigator.geolocation.getCurrentPosition(setViewState, null, null);
-          } else if (result.state === "denied") {
-            //If denied then you have to show instructions to enable location
-            setMessage({ text: "You need to enable geolocation to use this app.", type: "error" });
-            setTimeout(() => {
-              setMessage(null);
-            }, 5000);
-          }
-          result.onchange = function () {
-            console.log(result.state);
-          };
-        });
-      }
-    })();
-  }, []);
+  // custom hooks
+  useFlyTo(map, setViewState);
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -197,9 +149,7 @@ function Home({ writeContracts, address, injectedProvider, readContracts, userSi
     };
   });
 
-  navigator.geolocation.watchPosition(flyTo);
-  // navigator.geolocation.watchPosition(setCoords, error, options);
-
+  // Handlers
   const zkeyExportSolidityCalldata = async (_proof, options, _publicConstraint) => {
     const pub = unstringifyBigInts(_publicConstraint);
     const proof = unstringifyBigInts(_proof);
@@ -320,31 +270,22 @@ function Home({ writeContracts, address, injectedProvider, readContracts, userSi
       {message && <Alert message={message.text} type={message.type} style={{ padding: 20 }} />}
 
       <ModalIntro />
-      <Map
-        ref={mapRef}
-        mapboxAccessToken={REACT_APP_MAPBOX_ACCESS_TOKEN}
-        style={{ width: "100%", height: "100vh" }}
-        mapStyle={
-          currentTheme === "light"
-            ? "mapbox://styles/mapbox/streets-v9"
-            : "mapbox://styles/fpetra/ckvxbmc8b4lwx14s3zewfbr3d"
-        }
-        {...settings}
-        // {...viewState}
-        // onMove={e => onMove(e)}
-        attributionControl={false}
+
+      <MapContainer
+        ref={setMap}
+        style={{ width: "100%", height: "100vh", zIndex: 0 }}
+        center={[viewState?.latitude, viewState?.longitude]}
+        zoom={viewState.zoom}
+        scrollWheelZoom={false}
       >
-        {/* {Math.abs(longitude) && Math.abs(latitude) && (
-          // <Marker longitude={viewState?.longitude} latitude={viewState?.latitude}>
-          //   <img src={currentTheme === "light" ? markerBlack : markerLightSM} alt="you are here" />
-          // </Marker>
-        )} */}
-      </Map>
-      <img
-        src={markerLightSM}
-        alt={"you are somewhere 🤷"}
-        style={{ position: "absolute", top: "calc(50% - 50px)", left: "calc(50% - 50px)" }}
-      />
+        {/* https://stamen-tiles.a.ssl.fastly.net/toner/{z}/{x}/{y}.png */}
+        <TileLayer attribution="" url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+        <Marker position={[viewState?.latitude, viewState?.longitude]} icon={customMarkerIcon}>
+          <Popup>
+            You are here. <br /> Press "zk Proof your location" button to verify where you are maintaining your privacy.
+          </Popup>
+        </Marker>
+      </MapContainer>
       <div
         style={{ position: "fixed", textAlign: "center", alignItems: "center", bottom: 20, padding: 10, width: "100%" }}
       >
@@ -376,6 +317,7 @@ function Home({ writeContracts, address, injectedProvider, readContracts, userSi
           </Button>
         </Row>
       </div>
+      <CornerButtons />
     </div>
   );
 }

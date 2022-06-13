@@ -1,11 +1,9 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Button, Alert, AlertIcon, AlertDescription, AlertTitle, Text, Link, Flex } from "@chakra-ui/react";
 import { useRecoilValue, useRecoilState } from "recoil";
-// import { Link as ReachLink } from "@reach/router"
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import "antd/dist/antd.css";
 import Web3Modal from "web3modal";
-import { RouteComponentProps } from "@reach/router";
 // import { Biconomy } from "@biconomy/mexa";
 
 import Account from "../../Account";
@@ -23,8 +21,8 @@ import { addressAtom, providerAtom, injectedProviderAtom } from "../../../recoil
 // import contractsDetails from './contracts/hardhat_contracts.json'
 // const whitelist = ["Fraternal", "YourCollectible"];
 
-const { BufferList } = require("bl");
-const sigUtil = require("eth-sig-util");
+// const { BufferList } = require("bl");
+// const sigUtil = require("eth-sig-util");
 // https://www.npmjs.com/package/ipfs-http-client
 // const ipfs = ipfsAPI({ host: "ipfs.infura.io", port: "5001", protocol: "https" });
 const { ethers } = require("ethers");
@@ -115,7 +113,7 @@ const logoutOfWeb3Modal = async () => {
   }, 1);
 };
 
-const Wallet = (props: RouteComponentProps) => {
+const Wallet = props => {
   const mainnetProvider = scaffoldEthProvider && scaffoldEthProvider._network ? scaffoldEthProvider : mainnetInfura;
 
   const [biconomy, setBiconomy] = useState();

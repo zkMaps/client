@@ -1,4 +1,3 @@
-import { Button, Tooltip } from "antd";
 import "antd/dist/antd.css";
 import {
   useBalance,
@@ -8,9 +7,8 @@ import {
   useOnBlock,
   useUserProviderAndSigner,
 } from "eth-hooks";
-// import { useExchangeEthPrice } from "eth-hooks/dapps/dex";
 import React, { useCallback, useEffect, useState } from "react";
-import { Route, Switch, useLocation, useHistory } from "react-router-dom";
+import { Route, Switch } from "react-router-dom";
 import "./App.css";
 import { Account, NetworkDisplay, FaucetHint, NetworkSwitch } from "./components";
 import { NETWORKS, ALCHEMY_KEY } from "./constants";
@@ -18,38 +16,10 @@ import externalContracts from "./contracts/external_contracts";
 // contracts
 import deployedContracts from "./contracts/hardhat_contracts.json";
 import { Transactor, Web3ModalSetup } from "./helpers";
-import { Home, Subgraph } from "./views";
+import { Home, Subgraph, Polygons } from "./views";
 import { useStaticJsonRPC } from "./hooks";
-import { ClockCircleFilled, BackwardFilled } from "@ant-design/icons";
 
 const { ethers } = require("ethers");
-/*
-    Welcome to 🏗 scaffold-eth !
-
-    Code:
-    https://github.com/scaffold-eth/scaffold-eth
-
-    Support:
-    https://t.me/joinchat/KByvmRe5wkR-8F_zz6AjpA
-    or DM @austingriffith on twitter or telegram
-
-    You should get your own Alchemy.com & Infura.io ID and put it in `constants.js`
-    (this is your connection to the main Ethereum network for ENS etc.)
-
-
-    🌏 EXTERNAL CONTRACTS:
-    You can also bring in contract artifacts in `constants.js`
-    (and then use the `useExternalContractLoader()` hook!)
-*/
-
-/// 📡 What chain are your contracts deployed to?
-
-/* eslint-disable */
-// mapboxgl.workerClass = require("worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker").default;
-/* eslint-enable */
-
-// ...
-
 const initialNetwork = NETWORKS.mumbai; // <------- select your target frontend network (localhost, rinkeby, xdai, mainnet)
 
 // 😬 Sorry for all the console logging
@@ -75,10 +45,8 @@ function App(props) {
   const [injectedProvider, setInjectedProvider] = useState();
   const [address, setAddress] = useState();
   const [selectedNetwork, setSelectedNetwork] = useState(networkOptions[0]);
-  const location = useLocation();
 
   // recent verification
-  const [isVerified, setVerified] = useState(false);
   const targetNetwork = NETWORKS[selectedNetwork];
 
   // 🔭 block explorer URL
@@ -208,8 +176,6 @@ function App(props) {
     // myMainnetDAIBalance,
   ]);
 
-  let history = useHistory();
-
   const loadWeb3Modal = useCallback(async () => {
     const provider = await web3Modal.connect();
     setInjectedProvider(new ethers.providers.Web3Provider(provider));
@@ -241,13 +207,14 @@ function App(props) {
     }
   }, [loadWeb3Modal]);
 
-  const isHome = window.location.pathname === "/";
-  const faucetAvailable = localProvider && localProvider.connection && targetNetwork.name.indexOf("local") !== -1;
+  useEffect(() => {
+    if (web3Modal.cachedProvider) {
+      loadWeb3Modal();
+    }
+  }, [loadWeb3Modal]);
 
   return (
     <div className="App">
-      {/* ✏️ Edit the header and change the title to your project name */}
-      {/* <Header /> */}
       <NetworkDisplay
         NETWORKCHECK={NETWORKCHECK}
         localChainId={localChainId}
@@ -257,21 +224,21 @@ function App(props) {
         USE_NETWORK_SELECTOR={USE_NETWORK_SELECTOR}
       />
 
-      <div style={{ position: "absolute", bottom: 30, right: 15, zIndex: 20 }}>
-        <Tooltip title="zkHistory">
-          <Button
-            shape="circle"
-            icon={isHome ? <ClockCircleFilled /> : <BackwardFilled />}
-            onClick={() => (isHome ? history.push("/history") : history.push("/"))}
-            type="primary"
-          />
-        </Tooltip>
-      </div>
-
       <Switch>
         <Route exact path="/">
           {/* pass in any web3 props to this Home component. For example, yourLocalBalance */}
           <Home
+            yourLocalBalance={yourLocalBalance}
+            writeContracts={writeContracts}
+            readContracts={readContracts}
+            address={address}
+            injectedProvider={injectedProvider}
+            userSigner={userSigner}
+          />
+        </Route>
+        <Route exact path="/polygons">
+          {/* pass in any web3 props to this Home component. For example, yourLocalBalance */}
+          <Polygons
             yourLocalBalance={yourLocalBalance}
             writeContracts={writeContracts}
             readContracts={readContracts}
@@ -291,10 +258,8 @@ function App(props) {
         </Route>
       </Switch>
 
-      {/* <ThemeSwitch /> */}
-
       {/* 👨‍💼 Your account is in the top right with a wallet at connect options */}
-      <div style={{ position: "fixed", textAlign: "right", right: 0, top: 0, padding: 10 }}>
+      <div style={{ position: "fixed", textAlign: "right", right: 0, top: 0, padding: 10, zIndex: 999 }}>
         <div style={{ display: "flex", flex: 1 }}>
           {USE_NETWORK_SELECTOR && (
             <div style={{ marginRight: 10, marginTop: 6 }}>
@@ -321,65 +286,6 @@ function App(props) {
         {yourLocalBalance.lte(ethers.BigNumber.from("0")) && (
           <FaucetHint localProvider={localProvider} targetNetwork={targetNetwork} address={address} />
         )}
-      </div>
-
-      {/* 🗺 Extra UI like gas price, eth price, faucet, and support: */}
-      <div style={{ position: "fixed", textAlign: "left", left: 0, bottom: 20, padding: 10 }}>
-        {/* <Row align="middle" gutter={[4, 4]}>
-          <Col span={8}>
-            <Ramp price={price} address={address} networks={NETWORKS} />
-          </Col>
-
-          <Col span={8} style={{ textAlign: "center", opacity: 0.8 }}>
-            <GasGauge gasPrice={gasPrice} />
-          </Col>
-          <Col span={8} style={{ textAlign: "center", opacity: 1 }}>
-            <Button
-              onClick={() => {
-                window.open("https://t.me/joinchat/KByvmRe5wkR-8F_zz6AjpA");
-              }}
-              size="large"
-              shape="round"
-            >
-              <span style={{ marginRight: 8 }} role="img" aria-label="support">
-                💬
-              </span>
-              Support
-            </Button>
-          </Col>
-        </Row> */}
-        {/* <Button
-          onClick={async () => {
-            const tx = await writeContracts.Verifier.verifyProof(
-              [
-                "0x1e2cdec01d32f0bd784efed35b3b724eb62e6a05b887e5eaf35af3049d5f850a",
-                "0x19445a36d4536a49c4323eff01647ca5cd4db4902b054a5cc5ee5c9383d54b35",
-              ],
-              [
-                [
-                  "0x1bb8a138b2006f0f59c3bd4c73c9300f40d3e088a7c1c0b4e4f3e122f3c87603",
-                  "0x1d79c23cfbe3693e50cac552872b37118fd3762c151d434c7d16fa422878bc76",
-                ],
-                [
-                  "0x1046db7951e4412da7a15a2c4c9b63977d22657711bdc917df1806a27e203e84",
-                  "0x1872793bfe4828dac60811ccbfd55fb8b5a3779c3c0a5b783263bae331fd79dd",
-                ],
-              ],
-              [
-                "0x3062a537e8d58d314c731118998a2a20c0eed60d7484933f65aaf87ef65ac1d6",
-                "0x1d417031d2a40b655b6e35e55b1aedca105fbc4a702b49c7ddd0fc4db90be877",
-              ],
-              ["0x0000000000000000000000000000000000000000000000000000000000000001"],
-            );
-            console.log({ tx });
-
-            const recipt = await tx.wait(1);
-            console.log({recipt})
-          }}
-
-        >
-          call
-        </Button> */}
       </div>
     </div>
   );
