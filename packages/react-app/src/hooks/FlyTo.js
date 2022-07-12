@@ -1,13 +1,13 @@
 import { useEffect } from "react";
 
-export default function useFlyTo(map, setViewState) {
+export default function useFlyTo(map, setViewState, zoom) {
   const flyTo = async inputs => {
     setViewState({
       latitude: inputs.coords.latitude,
       longitude: inputs.coords.longitude,
       zoom: 13,
     });
-    if (map) map.flyTo([inputs.coords.latitude, inputs.coords.longitude], 18);
+    if (map) map.flyTo([inputs.coords.latitude, inputs.coords.longitude], zoom ?? 18);
   };
 
   useEffect(() => {

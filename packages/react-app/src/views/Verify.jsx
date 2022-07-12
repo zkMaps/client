@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { utils } from "ffjavascript";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
-import { Row, Button, Alert } from "antd";
+import { Button, Alert } from "antd";
 import { icon } from "leaflet";
 
 import "leaflet/dist/leaflet.css";
@@ -10,10 +10,11 @@ import "leaflet/dist/leaflet.css";
 import useFlyTo from "../hooks/FlyTo";
 
 // Components
-import CornerButtons from "../components/CornerButtons";
 import ModalIntro from "../components/ModalIntro";
+import LayerSwitch from "../components/LayerSwitch";
 
 // Constants
+import { ASSETS } from "../constants";
 import marker from "../logo-black.png";
 var customMarkerIcon = icon({
   iconUrl: marker,
@@ -70,38 +71,6 @@ const { unstringifyBigInts } = utils;
  * @returns react component
  **/
 
-// Constants
-
-/* Circon multiplier example */
-let wasmFile =
-  "https://gateway.pinata.cloud/ipfs/QmdBE3yZahaVbVXmHJHQnHvGQL8JtevJToTP1g6WkJ1hQP?filename=multiplier2.wasm";
-let zkeyFile =
-  "https://gateway.pinata.cloud/ipfs/Qmb4KF1F6UjYFH2c9ehvqiM4q5jMdCB8FmGUDjztRYLa8Z?filename=multiplier2_0001.zkey";
-let publicConstraint =
-  "https://gateway.pinata.cloud/ipfs/QmdrjaYAXtW59WMLEDoi6fGRDoQWNgMJzxGcs8N4Y6efvG?filename=public.json";
-let verification_key =
-  "https://gateway.pinata.cloud/ipfs/QmNtP68qhqvDNLMdSFkfNi5D3LYfWSyyUb8XPUPqdWuSA4?filename=verification_key.json";
-const proofInput = { a: 3, b: 11 };
-
-/* AtEthDenver */
-// let wasmFile =
-//   "https://gateway.pinata.cloud/ipfs/QmPyAbDi2EwesWSNWyYSresj4ZwRLsVoQXagoD7eDQbBDv?filename=AtEthDenver.wasm";
-// let zkeyFile =
-//   "https://gateway.pinata.cloud/ipfs/QmPyfF2k7wTKGibSKnh6eW3ibVhZDYoTUS1GdqcxVoZ3GX?filename=AtEthDenver_0001.zkey";
-// let publicConstraint = "https://gateway.pinata.cloud/ipfs/QmdCe5TJW3nAcXYbnXqLf9JGyodSgek6mKwSK9mxzn6ejx";
-// const proofInput = {
-//     latitude: 12973547807205024,
-//     longitude: 7500977777251779,
-//  };
-
-/* AtColorado */
-// let wasmFile =
-//   "https://gateway.pinata.cloud/ipfs/QmaKTiHhWWGLhgX3s8rjqy8TQT7i34Cz6f9voG8H7YdUrJ?filename=InColorado.wasm";
-// let zkeyFile =
-//   "https://gateway.pinata.cloud/ipfs/QmRDFEoFJbp9VuFbiVacF5B1PPVmDaJiczTcy43t4HX9ep?filename=InColorado_0001.zkey";
-// let publicConstraint =
-//   "https://gateway.pinata.cloud/ipfs/QmVhhVZj2wT2ZhFr8JPqM69ZPEM8AqaSEdgGNCKsXP6GS2?filename=InColoradoPublic.json";
-
 const settings = {
   // scrollZoom: true,
   boxZoom: false,
@@ -136,6 +105,7 @@ function Home({ writeContracts, address, injectedProvider, readContracts, userSi
   const [isCtaHovered, setIsCtaHovered] = useState(false);
   const [message, setMessage] = useState(null);
   const [isVerifying, setIsVerifying] = useState(false);
+  const [selectedOption, setSelectedOption] = useState(ASSETS[0]);
   const [map, setMap] = useState(null);
 
   // custom hooks
@@ -194,21 +164,24 @@ function Home({ writeContracts, address, injectedProvider, readContracts, userSi
       //   //   : Math.trunc((longitude + 180) * Math.pow(10, 14)),
       //   // latitude: withPrecision ? Math.trunc((latitude + 90) * 1000) : Math.trunc((latitude + 90) * Math.pow(10, 14)),
       // };
-      const { proof: _proof, publicSignals: _public } = await makeProof(proofInput, wasmFile, zkeyFile);
+      const { proof: _proof, publicSignals: _public } = await makeProof(
+        selectedOption?.proofInput,
+        selectedOption?.wasmFile,
+        selectedOption?.zkeyFile,
+      );
 
       setIsVerifying(true);
 
       _proof.protocol = "groth16";
-      console.log("🚀 ~ file: Home.jsx ~ line 257 ~ runProofs ~ _proof", _proof);
       setProof(JSON.stringify(_proof, null, 2));
       setSignals(JSON.stringify(_public, null, 2));
 
-      const vkey = await fetch(verification_key).then(res => {
+      const vkey = await fetch(selectedOption?.verification_key).then(res => {
         return res.json();
       });
 
       // const pub = ["33"];
-      const pub = await fetch(publicConstraint).then(res => {
+      const pub = await fetch(selectedOption?.publicConstraint).then(res => {
         return res.json();
       });
 
@@ -271,6 +244,38 @@ function Home({ writeContracts, address, injectedProvider, readContracts, userSi
 
       <ModalIntro />
 
+      {ASSETS && (
+        <div style={{ position: "absolute", top: "15px", left: "50%", transform: "translate(-50%)", zIndex: 10 }}>
+          <LayerSwitch layerOptions={ASSETS} selectedOption={selectedOption} setSelectedOption={setSelectedOption} />
+        </div>
+      )}
+
+      <div style={{ position: "absolute", top: "60%", left: "50%", transform: "translate(-50%, -50%)", zIndex: 20 }}>
+        <Button
+          key="runProofs"
+          style={{
+            backgroundColor: isCtaHovered && isValid ? "red" : isValid ? "green" : "#222222",
+          }}
+          shape="round"
+          size="large"
+          onClick={() => {
+            isCtaHovered && isValid ? forgetProofs() : runProofs();
+          }}
+          type="primary"
+          loading={isVerifying}
+          onMouseEnter={hoverCTA}
+          onMouseLeave={unhoverCTA}
+        >
+          {isCtaHovered && isValid
+            ? "Forget proof"
+            : isValid
+            ? "Verified"
+            : isVerifying
+            ? "verifying proof"
+            : `ZK prove your location`}
+        </Button>
+      </div>
+
       <MapContainer
         ref={setMap}
         style={{ width: "100%", height: "100vh", zIndex: 0 }}
@@ -286,38 +291,6 @@ function Home({ writeContracts, address, injectedProvider, readContracts, userSi
           </Popup>
         </Marker>
       </MapContainer>
-      <div
-        style={{ position: "fixed", textAlign: "center", alignItems: "center", bottom: 20, padding: 10, width: "100%" }}
-      >
-        <Row align="middle" gutter={[4, 4]}>
-          <Button
-            key="runProofs"
-            style={{
-              verticalAlign: "center",
-              marginLeft: 8,
-              backgroundColor: isCtaHovered && isValid ? "red" : isValid ? "green" : "transparent",
-            }}
-            shape="round"
-            size="large"
-            onClick={() => {
-              isCtaHovered && isValid ? forgetProofs() : runProofs();
-            }}
-            type="primary"
-            loading={isVerifying}
-            onMouseEnter={hoverCTA}
-            onMouseLeave={unhoverCTA}
-          >
-            {isCtaHovered && isValid
-              ? "Forget proof"
-              : isValid
-              ? "Verified"
-              : isVerifying
-              ? "verifying proof"
-              : `ZK prove your location`}
-          </Button>
-        </Row>
-      </div>
-      <CornerButtons />
     </div>
   );
 }

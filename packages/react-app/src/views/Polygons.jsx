@@ -28,7 +28,7 @@ function Polygons({ writeContracts, address, injectedProvider, readContracts, us
   const [map, setMap] = useState(null);
 
   // custom hooks
-  useFlyTo(map, setViewState);
+  useFlyTo(map, setViewState, 10);
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -49,7 +49,7 @@ function Polygons({ writeContracts, address, injectedProvider, readContracts, us
         scrollWheelZoom={false}
       >
         {/* TODO: Implement dark mode https://stamen-tiles.a.ssl.fastly.net/toner/{z}/{x}/{y}.png not working */}
-        <TileLayer attribution="" url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+        <TileLayer attribution="OpenStreetMap" url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
         <DrawTools />
       </MapContainer>
       <div

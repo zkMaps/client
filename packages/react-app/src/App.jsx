@@ -16,7 +16,7 @@ import externalContracts from "./contracts/external_contracts";
 // contracts
 import deployedContracts from "./contracts/hardhat_contracts.json";
 import { Transactor, Web3ModalSetup } from "./helpers";
-import { Home, Subgraph, Polygons } from "./views";
+import { Home, Subgraph, Polygons, Verify } from "./views";
 import { useStaticJsonRPC } from "./hooks";
 
 const { ethers } = require("ethers");
@@ -228,6 +228,17 @@ function App(props) {
         <Route exact path="/">
           {/* pass in any web3 props to this Home component. For example, yourLocalBalance */}
           <Home
+            yourLocalBalance={yourLocalBalance}
+            writeContracts={writeContracts}
+            readContracts={readContracts}
+            address={address}
+            injectedProvider={injectedProvider}
+            userSigner={userSigner}
+          />
+        </Route>
+        <Route exact path="/verify">
+          {/* pass in any web3 props to this Home component. For example, yourLocalBalance */}
+          <Verify
             yourLocalBalance={yourLocalBalance}
             writeContracts={writeContracts}
             readContracts={readContracts}

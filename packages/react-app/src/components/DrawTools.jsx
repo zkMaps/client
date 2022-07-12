@@ -1,8 +1,10 @@
 import React, { useState } from "react";
-import { Card } from "antd";
+import { Card, Button } from "antd";
 import { FeatureGroup } from "react-leaflet";
 import L from "leaflet";
 import { EditControl } from "react-leaflet-draw";
+import axios from "axios";
+
 // work around broken icons when using webpack, see https://github.com/PaulLeCam/react-leaflet/issues/255
 import "antd/dist/antd.css";
 
@@ -16,6 +18,7 @@ L.Icon.Default.mergeOptions({
 const DrawTools = () => {
   // Hooks
   const [polygons, setPolygons] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   // see http://leaflet.github.io/Leaflet.draw/docs/leaflet-draw-latest.html#l-draw-event for leaflet-draw events doc
 
   let _editableFG = null;
@@ -107,6 +110,16 @@ const DrawTools = () => {
     console.log("_onDeleteStop", e);
   };
 
+  const baseUrl = "http://localhost:8000";
+
+  const _generateContract = async () => {
+    setIsLoading(true);
+    console.log("_generateContract");
+    const res = await axios.get(`${baseUrl}`);
+    const { tokens } = res.data;
+    setIsLoading(false);
+  };
+
   return (
     <>
       <FeatureGroup
@@ -147,6 +160,17 @@ const DrawTools = () => {
               </p>
             ));
           })}
+          <Button
+            key="generateContract"
+            style={{ verticalAlign: "center", marginLeft: 8 }}
+            shape="round"
+            size="large"
+            onClick={_generateContract}
+            type="primary"
+            loading={isLoading}
+          >
+            Generate contract
+          </Button>
         </Card>
       )}
     </>

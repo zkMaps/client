@@ -210,3 +210,50 @@ export const NETWORK = chainId => {
     }
   }
 };
+
+export const ASSETS = [
+  {
+    id: 1,
+    description: "Circon multiplier example",
+    wasmFile:
+      "https://gateway.pinata.cloud/ipfs/QmdBE3yZahaVbVXmHJHQnHvGQL8JtevJToTP1g6WkJ1hQP?filename=multiplier2.wasm",
+    zkeyFile:
+      "https://gateway.pinata.cloud/ipfs/Qmb4KF1F6UjYFH2c9ehvqiM4q5jMdCB8FmGUDjztRYLa8Z?filename=multiplier2_0001.zkey",
+    publicConstraint:
+      "https://gateway.pinata.cloud/ipfs/QmdBE3yZahaVbVXmHJHQnHvGQL8JtevJToTP1g6WkJ1hQP?filename=multiplier2.wasm",
+    verification_key:
+      "https://gateway.pinata.cloud/ipfs/QmdBE3yZahaVbVXmHJHQnHvGQL8JtevJToTP1g6WkJ1hQP?filename=multiplier2.wasm",
+    proofInput: { a: 3, b: 11 },
+  },
+  {
+    id: 2,
+    description: "AtEthDenver",
+    wasmFile:
+      "https://gateway.pinata.cloud/ipfs/QmPyAbDi2EwesWSNWyYSresj4ZwRLsVoQXagoD7eDQbBDv?filename=AtEthDenver.wasm",
+    zkeyFile:
+      "https://gateway.pinata.cloud/ipfs/QmPyfF2k7wTKGibSKnh6eW3ibVhZDYoTUS1GdqcxVoZ3GX?filename=AtEthDenver_0001.zkey",
+    publicConstraint: "https://gateway.pinata.cloud/ipfs/QmdCe5TJW3nAcXYbnXqLf9JGyodSgek6mKwSK9mxzn6ejx",
+    // verification_key:
+    //   "https://gateway.pinata.cloud/ipfs/QmdBE3yZahaVbVXmHJHQnHvGQL8JtevJToTP1g6WkJ1hQP?filename=multiplier2.wasm",
+    proofInput: {
+      latitude: 12973547807205024,
+      longitude: 7500977777251779,
+    },
+  },
+  {
+    id: 3,
+    description: "AtColorado",
+    wasmFile:
+      "https://gateway.pinata.cloud/ipfs/QmaKTiHhWWGLhgX3s8rjqy8TQT7i34Cz6f9voG8H7YdUrJ?filename=InColorado.wasm",
+    zkeyFile:
+      "https://gateway.pinata.cloud/ipfs/QmRDFEoFJbp9VuFbiVacF5B1PPVmDaJiczTcy43t4HX9ep?filename=InColorado_0001.zkey",
+    publicConstraint:
+      "https://gateway.pinata.cloud/ipfs/QmVhhVZj2wT2ZhFr8JPqM69ZPEM8AqaSEdgGNCKsXP6GS2?filename=InColoradoPublic.json",
+    // verification_key:
+    //   "https://gateway.pinata.cloud/ipfs/QmdBE3yZahaVbVXmHJHQnHvGQL8JtevJToTP1g6WkJ1hQP?filename=multiplier2.wasm",
+    // proofInput: {
+    //   latitude: 12973547807205024,
+    //   longitude: 7500977777251779,
+    // },
+  },
+];
