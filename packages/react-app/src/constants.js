@@ -213,6 +213,31 @@ export const NETWORK = chainId => {
 
 export const ASSETS = [
   {
+    id: 0,
+    description: "RayTracing4 - Cordoba (Argentina)",
+    wasmFile: "https://gateway.pinata.cloud/ipfs/QmPZYu5xpEqj5H55U5nsNxrcvbfYWq4J9eaXo9KyaNi1Kg/RayTracing4.wasm",
+    zkeyFile: "https://gateway.pinata.cloud/ipfs/QmPZYu5xpEqj5H55U5nsNxrcvbfYWq4J9eaXo9KyaNi1Kg/RayTracing4_0001.zkey",
+    publicConstraint: "",
+    verification_key: "",
+    // FIXME: DO we need this input? Or is it only to create a new
+    proofInput: {
+      point: [11, 14],
+      polygon: [
+        [10, 10],
+        [10, 15],
+        [15, 15],
+        [15, 10],
+      ],
+    },
+    zone: [
+      [148236797790103940, 25084533691406236],
+      [149008262954913280, 25084533691406236],
+      [149008262954913280, 26427612304687492],
+      [148236797790103940, 26427612304687492],
+    ],
+    contractAddr: "0x4f52f8c5fb2c54e04e0044f799dd94484f4e52d5",
+  },
+  {
     id: 1,
     description: "Circon multiplier example",
     wasmFile:

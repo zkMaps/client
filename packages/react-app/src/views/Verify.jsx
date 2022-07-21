@@ -87,7 +87,7 @@ const settings = {
   showCompass: true,
 };
 
-function Home({ writeContracts, address, injectedProvider, readContracts, userSigner }) {
+function Verify({ writeContracts, address, injectedProvider, readContracts, userSigner }) {
   // you can also use hooks locally in your component of choice
 
   // Hooks
@@ -149,6 +149,37 @@ function Home({ writeContracts, address, injectedProvider, readContracts, userSi
     }
   };
 
+  const onChainVerification = async (_proof, pub) => {
+    try {
+      const callData = await zkeyExportSolidityCalldata(_proof, {}, pub);
+      const callDataFormatted = JSON.parse("[" + callData.replace(/}{/g, "},{") + "]");
+
+      // const tx = await readContracts.Verifier.verifyProof(...callDataFormatted);
+      // const recipt = await tx?.wait(2);
+      // const decodeOutput = ethers.utils.defaultAbiCoder.decode(["bool"], ethers.utils.hexDataSlice(tx.data, 4));
+
+      let iface = new ethers.utils.Interface(Verifier);
+      let verifier = new ethers.Contract(selectedOption?.contractAddr, iface, userSigner);
+      let decodeOutput = await verifier.verifyProof(...callDataFormatted);
+
+      if (decodeOutput[0]) {
+        setIsVerifying(false);
+        setIsValid(true);
+        setMessage({ text: "You have verified your location!", type: "success" });
+        setTimeout(() => {
+          setMessage(null);
+        }, 5000);
+      } else {
+        setIsVerifying(false);
+        setMessage({ text: "Your location doesn't meet the requirements. Try again.", type: "error" });
+        forgetProofs();
+      }
+    } catch (error) {
+      console.error(error);
+      setIsVerifying(false);
+    }
+  };
+
   const runProofs = async () => {
     try {
       if (!address) {
@@ -158,64 +189,66 @@ function Home({ writeContracts, address, injectedProvider, readContracts, userSi
         }, 5000);
         return;
       }
-      // const proofInput = {
-      //   // longitude: withPrecision
-      //   //   ? Math.trunc((longitude + 180) * 1000)
-      //   //   : Math.trunc((longitude + 180) * Math.pow(10, 14)),
-      //   // latitude: withPrecision ? Math.trunc((latitude + 90) * 1000) : Math.trunc((latitude + 90) * Math.pow(10, 14)),
+      setIsVerifying(true);
+      const proofInput = {
+        point: [11, 14],
+        polygon: [
+          [10, 10],
+          [10, 15],
+          [15, 15],
+          [15, 10],
+        ],
+      };
+      // {
+      //   point: [148536797790103940, 25584533691406236],
+      //   polygon: [
+      //     [148236797790103940, 25084533691406236],
+      //     [149008262954913280, 25084533691406236],
+      //     [149008262954913280, 26427612304687492],
+      //     [148236797790103940, 26427612304687492],
+      //   ],
       // };
+
+      // {
+      //   point: [
+      //     Math.trunc((viewState?.latitude + 180) * Math.pow(10, 15)),
+      //     Math.trunc((viewState?.longitude + 90) * Math.pow(10, 15)),
+      //   ],
+      //   polygon: selectedOption?.zone,
+      // };
+      // console.log("🚀 ~ file: Verify.jsx ~ line 200 ~ runProofs ~ proofInput", JSON.stringify(proofInput));
       const { proof: _proof, publicSignals: _public } = await makeProof(
-        selectedOption?.proofInput,
+        proofInput,
         selectedOption?.wasmFile,
         selectedOption?.zkeyFile,
       );
-
-      setIsVerifying(true);
 
       _proof.protocol = "groth16";
       setProof(JSON.stringify(_proof, null, 2));
       setSignals(JSON.stringify(_public, null, 2));
 
-      const vkey = await fetch(selectedOption?.verification_key).then(res => {
-        return res.json();
-      });
+      // const vkey = await fetch(selectedOption?.verification_key).then(res => {
+      //   return res.json();
+      // });
 
       // const pub = ["33"];
       const pub = await fetch(selectedOption?.publicConstraint).then(res => {
         return res.json();
       });
 
+      // TODO: Check if we end up checking proof locally
+      await onChainVerification(_proof, pub);
+      return;
+
       // TODO: Test what happens with AtEthDenver and InColorado
-      const localVerification = await window.snarkjs.groth16.verify(vkey, pub, _proof);
+      // const localVerification = await window.snarkjs.groth16.verify(vkey, pub, _proof);
 
-      if (localVerification) {
-        const callData = await zkeyExportSolidityCalldata(_proof, {}, pub);
-        const callDataFormatted = JSON.parse("[" + callData.replace(/}{/g, "},{") + "]");
-
-        // const tx = await readContracts.Verifier.verifyProof(...callDataFormatted);
-        // const recipt = await tx?.wait(2);
-        // const decodeOutput = ethers.utils.defaultAbiCoder.decode(["bool"], ethers.utils.hexDataSlice(tx.data, 4));
-
-        let iface = new ethers.utils.Interface(Verifier);
-        let verifier = new ethers.Contract("0xffdb60e666ae25fe5d79ff66680c828902de90cc", iface, userSigner);
-        let decodeOutput = await verifier.verifyProof(...callDataFormatted);
-
-        if (decodeOutput[0] && localVerification) {
-          setIsVerifying(false);
-          setIsValid(true);
-          setMessage({ text: "You have verified your location!", type: "success" });
-          setTimeout(() => {
-            setMessage(null);
-          }, 5000);
-        } else {
-          setIsVerifying(false);
-          setMessage({ text: "Your location doesn't meet the requirements. Try again.", type: "error" });
-          forgetProofs();
-        }
-      } else {
-        setMessage({ text: "Your location doesn't meet the requirements. Try again.", type: "error" });
-        setIsVerifying(false);
-      }
+      // if (localVerification) {
+      //   onChainVerification(_proof, pub);
+      // } else {
+      //   setMessage({ text: "Your location doesn't meet the requirements. Try again.", type: "error" });
+      //   setIsVerifying(false);
+      // }
       // console.log({ recipt.past});
     } catch (error) {
       setIsVerifying(false);
@@ -295,4 +328,4 @@ function Home({ writeContracts, address, injectedProvider, readContracts, userSi
   );
 }
 
-export default Home;
+export default Verify;

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Card, Button } from "antd";
+import { Card, Button, message } from "antd";
 import { FeatureGroup } from "react-leaflet";
 import L from "leaflet";
 import { EditControl } from "react-leaflet-draw";
@@ -17,14 +17,14 @@ L.Icon.Default.mergeOptions({
 
 const DrawTools = () => {
   // Hooks
-  const [polygons, setPolygons] = useState([]);
+  console.log("🚀 ~ file: DrawTools.jsx ~ line 21 ~ DrawTools ~ polygon", polygon);
+  const [polygon, setPolygon] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   // see http://leaflet.github.io/Leaflet.draw/docs/leaflet-draw-latest.html#l-draw-event for leaflet-draw events doc
 
   let _editableFG = null;
 
   const _onFeatureGroupReady = reactFGref => {
-    console.log("🚀 ~ file: DrawTools.jsx ~ line 102 ~ test ~ reactFGref", reactFGref);
     // populate the leaflet FeatureGroup with the geoJson layers
     // TODO: When we have an asset management sysyem, we can load previous drawings with this script
     // let leafletGeoJSON = new L.GeoJSON(getGeoJson());
@@ -63,16 +63,14 @@ const DrawTools = () => {
 
   const _onCreated = e => {
     let type = e.layerType;
-    let layer = e.layer;
     if (type === "marker") {
       // Do marker specific actions
-      setPolygons(polygons.push(e?.layer?._latlngs));
+      setPolygon([...polygon, e?.layer?._latlngs]);
     } else {
       console.log("_onCreated: something else created:", type, e);
-      setPolygons([...polygons, e?.layer?._latlngs]);
+      setPolygon(e?.layer?._latlngs[0]);
     }
     // Do whatever else you need to. (save to db; etc)
-
     _onChange();
   };
 
@@ -110,14 +108,40 @@ const DrawTools = () => {
     console.log("_onDeleteStop", e);
   };
 
-  const baseUrl = "http://localhost:8000";
+  // const baseUrl = "http://localhost:8000/";
+  const baseUrl = "https://zk-maps.vercel.app/";
 
   const _generateContract = async () => {
-    setIsLoading(true);
-    console.log("_generateContract");
-    const res = await axios.get(`${baseUrl}`);
-    const { tokens } = res.data;
-    setIsLoading(false);
+    polygon.map(coord => {
+      console.log(
+        "[",
+        Math.trunc((coord.lat + 180) * Math.pow(10, 15)),
+        ",",
+        Math.trunc((coord.lng + 90) * Math.pow(10, 15)),
+        "]",
+      );
+    });
+    // try {
+    //   setIsLoading(true);
+    //   console.log("_generateContract");
+    //   const res = await axios({
+    //     method: "post",
+    //     baseURL: baseUrl,
+    //     url: "api/generate/boundingbox",
+    //     // (${northEastX}, ${northEastY}, ${southWestX}, ${southWestY});
+    //     // y = longitude and x = latitude
+    //     data: {
+    //       geoFenceCoords: [polygon[1].lat, polygon[1].lng, polygon[3].lat, polygon[3].lng],
+    //     },
+    //   });
+    //   const { tokens } = res.data;
+    //   setIsLoading(false);
+    //   message.success("Zone created");
+    // } catch (error) {
+    //   console.log("🚀 ~ file: DrawTools.jsx ~ line 131 ~ const_generateContract= ~ error", error.message);
+    //   setIsLoading(false);
+    //   message.error("Error creating new verification zone");
+    // }
   };
 
   return (
@@ -147,18 +171,18 @@ const DrawTools = () => {
           }}
         />
       </FeatureGroup>
-      {polygons?.length && (
+      {polygon?.length && (
         <Card
           title="Polygon Coords"
           bordered={true}
           style={{ position: "absolute", width: 300, zIndex: 500, bottom: 10 }}
         >
-          {polygons[0]?.map(polygon => {
-            return polygon.map(vertex => (
+          {polygon.map(vertex => {
+            return (
               <p>
                 lat: {vertex.lat} - long: {vertex.lng}
               </p>
-            ));
+            );
           })}
           <Button
             key="generateContract"
@@ -169,7 +193,7 @@ const DrawTools = () => {
             type="primary"
             loading={isLoading}
           >
-            Generate contract
+            Create Zone
           </Button>
         </Card>
       )}
