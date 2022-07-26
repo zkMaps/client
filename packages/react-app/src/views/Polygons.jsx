@@ -7,7 +7,7 @@ import "leaflet/dist/leaflet.css";
 import useFlyTo from "../hooks/FlyTo";
 
 // Components
-import DrawTools from "../components/DrawTools";
+import ControlTools from "../components/ControlTools";
 
 // The following is required to stop "npm build" from transpiling mapbox code.
 // notice the exclamation point in the import.
@@ -50,7 +50,7 @@ function Polygons({ writeContracts, address, injectedProvider, readContracts, us
       >
         {/* TODO: Implement dark mode https://stamen-tiles.a.ssl.fastly.net/toner/{z}/{x}/{y}.png not working */}
         <TileLayer attribution="OpenStreetMap" url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-        <DrawTools />
+        <ControlTools draw />
       </MapContainer>
       <div
         style={{ position: "fixed", textAlign: "center", alignItems: "center", bottom: 20, padding: 10, width: "100%" }}

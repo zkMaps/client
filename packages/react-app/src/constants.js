@@ -215,70 +215,70 @@ export const ASSETS = [
   {
     id: 0,
     description: "RayTracing4 - Cordoba (Argentina)",
-    wasmFile: "https://gateway.pinata.cloud/ipfs/QmPZYu5xpEqj5H55U5nsNxrcvbfYWq4J9eaXo9KyaNi1Kg/RayTracing4.wasm",
-    zkeyFile: "https://gateway.pinata.cloud/ipfs/QmPZYu5xpEqj5H55U5nsNxrcvbfYWq4J9eaXo9KyaNi1Kg/RayTracing4_0001.zkey",
-    publicConstraint: "",
-    verification_key: "",
-    // FIXME: DO we need this input? Or is it only to create a new
-    proofInput: {
-      point: [11, 14],
-      polygon: [
-        [10, 10],
-        [10, 15],
-        [15, 15],
-        [15, 10],
-      ],
+    wasmFile: "https://gateway.pinata.cloud/ipfs/Qmf6423zajZzX33kt9ay6X9mqnfXZAyJj2e8eGnXWmAqVJ/RayTracing4.wasm",
+    zkeyFile: "https://gateway.pinata.cloud/ipfs/Qmf6423zajZzX33kt9ay6X9mqnfXZAyJj2e8eGnXWmAqVJ/RayTracing4_0001.zkey",
+    publicConstraint: ["1"],
+    geoJson: {
+      type: "Feature",
+      properties: {},
+      geometry: {
+        type: "Polygon",
+        coordinates: [
+          [
+            [-64.63119506835939, -31.59491312542741],
+            [-64.63119506835939, -31.10821276589124],
+            [-63.94454956054688, -31.10821276589124],
+            [-63.94454956054688, -31.59491312542741],
+          ],
+        ],
+      },
     },
-    zone: [
-      [148236797790103940, 25084533691406236],
-      [149008262954913280, 25084533691406236],
-      [149008262954913280, 26427612304687492],
-      [148236797790103940, 26427612304687492],
-    ],
-    contractAddr: "0x4f52f8c5fb2c54e04e0044f799dd94484f4e52d5",
+    contractAddr: "0x4f52f8c5fb2c54e04e0044f799dd94484f4e52d5", // Ropsten
   },
   {
     id: 1,
-    description: "Circon multiplier example",
-    wasmFile:
-      "https://gateway.pinata.cloud/ipfs/QmdBE3yZahaVbVXmHJHQnHvGQL8JtevJToTP1g6WkJ1hQP?filename=multiplier2.wasm",
-    zkeyFile:
-      "https://gateway.pinata.cloud/ipfs/Qmb4KF1F6UjYFH2c9ehvqiM4q5jMdCB8FmGUDjztRYLa8Z?filename=multiplier2_0001.zkey",
-    publicConstraint:
-      "https://gateway.pinata.cloud/ipfs/QmdBE3yZahaVbVXmHJHQnHvGQL8JtevJToTP1g6WkJ1hQP?filename=multiplier2.wasm",
-    verification_key:
-      "https://gateway.pinata.cloud/ipfs/QmdBE3yZahaVbVXmHJHQnHvGQL8JtevJToTP1g6WkJ1hQP?filename=multiplier2.wasm",
-    proofInput: { a: 3, b: 11 },
+    description: "RayTracing4 - New Zeland",
+    wasmFile: "https://gateway.pinata.cloud/ipfs/Qmf6423zajZzX33kt9ay6X9mqnfXZAyJj2e8eGnXWmAqVJ/RayTracing4.wasm",
+    zkeyFile: "https://gateway.pinata.cloud/ipfs/Qmf6423zajZzX33kt9ay6X9mqnfXZAyJj2e8eGnXWmAqVJ/RayTracing4_0001.zkey",
+    publicConstraint: ["1"],
+    geoJson: {
+      type: "Feature",
+      properties: {},
+      geometry: {
+        type: "Polygon",
+        coordinates: [
+          [
+            [161.67480468750003, -48.54570549184745],
+            [161.67480468750003, -32.69486597787506],
+            [184.70214843750003, -32.69486597787506],
+            [184.70214843750003, -48.54570549184745],
+          ],
+        ],
+      },
+    },
+    contractAddr: "0x4f52f8c5fb2c54e04e0044f799dd94484f4e52d5", // Ropsten
   },
   {
     id: 2,
-    description: "AtEthDenver",
-    wasmFile:
-      "https://gateway.pinata.cloud/ipfs/QmPyAbDi2EwesWSNWyYSresj4ZwRLsVoQXagoD7eDQbBDv?filename=AtEthDenver.wasm",
-    zkeyFile:
-      "https://gateway.pinata.cloud/ipfs/QmPyfF2k7wTKGibSKnh6eW3ibVhZDYoTUS1GdqcxVoZ3GX?filename=AtEthDenver_0001.zkey",
-    publicConstraint: "https://gateway.pinata.cloud/ipfs/QmdCe5TJW3nAcXYbnXqLf9JGyodSgek6mKwSK9mxzn6ejx",
-    // verification_key:
-    //   "https://gateway.pinata.cloud/ipfs/QmdBE3yZahaVbVXmHJHQnHvGQL8JtevJToTP1g6WkJ1hQP?filename=multiplier2.wasm",
-    proofInput: {
-      latitude: 12973547807205024,
-      longitude: 7500977777251779,
+    description: "RayTracing4 - Israel",
+    wasmFile: "https://gateway.pinata.cloud/ipfs/Qmf6423zajZzX33kt9ay6X9mqnfXZAyJj2e8eGnXWmAqVJ/RayTracing4.wasm",
+    zkeyFile: "https://gateway.pinata.cloud/ipfs/Qmf6423zajZzX33kt9ay6X9mqnfXZAyJj2e8eGnXWmAqVJ/RayTracing4_0001.zkey",
+    publicConstraint: ["1"],
+    geoJson: {
+      type: "Feature",
+      properties: {},
+      geometry: {
+        type: "Polygon",
+        coordinates: [
+          [
+            [33.09082031250001, 29.9596938141845],
+            [33.09082031250001, 33.5963189611327],
+            [36.26037597656251, 33.5963189611327],
+            [36.26037597656251, 29.9596938141845],
+          ],
+        ],
+      },
     },
-  },
-  {
-    id: 3,
-    description: "AtColorado",
-    wasmFile:
-      "https://gateway.pinata.cloud/ipfs/QmaKTiHhWWGLhgX3s8rjqy8TQT7i34Cz6f9voG8H7YdUrJ?filename=InColorado.wasm",
-    zkeyFile:
-      "https://gateway.pinata.cloud/ipfs/QmRDFEoFJbp9VuFbiVacF5B1PPVmDaJiczTcy43t4HX9ep?filename=InColorado_0001.zkey",
-    publicConstraint:
-      "https://gateway.pinata.cloud/ipfs/QmVhhVZj2wT2ZhFr8JPqM69ZPEM8AqaSEdgGNCKsXP6GS2?filename=InColoradoPublic.json",
-    // verification_key:
-    //   "https://gateway.pinata.cloud/ipfs/QmdBE3yZahaVbVXmHJHQnHvGQL8JtevJToTP1g6WkJ1hQP?filename=multiplier2.wasm",
-    // proofInput: {
-    //   latitude: 12973547807205024,
-    //   longitude: 7500977777251779,
-    // },
+    contractAddr: "0x4f52f8c5fb2c54e04e0044f799dd94484f4e52d5", // Ropsten
   },
 ];

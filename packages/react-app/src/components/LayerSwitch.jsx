@@ -1,7 +1,12 @@
 import React from "react";
 import { Dropdown, Menu, Button } from "antd";
+import { PlusCircleOutlined } from "@ant-design/icons";
+import { useHistory } from "react-router-dom";
 
 function LayerSwitch({ layerOptions, selectedOption, setSelectedOption }) {
+  // Hooks
+  let history = useHistory();
+
   const menu = (
     <Menu>
       {layerOptions
@@ -14,8 +19,8 @@ function LayerSwitch({ layerOptions, selectedOption, setSelectedOption }) {
           </Menu.Item>
         ))}
       <Menu.Item key={9}>
-        <Button type="text" onClick={() => console.log("adsfijdaiosfjaos")}>
-          <span style={{ textTransform: "capitalize" }}>asdfjaiosfjoiaj</span>
+        <Button type="text" onClick={() => history.push("/polygons")} icon={<PlusCircleOutlined />}>
+          <span style={{ textTransform: "capitalize" }}>Add Zone</span>
         </Button>
       </Menu.Item>
     </Menu>

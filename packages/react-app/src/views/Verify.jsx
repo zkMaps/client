@@ -12,6 +12,7 @@ import useFlyTo from "../hooks/FlyTo";
 // Components
 import ModalIntro from "../components/ModalIntro";
 import LayerSwitch from "../components/LayerSwitch";
+import ControlTools from "../components/ControlTools";
 
 // Constants
 import { ASSETS } from "../constants";
@@ -105,6 +106,7 @@ function Verify({ writeContracts, address, injectedProvider, readContracts, user
   const [isCtaHovered, setIsCtaHovered] = useState(false);
   const [message, setMessage] = useState(null);
   const [isVerifying, setIsVerifying] = useState(false);
+  const [isGeneratingProof, setIsGeneratingProof] = useState(false);
   const [selectedOption, setSelectedOption] = useState(ASSETS[0]);
   const [map, setMap] = useState(null);
 
@@ -126,7 +128,6 @@ function Verify({ writeContracts, address, injectedProvider, readContracts, user
 
     let res;
     if (proof.protocol === "groth16") {
-      // res = await groth16ExportSolidityCallData(proof, pub);
       res = await window.snarkjs.groth16.exportSolidityCallData(proof, pub);
     } else if (proof.protocol === "plonk") {
       res = await window.snarkjs.plonk.exportSolidityCallData(proof, pub);
@@ -161,22 +162,22 @@ function Verify({ writeContracts, address, injectedProvider, readContracts, user
       let iface = new ethers.utils.Interface(Verifier);
       let verifier = new ethers.Contract(selectedOption?.contractAddr, iface, userSigner);
       let decodeOutput = await verifier.verifyProof(...callDataFormatted);
-
-      if (decodeOutput[0]) {
-        setIsVerifying(false);
+      setIsVerifying(false);
+      setIsGeneratingProof(false);
+      if (decodeOutput) {
         setIsValid(true);
         setMessage({ text: "You have verified your location!", type: "success" });
         setTimeout(() => {
           setMessage(null);
         }, 5000);
       } else {
-        setIsVerifying(false);
         setMessage({ text: "Your location doesn't meet the requirements. Try again.", type: "error" });
         forgetProofs();
       }
     } catch (error) {
       console.error(error);
       setIsVerifying(false);
+      setIsGeneratingProof(false);
     }
   };
 
@@ -189,40 +190,33 @@ function Verify({ writeContracts, address, injectedProvider, readContracts, user
         }, 5000);
         return;
       }
-      setIsVerifying(true);
-      const proofInput = {
-        point: [11, 14],
-        polygon: [
-          [10, 10],
-          [10, 15],
-          [15, 15],
-          [15, 10],
-        ],
-      };
-      // {
-      //   point: [148536797790103940, 25584533691406236],
-      //   polygon: [
-      //     [148236797790103940, 25084533691406236],
-      //     [149008262954913280, 25084533691406236],
-      //     [149008262954913280, 26427612304687492],
-      //     [148236797790103940, 26427612304687492],
-      //   ],
-      // };
 
-      // {
-      //   point: [
-      //     Math.trunc((viewState?.latitude + 180) * Math.pow(10, 15)),
-      //     Math.trunc((viewState?.longitude + 90) * Math.pow(10, 15)),
-      //   ],
-      //   polygon: selectedOption?.zone,
-      // };
-      // console.log("🚀 ~ file: Verify.jsx ~ line 200 ~ runProofs ~ proofInput", JSON.stringify(proofInput));
+      setIsGeneratingProof(true);
+
+      const normalizedFeatures = selectedOption?.geoJson?.geometry?.coordinates[0].map(coords => {
+        return coords.map((coord, index) => {
+          const normalization = index === 0 ? 180 : 90;
+          return Math.trunc((coord + normalization) * Math.pow(10, 7));
+        });
+      });
+
+      const proofInput = {
+        point: [
+          Math.trunc((viewState?.longitude + 180) * Math.pow(10, 7)),
+          Math.trunc((viewState?.latitude + 90) * Math.pow(10, 7)),
+        ],
+        polygon: normalizedFeatures,
+      };
+      console.log("🚀 ~ file: Verify.jsx ~ line 215 ~ runProofs ~ proofInput", proofInput);
       const { proof: _proof, publicSignals: _public } = await makeProof(
         proofInput,
         selectedOption?.wasmFile,
         selectedOption?.zkeyFile,
       );
+      console.log("🚀 ~ file: Verify.jsx ~ line 212 ~ runProofs ~ _proof", _proof);
 
+      setIsGeneratingProof(false);
+      setIsVerifying(true);
       _proof.protocol = "groth16";
       setProof(JSON.stringify(_proof, null, 2));
       setSignals(JSON.stringify(_public, null, 2));
@@ -231,13 +225,8 @@ function Verify({ writeContracts, address, injectedProvider, readContracts, user
       //   return res.json();
       // });
 
-      // const pub = ["33"];
-      const pub = await fetch(selectedOption?.publicConstraint).then(res => {
-        return res.json();
-      });
-
       // TODO: Check if we end up checking proof locally
-      await onChainVerification(_proof, pub);
+      await onChainVerification(_proof, selectedOption?.publicConstraint);
       return;
 
       // TODO: Test what happens with AtEthDenver and InColorado
@@ -252,6 +241,7 @@ function Verify({ writeContracts, address, injectedProvider, readContracts, user
       // console.log({ recipt.past});
     } catch (error) {
       setIsVerifying(false);
+      setIsGeneratingProof(false);
       forgetProofs();
       console.error(error);
     }
@@ -295,7 +285,7 @@ function Verify({ writeContracts, address, injectedProvider, readContracts, user
             isCtaHovered && isValid ? forgetProofs() : runProofs();
           }}
           type="primary"
-          loading={isVerifying}
+          loading={isGeneratingProof || isVerifying}
           onMouseEnter={hoverCTA}
           onMouseLeave={unhoverCTA}
         >
@@ -303,6 +293,8 @@ function Verify({ writeContracts, address, injectedProvider, readContracts, user
             ? "Forget proof"
             : isValid
             ? "Verified"
+            : isGeneratingProof
+            ? "generating proof"
             : isVerifying
             ? "verifying proof"
             : `ZK prove your location`}
@@ -315,7 +307,9 @@ function Verify({ writeContracts, address, injectedProvider, readContracts, user
         center={[viewState?.latitude, viewState?.longitude]}
         zoom={viewState.zoom}
         scrollWheelZoom={false}
+        dragging={false}
       >
+        <ControlTools map={map} draw={false} geoJson={selectedOption?.geoJson} />
         {/* https://stamen-tiles.a.ssl.fastly.net/toner/{z}/{x}/{y}.png */}
         <TileLayer attribution="" url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
         <Marker position={[viewState?.latitude, viewState?.longitude]} icon={customMarkerIcon}>
