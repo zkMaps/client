@@ -214,9 +214,10 @@ export const NETWORK = chainId => {
 export const ASSETS = [
   {
     id: 0,
-    description: "RayTracing4 - Cordoba (Argentina)",
-    wasmFile: "https://gateway.pinata.cloud/ipfs/Qmf6423zajZzX33kt9ay6X9mqnfXZAyJj2e8eGnXWmAqVJ/RayTracing4.wasm",
-    zkeyFile: "https://gateway.pinata.cloud/ipfs/Qmf6423zajZzX33kt9ay6X9mqnfXZAyJj2e8eGnXWmAqVJ/RayTracing4_0001.zkey",
+    description: "RayTracing4 (4pts) - Cordoba (Argentina)",
+    wasmFile:
+      "https://gateway.pinata.cloud/ipfs/QmRNr6MFPLPkAXdrsyKGM1TYJcPesbdLobHTGWehvrN7VU/RayTracing4_js/RayTracing4.wasm",
+    zkeyFile: "https://gateway.pinata.cloud/ipfs/QmRNr6MFPLPkAXdrsyKGM1TYJcPesbdLobHTGWehvrN7VU/RayTracing4_0001.zkey",
     publicConstraint: ["1"],
     geoJson: {
       type: "Feature",
@@ -233,13 +234,42 @@ export const ASSETS = [
         ],
       },
     },
-    contractAddr: "0x4f52f8c5fb2c54e04e0044f799dd94484f4e52d5", // Ropsten
+    contractAddr: "0x4f52f8c5fb2c54e04e0044f799dd94484f4e52d5", // Ropsten | 4 Vertex
   },
   {
     id: 1,
+    description: "RayTracing10 (7 pts) - Cordoba (Argentina)",
+    wasmFile:
+      "https://gateway.pinata.cloud/ipfs/QmZCigwzjvtTaZpT1k5n3uLhJbHQsJnb1cV9YFHGJYm4wn/RayTracing10_js/RayTracing10.wasm",
+    zkeyFile: "https://gateway.pinata.cloud/ipfs/QmZCigwzjvtTaZpT1k5n3uLhJbHQsJnb1cV9YFHGJYm4wn/RayTracing10_0001.zkey",
+    publicConstraint: ["1"],
+    geoJson: {
+      type: "Feature",
+      properties: {},
+      geometry: {
+        type: "Polygon",
+        coordinates: [
+          [
+            [-64.18762207031251, -31.54928237735268],
+            [-63.92395019531251, -31.4333502624144],
+            [-64.08874511718751, -31.20927787746013],
+            [-64.42657470703126, -31.19635695773507],
+            [-64.58999633789064, -31.3595005198224],
+            [-64.57626342773439, -31.56917544907091],
+            [-64.35928344726564, -31.70012955398594],
+          ],
+        ],
+      },
+    },
+    contractAddr: "0x4fa6bbef535f5ce142ef097bcd31decbab224a39", // Ropsten | 10 Vertex
+    // contractAddr: "0x4f52f8c5fb2c54e04e0044f799dd94484f4e52d5", // Ropsten | 4 Vertex
+  },
+  {
+    id: 2,
     description: "RayTracing4 - New Zeland",
-    wasmFile: "https://gateway.pinata.cloud/ipfs/Qmf6423zajZzX33kt9ay6X9mqnfXZAyJj2e8eGnXWmAqVJ/RayTracing4.wasm",
-    zkeyFile: "https://gateway.pinata.cloud/ipfs/Qmf6423zajZzX33kt9ay6X9mqnfXZAyJj2e8eGnXWmAqVJ/RayTracing4_0001.zkey",
+    wasmFile:
+      "https://gateway.pinata.cloud/ipfs/QmZCigwzjvtTaZpT1k5n3uLhJbHQsJnb1cV9YFHGJYm4wn/RayTracing10_js/RayTracing10.wasm",
+    zkeyFile: "https://gateway.pinata.cloud/ipfs/QmZCigwzjvtTaZpT1k5n3uLhJbHQsJnb1cV9YFHGJYm4wn/RayTracing10_0001.zkey",
     publicConstraint: ["1"],
     geoJson: {
       type: "Feature",
@@ -256,13 +286,14 @@ export const ASSETS = [
         ],
       },
     },
-    contractAddr: "0x4f52f8c5fb2c54e04e0044f799dd94484f4e52d5", // Ropsten
+    contractAddr: "0x4fa6bbef535f5ce142ef097bcd31decbab224a39", // Ropsten
   },
   {
-    id: 2,
+    id: 3,
     description: "RayTracing4 - Israel",
-    wasmFile: "https://gateway.pinata.cloud/ipfs/Qmf6423zajZzX33kt9ay6X9mqnfXZAyJj2e8eGnXWmAqVJ/RayTracing4.wasm",
-    zkeyFile: "https://gateway.pinata.cloud/ipfs/Qmf6423zajZzX33kt9ay6X9mqnfXZAyJj2e8eGnXWmAqVJ/RayTracing4_0001.zkey",
+    wasmFile:
+      "https://gateway.pinata.cloud/ipfs/QmZCigwzjvtTaZpT1k5n3uLhJbHQsJnb1cV9YFHGJYm4wn/RayTracing10_js/RayTracing10.wasm",
+    zkeyFile: "https://gateway.pinata.cloud/ipfs/QmZCigwzjvtTaZpT1k5n3uLhJbHQsJnb1cV9YFHGJYm4wn/RayTracing10_0001.zkey",
     publicConstraint: ["1"],
     geoJson: {
       type: "Feature",
@@ -279,6 +310,6 @@ export const ASSETS = [
         ],
       },
     },
-    contractAddr: "0x4f52f8c5fb2c54e04e0044f799dd94484f4e52d5", // Ropsten
+    contractAddr: "0x4fa6bbef535f5ce142ef097bcd31decbab224a39", // Ropsten
   },
 ];

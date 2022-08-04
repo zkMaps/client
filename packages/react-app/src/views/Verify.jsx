@@ -181,6 +181,28 @@ function Verify({ writeContracts, address, injectedProvider, readContracts, user
     }
   };
 
+  const _normalizedZoneTenPoints = normalizedZone => {
+    let normalizedZoneTen = normalizedZone;
+    let normalizedZoneLength = normalizedZone.length;
+    let totalPoints = 4;
+    if (normalizedZoneLength > 4) {
+      totalPoints = 10;
+    } else if (normalizedZoneLength < 3 || normalizedZoneLength > 10) {
+      setMessage({ text: "There was an error with the zone you're trying to verify.", type: "error" });
+      setTimeout(() => {
+        setMessage(null);
+      }, 5000);
+    }
+    let remaining = totalPoints - normalizedZoneLength;
+    while (remaining > 0) {
+      remaining--;
+      const newZone = [normalizedZoneTen[0][0] + remaining, normalizedZoneTen[0][1]];
+      // TODO: Check if order (pushing at the end of array) still works with rayTracing
+      normalizedZoneTen.push(newZone);
+    }
+    return normalizedZoneTen;
+  };
+
   const runProofs = async () => {
     try {
       if (!address) {
@@ -193,27 +215,26 @@ function Verify({ writeContracts, address, injectedProvider, readContracts, user
 
       setIsGeneratingProof(true);
 
-      const normalizedFeatures = selectedOption?.geoJson?.geometry?.coordinates[0].map(coords => {
+      const normalizedZone = selectedOption?.geoJson?.geometry?.coordinates[0].map(coords => {
         return coords.map((coord, index) => {
           const normalization = index === 0 ? 180 : 90;
           return Math.trunc((coord + normalization) * Math.pow(10, 7));
         });
       });
 
+      const normalizedZoneTenPoints = _normalizedZoneTenPoints(normalizedZone);
       const proofInput = {
         point: [
           Math.trunc((viewState?.longitude + 180) * Math.pow(10, 7)),
           Math.trunc((viewState?.latitude + 90) * Math.pow(10, 7)),
         ],
-        polygon: normalizedFeatures,
+        polygon: normalizedZoneTenPoints,
       };
-      console.log("🚀 ~ file: Verify.jsx ~ line 215 ~ runProofs ~ proofInput", proofInput);
       const { proof: _proof, publicSignals: _public } = await makeProof(
         proofInput,
         selectedOption?.wasmFile,
         selectedOption?.zkeyFile,
       );
-      console.log("🚀 ~ file: Verify.jsx ~ line 212 ~ runProofs ~ _proof", _proof);
 
       setIsGeneratingProof(false);
       setIsVerifying(true);
@@ -263,7 +284,13 @@ function Verify({ writeContracts, address, injectedProvider, readContracts, user
 
   return (
     <div>
-      {message && <Alert message={message.text} type={message.type} style={{ padding: 20 }} />}
+      {message && (
+        <Alert
+          message={message.text}
+          type={message.type}
+          style={{ padding: 20, zIndex: 1100, position: "absolute", width: "100%" }}
+        />
+      )}
 
       <ModalIntro />
 
