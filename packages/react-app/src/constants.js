@@ -268,8 +268,8 @@ export const ASSETS = [
     id: 2,
     description: "RayTracing4 - New Zeland",
     wasmFile:
-      "https://gateway.pinata.cloud/ipfs/QmZCigwzjvtTaZpT1k5n3uLhJbHQsJnb1cV9YFHGJYm4wn/RayTracing10_js/RayTracing10.wasm",
-    zkeyFile: "https://gateway.pinata.cloud/ipfs/QmZCigwzjvtTaZpT1k5n3uLhJbHQsJnb1cV9YFHGJYm4wn/RayTracing10_0001.zkey",
+      "https://gateway.pinata.cloud/ipfs/QmRNr6MFPLPkAXdrsyKGM1TYJcPesbdLobHTGWehvrN7VU/RayTracing4_js/RayTracing4.wasm",
+    zkeyFile: "https://gateway.pinata.cloud/ipfs/QmRNr6MFPLPkAXdrsyKGM1TYJcPesbdLobHTGWehvrN7VU/RayTracing4_0001.zkey",
     publicConstraint: ["1"],
     geoJson: {
       type: "Feature",
@@ -292,8 +292,8 @@ export const ASSETS = [
     id: 3,
     description: "RayTracing4 - Israel",
     wasmFile:
-      "https://gateway.pinata.cloud/ipfs/QmZCigwzjvtTaZpT1k5n3uLhJbHQsJnb1cV9YFHGJYm4wn/RayTracing10_js/RayTracing10.wasm",
-    zkeyFile: "https://gateway.pinata.cloud/ipfs/QmZCigwzjvtTaZpT1k5n3uLhJbHQsJnb1cV9YFHGJYm4wn/RayTracing10_0001.zkey",
+      "https://gateway.pinata.cloud/ipfs/QmRNr6MFPLPkAXdrsyKGM1TYJcPesbdLobHTGWehvrN7VU/RayTracing4_js/RayTracing4.wasm",
+    zkeyFile: "https://gateway.pinata.cloud/ipfs/QmRNr6MFPLPkAXdrsyKGM1TYJcPesbdLobHTGWehvrN7VU/RayTracing4_0001.zkey",
     publicConstraint: ["1"],
     geoJson: {
       type: "Feature",
