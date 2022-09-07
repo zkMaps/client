@@ -4,7 +4,7 @@ import Web3Modal from "web3modal";
 import Portis from "@portis/web3";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import Authereum from "authereum";
-import { INFURA_ID, ALCHEMY_KEY } from "../constants";
+import { INFURA_ID, ALCHEMY_KEY } from "../constants/ethereum";
 
 // Coinbase walletLink init
 const walletLink = new WalletLink({

@@ -1,0 +1,60 @@
+{
+  "0x51546624705F15336a2a4275BeCCD041f84143F6": {
+        "address": "0x51546624705F15336a2a4275BeCCD041f84143F6",
+        "abi": [
+          {
+            "anonymous": false,
+            "inputs": [
+              {
+                "indexed": true,
+                "internalType": "address",
+                "name": "user",
+                "type": "address"
+              },
+              {
+                "indexed": true,
+                "internalType": "uint256[13]",
+                "name": "input",
+                "type": "uint256[13]"
+              }
+            ],
+            "name": "Verified",
+            "type": "event"
+          },
+          {
+            "inputs": [
+              {
+                "internalType": "uint256[2]",
+                "name": "a",
+                "type": "uint256[2]"
+              },
+              {
+                "internalType": "uint256[2][2]",
+                "name": "b",
+                "type": "uint256[2][2]"
+              },
+              {
+                "internalType": "uint256[2]",
+                "name": "c",
+                "type": "uint256[2]"
+              },
+              {
+                "internalType": "uint256[13]",
+                "name": "input",
+                "type": "uint256[13]"
+              }
+            ],
+            "name": "verifyProof",
+            "outputs": [
+              {
+                "internalType": "bool",
+                "name": "r",
+                "type": "bool"
+              }
+            ],
+            "stateMutability": "nonpayable",
+            "type": "function"
+          }
+        ]
+      }
+}

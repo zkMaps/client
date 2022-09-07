@@ -15,7 +15,7 @@ import LayerSwitch from "../components/LayerSwitch";
 import ControlTools from "../components/ControlTools";
 
 // Constants
-import { ASSETS } from "../constants";
+import AREAS from "../constants/areas";
 import marker from "../logo-black.png";
 var customMarkerIcon = icon({
   iconUrl: marker,
@@ -23,45 +23,6 @@ var customMarkerIcon = icon({
 });
 
 const { ethers } = require("ethers");
-
-// Original: 0xB5217d3E37F12F89138113534953E1b9583e4F3B
-// https://mumbai.polygonscan.com/address/0xffdb60e666ae25fe5d79ff66680c828902de90cc
-const Verifier = [
-  {
-    inputs: [
-      {
-        internalType: "uint256[2]",
-        name: "a",
-        type: "uint256[2]",
-      },
-      {
-        internalType: "uint256[2][2]",
-        name: "b",
-        type: "uint256[2][2]",
-      },
-      {
-        internalType: "uint256[2]",
-        name: "c",
-        type: "uint256[2]",
-      },
-      {
-        internalType: "uint256[1]",
-        name: "input",
-        type: "uint256[1]",
-      },
-    ],
-    name: "verifyProof",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "r",
-        type: "bool",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-];
 
 const { unstringifyBigInts } = utils;
 
@@ -71,22 +32,6 @@ const { unstringifyBigInts } = utils;
  * @param {*} readContracts contracts from current chain already pre-loaded using ethers contract module. More here https://docs.ethers.io/v5/api/contract/contract/
  * @returns react component
  **/
-
-const settings = {
-  // scrollZoom: true,
-  boxZoom: false,
-  dragRotate: false,
-  dragPan: false,
-  doubleClickZoom: false,
-  // keyboard: true,
-  // touchZoomRotate: true,
-  // touchPitch: true,
-  // minZoom: 0,
-  // maxZoom: 20,
-  // minPitch: 0,
-  // maxPitch: 85
-  showCompass: true,
-};
 
 function Verify({ writeContracts, address, injectedProvider, readContracts, userSigner }) {
   // you can also use hooks locally in your component of choice
@@ -107,7 +52,7 @@ function Verify({ writeContracts, address, injectedProvider, readContracts, user
   const [message, setMessage] = useState(null);
   const [isVerifying, setIsVerifying] = useState(false);
   const [isGeneratingProof, setIsGeneratingProof] = useState(false);
-  const [selectedOption, setSelectedOption] = useState(ASSETS[0]);
+  const [selectedOption, setSelectedOption] = useState(AREAS[0]);
   const [map, setMap] = useState(null);
 
   // custom hooks
@@ -159,19 +104,14 @@ function Verify({ writeContracts, address, injectedProvider, readContracts, user
     }
   };
 
+  console.log("🚀 ~ file: Verify.jsx ~ line 113 ~ onChainVerification ~ selectedOption", selectedOption);
   const onChainVerification = async (_proof, pub, _signal) => {
     try {
       const callData = await zkeyExportSolidityCalldata(_proof, {}, pub);
       const callDataFormatted = JSON.parse("[" + callData.replace(/}{/g, "},{") + "]");
-      console.log("🚀 ~ file: Verify.jsx ~ line 168 ~ onChainVerification ~ callDataFormatted", ...callDataFormatted);
 
-      // const tx = await readContracts.Verifier.verifyProof(...callDataFormatted);
-      // const recipt = await tx?.wait(2);
-      // const decodeOutput = ethers.utils.defaultAbiCoder.decode(["bool"], ethers.utils.hexDataSlice(tx.data, 4));
-
-      let iface = new ethers.utils.Interface(Verifier);
-      let verifier = new ethers.Contract(selectedOption?.contractAddr, iface, userSigner);
-      console.log("🚀 ~ file: Verify.jsx ~ line 174 ~ onChainVerification ~ verifier", verifier);
+      let iface = new ethers.utils.Interface(selectedOption?.contract.abi);
+      let verifier = new ethers.Contract(selectedOption?.contract.address, iface, userSigner);
       let decodeOutput = await verifier.verifyProof(...callDataFormatted);
       setIsVerifying(false);
       setIsGeneratingProof(false);
@@ -275,7 +215,6 @@ function Verify({ writeContracts, address, injectedProvider, readContracts, user
       await onChainVerification(_proof, _public, signals);
       return;
 
-      // TODO: Test what happens with AtEthDenver and InColorado
       // const localVerification = await window.snarkjs.groth16.verify(vkey, pub, _proof);
 
       // if (localVerification) {
@@ -319,9 +258,9 @@ function Verify({ writeContracts, address, injectedProvider, readContracts, user
 
       <ModalIntro />
 
-      {ASSETS && (
+      {AREAS && (
         <div style={{ position: "absolute", top: "15px", left: "50%", transform: "translate(-50%)", zIndex: 10 }}>
-          <LayerSwitch layerOptions={ASSETS} selectedOption={selectedOption} setSelectedOption={setSelectedOption} />
+          <LayerSwitch layerOptions={AREAS} selectedOption={selectedOption} setSelectedOption={setSelectedOption} />
         </div>
       )}
 

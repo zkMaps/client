@@ -7,7 +7,7 @@ import Web3Modal from "web3modal";
 // import { Biconomy } from "@biconomy/mexa";
 
 import Account from "../../Account";
-import { INFURA_ID, NETWORK, NETWORKS } from "../../../constants";
+import { INFURA_ID, NETWORK, NETWORKS } from "../../../constants/ethereum";
 import { useGasPrice, useUserSigner } from "../../../hooks";
 import { useEventListener } from "eth-hooks/events/useEventListener";
 import { useContractLoader, useOnBlock } from "eth-hooks";

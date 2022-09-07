@@ -11,7 +11,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Route, Switch } from "react-router-dom";
 import "./App.css";
 import { Account, NetworkDisplay, FaucetHint, NetworkSwitch } from "./components";
-import { NETWORKS, ALCHEMY_KEY } from "./constants";
+import { NETWORKS, ALCHEMY_KEY } from "./constants/ethereum";
 import externalContracts from "./contracts/external_contracts";
 // contracts
 import deployedContracts from "./contracts/hardhat_contracts.json";

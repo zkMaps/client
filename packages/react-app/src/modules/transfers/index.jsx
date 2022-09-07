@@ -11,7 +11,7 @@ export {}
 // import "./App.css";
 // import { Biconomy } from "@biconomy/mexa";
 // import { Account, Address, AddressInput, Contract, Faucet, GasGauge, Header, Ramp, ThemeSwitch } from "./components";
-// import { INFURA_ID, NETWORK, NETWORKS } from "../../constants";
+// import { INFURA_ID, NETWORK, NETWORKS } from "../../constants/ethereum";
 // import { Transactor } from "../../helpers";
 // import {
 //   useBalance,
