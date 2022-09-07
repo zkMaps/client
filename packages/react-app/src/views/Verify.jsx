@@ -125,7 +125,6 @@ function Verify({ writeContracts, address, injectedProvider, readContracts, user
   const zkeyExportSolidityCalldata = async (_proof, options, _publicConstraint) => {
     const pub = unstringifyBigInts(_publicConstraint);
     const proof = unstringifyBigInts(_proof);
-
     let res;
     if (proof.protocol === "groth16") {
       res = await window.snarkjs.groth16.exportSolidityCallData(proof, pub);
@@ -137,11 +136,21 @@ function Verify({ writeContracts, address, injectedProvider, readContracts, user
     return res;
   };
 
-  const makeProof = async (_proofInput, _wasm, _zkey) => {
+  const makeProof = async (_proofInput, _wasm, _zkey, _wtns = null) => {
     try {
-      const { proof, publicSignals } = await window.snarkjs.groth16.fullProve(_proofInput, _wasm, _zkey);
-      return { proof, publicSignals };
+      if (selectedOption.protocol === "groth16") {
+        const { proof, publicSignals } = await window.snarkjs.groth16.fullProve(_proofInput, _wasm, _zkey);
+        return { proof, publicSignals };
+      } else if (selectedOption.protocol === "plonk") {
+        const { proof, publicSignals } = await window.snarkjs.plonk.prove(_zkey, _wtns);
+        return { proof, publicSignals };
+      } else {
+        throw new Error("Error creating proof");
+      }
     } catch (error) {
+      if (error.code === 404) {
+        setMessage({ text: "There was a problem connecting with the server.", type: "error" });
+      }
       setMessage({ text: "You are outside of the proof zone.", type: "error" });
       setTimeout(() => {
         setMessage(null);
@@ -150,10 +159,11 @@ function Verify({ writeContracts, address, injectedProvider, readContracts, user
     }
   };
 
-  const onChainVerification = async (_proof, pub) => {
+  const onChainVerification = async (_proof, pub, _signal) => {
     try {
       const callData = await zkeyExportSolidityCalldata(_proof, {}, pub);
       const callDataFormatted = JSON.parse("[" + callData.replace(/}{/g, "},{") + "]");
+      console.log("🚀 ~ file: Verify.jsx ~ line 168 ~ onChainVerification ~ callDataFormatted", ...callDataFormatted);
 
       // const tx = await readContracts.Verifier.verifyProof(...callDataFormatted);
       // const recipt = await tx?.wait(2);
@@ -161,6 +171,7 @@ function Verify({ writeContracts, address, injectedProvider, readContracts, user
 
       let iface = new ethers.utils.Interface(Verifier);
       let verifier = new ethers.Contract(selectedOption?.contractAddr, iface, userSigner);
+      console.log("🚀 ~ file: Verify.jsx ~ line 174 ~ onChainVerification ~ verifier", verifier);
       let decodeOutput = await verifier.verifyProof(...callDataFormatted);
       setIsVerifying(false);
       setIsGeneratingProof(false);
@@ -172,6 +183,9 @@ function Verify({ writeContracts, address, injectedProvider, readContracts, user
         }, 5000);
       } else {
         setMessage({ text: "Your location doesn't meet the requirements. Try again.", type: "error" });
+        setTimeout(() => {
+          setMessage(null);
+        }, 5000);
         forgetProofs();
       }
     } catch (error) {
@@ -185,13 +199,16 @@ function Verify({ writeContracts, address, injectedProvider, readContracts, user
     let normalizedZoneTen = normalizedZone;
     let normalizedZoneLength = normalizedZone.length;
     let totalPoints = 4;
-    if (normalizedZoneLength > 4) {
+    if (normalizedZoneLength == 6) {
+      totalPoints = 6;
+    } else if (normalizedZoneLength > 4) {
       totalPoints = 10;
     } else if (normalizedZoneLength < 3 || normalizedZoneLength > 10) {
       setMessage({ text: "There was an error with the zone you're trying to verify.", type: "error" });
       setTimeout(() => {
         setMessage(null);
       }, 5000);
+      throw new Error("There was an error with the zone.");
     }
     let remaining = totalPoints - normalizedZoneLength;
     while (remaining > 0) {
@@ -215,30 +232,38 @@ function Verify({ writeContracts, address, injectedProvider, readContracts, user
 
       setIsGeneratingProof(true);
 
+      const precision = selectedOption?.precision;
+
       const normalizedZone = selectedOption?.geoJson?.geometry?.coordinates[0].map(coords => {
         return coords.map((coord, index) => {
           const normalization = index === 0 ? 180 : 90;
-          return Math.trunc((coord + normalization) * Math.pow(10, 7));
+          return Math.trunc((coord + normalization) * Math.pow(10, precision));
         });
       });
 
       const normalizedZoneTenPoints = _normalizedZoneTenPoints(normalizedZone);
       const proofInput = {
         point: [
-          Math.trunc((viewState?.longitude + 180) * Math.pow(10, 7)),
-          Math.trunc((viewState?.latitude + 90) * Math.pow(10, 7)),
+          Math.trunc((viewState?.longitude + 180) * Math.pow(10, precision)),
+          Math.trunc((viewState?.latitude + 90) * Math.pow(10, precision)),
         ],
         polygon: normalizedZoneTenPoints,
       };
+      const startTime = new Date();
       const { proof: _proof, publicSignals: _public } = await makeProof(
         proofInput,
         selectedOption?.wasmFile,
         selectedOption?.zkeyFile,
+        selectedOption?.wtns,
       );
+      const endTime = new Date();
+      const timeDiff = (endTime.getTime() - startTime.getTime()) / 1000;
+      console.log("timeDiff", timeDiff);
 
       setIsGeneratingProof(false);
       setIsVerifying(true);
       _proof.protocol = "groth16";
+      // _proof.protocol = "plonk";
       setProof(JSON.stringify(_proof, null, 2));
       setSignals(JSON.stringify(_public, null, 2));
 
@@ -247,7 +272,7 @@ function Verify({ writeContracts, address, injectedProvider, readContracts, user
       // });
 
       // TODO: Check if we end up checking proof locally
-      await onChainVerification(_proof, selectedOption?.publicConstraint);
+      await onChainVerification(_proof, _public, signals);
       return;
 
       // TODO: Test what happens with AtEthDenver and InColorado
