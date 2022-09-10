@@ -3,10 +3,10 @@ import contracts from "./contracts.json";
 
 export default [
   {
-    id: 55,
-    description: "RayTracing6Basic - Argentina - Public Polygon",
-    wasmFile: "https://ipfs.io/ipfs/QmcpsZ5pe83WNGDPMuDQrQcDpDQNaPuomyo8AvntzKsTMR/RayTracing6_js/RayTracing6.wasm",
-    zkeyFile: "https://ipfs.io/ipfs/QmcpsZ5pe83WNGDPMuDQrQcDpDQNaPuomyo8AvntzKsTMR/RayTracing6_0001.zkey",
+    id: 1,
+    description: "RayTracing6 - Argentina - Public Polygon",
+    wasmFile: "https://ipfs.io/ipfs/QmcBRvjfDUuQPK499b6pbXyAjqy6rLr8i8quPX3DovQUoc/RayTracing6_js/RayTracing6.wasm",
+    zkeyFile: "https://ipfs.io/ipfs/QmcBRvjfDUuQPK499b6pbXyAjqy6rLr8i8quPX3DovQUoc/RayTracing6_0001.zkey",
     publicConstraint: ["1"],
     geoJson: {
       type: "Feature",
@@ -25,7 +25,7 @@ export default [
         ],
       },
     },
-    contract: contracts["0x51546624705F15336a2a4275BeCCD041f84143F6"], // Ropsten | 6 Vertex | Public
+    contract: contracts["0x0a23af15ce2642689aF312B8A570534731285E83"], // Mumbai | 6 Vertex | Public | Emits
     precision: 5,
     protocol: "groth16",
   },

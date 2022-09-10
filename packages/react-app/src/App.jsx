@@ -20,7 +20,7 @@ import { Home, Subgraph, Polygons, Verify } from "./views";
 import { useStaticJsonRPC } from "./hooks";
 
 const { ethers } = require("ethers");
-const initialNetwork = NETWORKS.ropsten; // <------- select your target frontend network (localhost, rinkeby, xdai, mainnet)
+const initialNetwork = NETWORKS.mumbai; // <------- select your target frontend network (localhost, rinkeby, xdai, mainnet)
 
 // 😬 Sorry for all the console logging
 const DEBUG = true;
@@ -40,7 +40,7 @@ const providers = [
 function App(props) {
   // specify all the chains your app is available on. Eg: ['localhost', 'mainnet', ...otherNetworks ]
   // reference './constants.js' for other networks
-  const networkOptions = [initialNetwork.name, "mainnet", "mumbai", "testnetHarmony"];
+  const networkOptions = [initialNetwork.name, "mainnet", "ropsten", "testnetHarmony"];
 
   const [injectedProvider, setInjectedProvider] = useState();
   const [address, setAddress] = useState();
@@ -213,6 +213,18 @@ function App(props) {
     }
   }, [loadWeb3Modal]);
 
+  {
+    /* pass in any web3 props to this Home component. For example, yourLocalBalance */
+  }
+  const routeProps = {
+    yourLocalBalance,
+    writeContracts,
+    readContracts,
+    address,
+    injectedProvider,
+    userSigner,
+  };
+
   return (
     <div className="App">
       <NetworkDisplay
@@ -226,37 +238,13 @@ function App(props) {
 
       <Switch>
         <Route exact path="/">
-          {/* pass in any web3 props to this Home component. For example, yourLocalBalance */}
-          <Verify
-            yourLocalBalance={yourLocalBalance}
-            writeContracts={writeContracts}
-            readContracts={readContracts}
-            address={address}
-            injectedProvider={injectedProvider}
-            userSigner={userSigner}
-          />
+          <Verify {...routeProps} />
         </Route>
         <Route exact path="/polygons">
-          {/* pass in any web3 props to this Home component. For example, yourLocalBalance */}
-          <Polygons
-            yourLocalBalance={yourLocalBalance}
-            writeContracts={writeContracts}
-            readContracts={readContracts}
-            address={address}
-            injectedProvider={injectedProvider}
-            userSigner={userSigner}
-          />
+          <Polygons {...routeProps} />
         </Route>
         <Route exact path="/ethdenver">
-          {/* pass in any web3 props to this Home component. For example, yourLocalBalance */}
-          <Home
-            yourLocalBalance={yourLocalBalance}
-            writeContracts={writeContracts}
-            readContracts={readContracts}
-            address={address}
-            injectedProvider={injectedProvider}
-            userSigner={userSigner}
-          />
+          <Home {...routeProps} />
         </Route>
         <Route path="/history">
           <Subgraph

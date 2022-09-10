@@ -112,6 +112,7 @@ function Verify({ writeContracts, address, injectedProvider, readContracts, user
 
       let iface = new ethers.utils.Interface(selectedOption?.contract.abi);
       let verifier = new ethers.Contract(selectedOption?.contract.address, iface, userSigner);
+      console.log("🚀 ~ file: Verify.jsx ~ line 115 ~ onChainVerification ~ verifier", verifier);
       let decodeOutput = await verifier.verifyProof(...callDataFormatted);
       setIsVerifying(false);
       setIsGeneratingProof(false);
@@ -196,6 +197,7 @@ function Verify({ writeContracts, address, injectedProvider, readContracts, user
         selectedOption?.zkeyFile,
         selectedOption?.wtns,
       );
+      console.log("🚀 ~ file: Verify.jsx ~ line 195 ~ runProofs ~ _public", _public);
       const endTime = new Date();
       const timeDiff = (endTime.getTime() - startTime.getTime()) / 1000;
       console.log("timeDiff", timeDiff);
