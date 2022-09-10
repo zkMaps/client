@@ -62,5 +62,69 @@
         "type": "function"
       }
     ]
+  },
+  "0xDEc4bD77b257E346F2fa8E52C4B91482C9081e6b":{
+    "address": "0xDEc4bD77b257E346F2fa8E52C4B91482C9081e6b",
+    "abi": [
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": true,
+            "internalType": "bool",
+            "name": "isVerifie",
+            "type": "bool"
+          },
+          {
+            "indexed": true,
+            "internalType": "address",
+            "name": "user",
+            "type": "address"
+          },
+          {
+            "indexed": true,
+            "internalType": "uint256[14]",
+            "name": "input",
+            "type": "uint256[14]"
+          }
+        ],
+        "name": "IsVerified",
+        "type": "event"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint256[2]",
+            "name": "a",
+            "type": "uint256[2]"
+          },
+          {
+            "internalType": "uint256[2][2]",
+            "name": "b",
+            "type": "uint256[2][2]"
+          },
+          {
+            "internalType": "uint256[2]",
+            "name": "c",
+            "type": "uint256[2]"
+          },
+          {
+            "internalType": "uint256[14]",
+            "name": "input",
+            "type": "uint256[14]"
+          }
+        ],
+        "name": "verifyProof",
+        "outputs": [
+          {
+            "internalType": "bool",
+            "name": "r",
+            "type": "bool"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    ]
   }
 }
