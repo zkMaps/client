@@ -20,7 +20,7 @@ import { Home, Subgraph, Polygons, Verify } from "./views";
 import { useStaticJsonRPC } from "./hooks";
 
 const { ethers } = require("ethers");
-const initialNetwork = NETWORKS.mumbai; // <------- select your target frontend network (localhost, rinkeby, xdai, mainnet)
+const initialNetwork = NETWORKS.polygon; // <------- select your target frontend network (localhost, rinkeby, xdai, mainnet)
 
 // 😬 Sorry for all the console logging
 const DEBUG = true;
@@ -40,7 +40,7 @@ const providers = [
 function App(props) {
   // specify all the chains your app is available on. Eg: ['localhost', 'mainnet', ...otherNetworks ]
   // reference './constants.js' for other networks
-  const networkOptions = [initialNetwork.name, "mainnet", "ropsten", "testnetHarmony"];
+  const networkOptions = [initialNetwork.name, "mainnet", "ropsten", "testnetHarmony", "mumbai", "polygon"];
 
   const [injectedProvider, setInjectedProvider] = useState();
   const [address, setAddress] = useState();

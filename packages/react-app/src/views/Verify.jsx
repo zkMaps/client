@@ -201,7 +201,6 @@ function Verify({ writeContracts, address, injectedProvider, readContracts, user
       const endTime = new Date();
       const timeDiff = (endTime.getTime() - startTime.getTime()) / 1000;
       console.log("timeDiff", timeDiff);
-
       setIsGeneratingProof(false);
       setIsVerifying(true);
       _proof.protocol = "groth16";
@@ -227,6 +226,7 @@ function Verify({ writeContracts, address, injectedProvider, readContracts, user
       // }
       // console.log({ recipt.past});
     } catch (error) {
+      console.log({ error });
       setIsVerifying(false);
       setIsGeneratingProof(false);
       forgetProofs();
