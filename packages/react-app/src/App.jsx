@@ -16,7 +16,7 @@ import externalContracts from "./contracts/external_contracts";
 // contracts
 import deployedContracts from "./contracts/hardhat_contracts.json";
 import { Transactor, Web3ModalSetup } from "./helpers";
-import { Home, Subgraph, Polygons, Verify } from "./views";
+import { Home, Subgraph, Polygons, Verify, Dune } from "./views";
 import { useStaticJsonRPC } from "./hooks";
 
 const { ethers } = require("ethers");
@@ -40,7 +40,7 @@ const providers = [
 function App(props) {
   // specify all the chains your app is available on. Eg: ['localhost', 'mainnet', ...otherNetworks ]
   // reference './constants.js' for other networks
-  const networkOptions = [initialNetwork.name, "mainnet", "ropsten", "testnetHarmony", "mumbai", "polygon"];
+  const networkOptions = [initialNetwork.name, "mainnet", "ropsten", "testnetHarmony", "mumbai"];
 
   const [injectedProvider, setInjectedProvider] = useState();
   const [address, setAddress] = useState();
@@ -245,6 +245,9 @@ function App(props) {
         </Route>
         <Route exact path="/ethdenver">
           <Home {...routeProps} />
+        </Route>
+        <Route exact path="/dune">
+          <Dune {...routeProps} />
         </Route>
         <Route path="/history">
           <Subgraph

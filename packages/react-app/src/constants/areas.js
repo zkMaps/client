@@ -4,7 +4,7 @@ import contracts from "./contracts.json";
 export default [
   {
     id: 3,
-    description: "RayTracing6 - New York - Public Polygon",
+    description: "RayTracing6 - New York - Public Zone (Polygon)",
     wasmFile: "https://ipfs.io/ipfs/QmcBRvjfDUuQPK499b6pbXyAjqy6rLr8i8quPX3DovQUoc/RayTracing6_js/RayTracing6.wasm",
     zkeyFile: "https://ipfs.io/ipfs/QmcBRvjfDUuQPK499b6pbXyAjqy6rLr8i8quPX3DovQUoc/RayTracing6_0001.zkey",
     publicConstraint: ["1"],
@@ -31,7 +31,7 @@ export default [
   },
   {
     id: 4,
-    description: "RayTracing6 - New York State - Public Polygon",
+    description: "RayTracing6 - New York State - Public Zone (Polygon)",
     wasmFile: "https://ipfs.io/ipfs/QmcBRvjfDUuQPK499b6pbXyAjqy6rLr8i8quPX3DovQUoc/RayTracing6_js/RayTracing6.wasm",
     zkeyFile: "https://ipfs.io/ipfs/QmcBRvjfDUuQPK499b6pbXyAjqy6rLr8i8quPX3DovQUoc/RayTracing6_0001.zkey",
     publicConstraint: ["1"],
@@ -58,7 +58,7 @@ export default [
   },
   {
     id: 1,
-    description: "RayTracing6 - Argentina - Public Polygon",
+    description: "RayTracing6 - Argentina - Public Zone (Mumbai)",
     wasmFile: "https://ipfs.io/ipfs/QmcBRvjfDUuQPK499b6pbXyAjqy6rLr8i8quPX3DovQUoc/RayTracing6_js/RayTracing6.wasm",
     zkeyFile: "https://ipfs.io/ipfs/QmcBRvjfDUuQPK499b6pbXyAjqy6rLr8i8quPX3DovQUoc/RayTracing6_0001.zkey",
     publicConstraint: ["1"],
@@ -85,7 +85,35 @@ export default [
   },
   {
     id: 2,
-    description: "RayTracing6Private - Argentina - Public Polygon",
+    description: "RayTracing6Private - Argentina - Private Zone (Polygon)",
+    wasmFile:
+      "https://ipfs.io/ipfs/QmeLREkAuCTLMkyc37CqPF44SpL5PStDQeERazCAinjFBQ/RayTracing6Private_js/RayTracing6Private.wasm",
+    zkeyFile: "https://ipfs.io/ipfs/QmeLREkAuCTLMkyc37CqPF44SpL5PStDQeERazCAinjFBQ/RayTracing6Private_0001.zkey",
+    publicConstraint: ["1"],
+    geoJson: {
+      type: "Feature",
+      properties: {},
+      geometry: {
+        type: "Polygon",
+        coordinates: [
+          [
+            [-66.31347656250001, -31.72816714602391],
+            [-65.08300781250001, -28.88315960932351],
+            [-55.10742187500001, -35.49645605658411],
+            [-61.65527343750001, -37.68382032669381],
+            [-63.45703125000001, -35.06597313798411],
+            [-66.13769531250001, -35.10193405724601],
+          ],
+        ],
+      },
+    },
+    contract: contracts["0x0Eb82353271c162256b15BA540b10303F209F636"], // Polygon | 6 Vertex | Private | Emits
+    precision: 5,
+    protocol: "groth16",
+  },
+  {
+    id: 2,
+    description: "RayTracing6Private - Argentina - Private Zone (Mumbai)",
     wasmFile:
       "https://ipfs.io/ipfs/QmeLREkAuCTLMkyc37CqPF44SpL5PStDQeERazCAinjFBQ/RayTracing6Private_js/RayTracing6Private.wasm",
     zkeyFile: "https://ipfs.io/ipfs/QmeLREkAuCTLMkyc37CqPF44SpL5PStDQeERazCAinjFBQ/RayTracing6Private_0001.zkey",

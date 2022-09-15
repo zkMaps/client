@@ -197,7 +197,6 @@ function Verify({ writeContracts, address, injectedProvider, readContracts, user
         selectedOption?.zkeyFile,
         selectedOption?.wtns,
       );
-      console.log("🚀 ~ file: Verify.jsx ~ line 195 ~ runProofs ~ _public", _public);
       const endTime = new Date();
       const timeDiff = (endTime.getTime() - startTime.getTime()) / 1000;
       console.log("timeDiff", timeDiff);
