@@ -118,7 +118,7 @@ const settings = {
   showCompass: true,
 };
 
-function Home({ writeContracts, address, injectedProvider, readContracts, userSigner }) {
+function Home({ address, userSigner }) {
   // you can also use hooks locally in your component of choice
 
   // Hooks

@@ -14,7 +14,7 @@ import ControlTools from "../components/ControlTools";
 // @ts-ignore
 // eslint-disable-next-line import/no-webpack-loader-syntax, import/no-unresolved
 
-function Polygons({ writeContracts, address, injectedProvider, readContracts, userSigner }) {
+function Polygons({ selectedNetwork }) {
   // Hooks
   const [viewState, setViewState] = useState({
     latitude: 0,
@@ -50,7 +50,7 @@ function Polygons({ writeContracts, address, injectedProvider, readContracts, us
       >
         {/* TODO: Implement dark mode https://stamen-tiles.a.ssl.fastly.net/toner/{z}/{x}/{y}.png not working */}
         <TileLayer attribution="OpenStreetMap" url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-        <ControlTools draw />
+        <ControlTools draw selectedNetwork={selectedNetwork} />
       </MapContainer>
       <div
         style={{ position: "fixed", textAlign: "center", alignItems: "center", bottom: 20, padding: 10, width: "100%" }}

@@ -3,11 +3,17 @@ import { utils } from "ffjavascript";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import { Button, Alert } from "antd";
 import { icon } from "leaflet";
+import { useRecoilValue, useRecoilState } from "recoil";
+import { useLocation } from "react-router-dom";
+import queryString from "query-string";
 
 import "leaflet/dist/leaflet.css";
 
 // Hooks
 import useFlyTo from "../hooks/FlyTo";
+
+// Recoil
+import { zonesAtom, zonesSelector } from "../recoil/zones";
 
 // Components
 import ModalIntro from "../components/ModalIntro";
@@ -15,7 +21,6 @@ import LayerSwitch from "../components/LayerSwitch";
 import ControlTools from "../components/ControlTools";
 
 // Constants
-import AREAS from "../constants/areas";
 import marker from "../logo-black.png";
 var customMarkerIcon = icon({
   iconUrl: marker,
@@ -33,8 +38,13 @@ const { unstringifyBigInts } = utils;
  * @returns react component
  **/
 
-function Verify({ writeContracts, address, injectedProvider, readContracts, userSigner }) {
+function Verify({ address, userSigner, selectedNetwork }) {
   // you can also use hooks locally in your component of choice
+
+  // Recoil
+  const [zones, setZones] = useRecoilState(zonesAtom);
+  const zonesFormatted = useRecoilValue(zonesSelector);
+  console.log("🚀 ~ file: Verify.jsx ~ line 47 ~ Verify ~ zonesFormatted", zonesFormatted);
 
   // Hooks
   const [viewState, setViewState] = useState({
@@ -52,11 +62,26 @@ function Verify({ writeContracts, address, injectedProvider, readContracts, user
   const [message, setMessage] = useState(null);
   const [isVerifying, setIsVerifying] = useState(false);
   const [isGeneratingProof, setIsGeneratingProof] = useState(false);
-  const [selectedOption, setSelectedOption] = useState(AREAS[0]);
+  const [selectedOption, setSelectedOption] = useState(zonesFormatted[0]);
   const [map, setMap] = useState(null);
 
   // custom hooks
+  let location = useLocation();
   useFlyTo(map, setViewState, 13);
+
+  useEffect(() => {
+    let parsed = queryString.parse(location?.search);
+    if (parsed) {
+      const coords = parsed.coordinates.split(",");
+      const coordinates = [];
+      for (let index = 0; index < coords.length; index = index + 2) {
+        const current = [parseFloat(coords[index]), parseFloat(coords[index + 1])];
+        coordinates.push(current);
+      }
+      parsed.coordinates = [coordinates];
+      setZones(z => [...z, parsed]);
+    }
+  }, []);
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -259,9 +284,13 @@ function Verify({ writeContracts, address, injectedProvider, readContracts, user
 
       <ModalIntro />
 
-      {AREAS && (
+      {zonesFormatted && (
         <div style={{ position: "absolute", top: "15px", left: "50%", transform: "translate(-50%)", zIndex: 10 }}>
-          <LayerSwitch layerOptions={AREAS} selectedOption={selectedOption} setSelectedOption={setSelectedOption} />
+          <LayerSwitch
+            layerOptions={zonesFormatted}
+            selectedOption={selectedOption}
+            setSelectedOption={setSelectedOption}
+          />
         </div>
       )}
 
@@ -301,7 +330,7 @@ function Verify({ writeContracts, address, injectedProvider, readContracts, user
         scrollWheelZoom={false}
         dragging={false}
       >
-        <ControlTools map={map} draw={false} geoJson={selectedOption?.geoJson} />
+        <ControlTools map={map} draw={false} geoJson={selectedOption?.geoJson} selectedNetwork={selectedNetwork} />
         {/* https://stamen-tiles.a.ssl.fastly.net/toner/{z}/{x}/{y}.png */}
         <TileLayer attribution="" url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
         <Marker position={[viewState?.latitude, viewState?.longitude]} icon={customMarkerIcon}>

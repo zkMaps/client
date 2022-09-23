@@ -44,6 +44,7 @@ function App(props) {
 
   const [injectedProvider, setInjectedProvider] = useState();
   const [address, setAddress] = useState();
+  // TODO: Add to recoil
   const [selectedNetwork, setSelectedNetwork] = useState(networkOptions[0]);
 
   // recent verification
@@ -223,6 +224,7 @@ function App(props) {
     address,
     injectedProvider,
     userSigner,
+    selectedNetwork,
   };
 
   return (

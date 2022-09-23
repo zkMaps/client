@@ -7,6 +7,14 @@ function LayerSwitch({ layerOptions, selectedOption, setSelectedOption }) {
   // Hooks
   let history = useHistory();
 
+  const AddButton = ({ type = "text" }) => {
+    return (
+      <Button type={type} onClick={() => history.push("/polygons")} icon={<PlusCircleOutlined />}>
+        <span style={{ textTransform: "capitalize" }}>Add New Zone</span>
+      </Button>
+    );
+  };
+
   const menu = (
     <Menu>
       {layerOptions
@@ -19,12 +27,14 @@ function LayerSwitch({ layerOptions, selectedOption, setSelectedOption }) {
           </Menu.Item>
         ))}
       <Menu.Item key={9}>
-        <Button type="text" onClick={() => history.push("/polygons")} icon={<PlusCircleOutlined />}>
-          <span style={{ textTransform: "capitalize" }}>Add Zone</span>
-        </Button>
+        <AddButton />
       </Menu.Item>
     </Menu>
   );
+
+  if (!layerOptions?.length) {
+    return <AddButton type="primary" />;
+  }
 
   return (
     <Dropdown.Button overlay={menu} trigger={["click"]} type="primary" shape="round">

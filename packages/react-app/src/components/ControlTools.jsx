@@ -3,9 +3,16 @@ import { Card, Button, message } from "antd";
 import { FeatureGroup } from "react-leaflet";
 import L from "leaflet";
 import { EditControl } from "react-leaflet-draw";
+import { useRecoilState } from "recoil";
+import { v4 as uuidv4 } from "uuid";
+import { useHistory } from "react-router-dom";
+import queryString from "query-string";
 
 // work around broken icons when using webpack, see https://github.com/PaulLeCam/react-leaflet/issues/255
 import "antd/dist/antd.css";
+
+// Recoil
+import { zonesAtom } from "../recoil/zones.js";
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -14,11 +21,17 @@ L.Icon.Default.mergeOptions({
   shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.0/images/marker-shadow.png",
 });
 
-const ControlTools = ({ map, draw, geoJson = null }) => {
+const ControlTools = ({ map, draw, geoJson = null, selectedNetwork }) => {
   // Hooks
   const [polygon, setPolygon] = useState([]);
+  const [lastCreated, setLastCreated] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   // see http://leaflet.github.io/Leaflet.draw/docs/leaflet-draw-latest.html#l-draw-event for leaflet-draw events doc
+
+  let history = useHistory();
+
+  // Recoil
+  const [zones, setZones] = useRecoilState(zonesAtom);
 
   let _editableFG = null;
 
@@ -26,6 +39,10 @@ const ControlTools = ({ map, draw, geoJson = null }) => {
     // store the ref for future access to content
     _editableFG = reactFGref;
   };
+
+  useEffect(() => {
+    draw && message.info("Draw an area to create a verification zone");
+  }, []);
 
   useEffect(() => {
     if (_editableFG && geoJson && map) {
@@ -113,29 +130,98 @@ const ControlTools = ({ map, draw, geoJson = null }) => {
   };
 
   const _generateZone = async () => {
-    polygon.map(coord => {
-      console.log("🚀 ~ coord", coord);
-    });
     try {
       setIsLoading(true);
-      // const res = await axios({
-      //   method: "post",
-      //   baseURL: baseUrl,
-      //   url: "api/generate/boundingbox",
-      //   // (${northEastX}, ${northEastY}, ${southWestX}, ${southWestY});
-      //   // y = longitude and x = latitude
-      //   data: {
-      //     geoFenceCoords: [polygon[1].lat, polygon[1].lng, polygon[3].lat, polygon[3].lng],
-      //   },
-      // });
-      // const { tokens } = res.data;
+      const inverted = polygon.map(coord => [coord.lng, coord.lat]);
+      const id = uuidv4();
+      const newZone = {
+        id,
+        description: `Zone ${id}`,
+        coordinates: [inverted],
+        privacy: "public", //"private"
+        qVertex: inverted.length,
+        network: selectedNetwork,
+      };
+      setZones(z => [...z, newZone]);
+      setLastCreated(newZone);
       setIsLoading(false);
+      // TODO: add Share zone
       message.success("Zone created");
     } catch (error) {
       console.log("🚀 ~ file: DrawTools.jsx ~ line 131 ~ const_generateContract= ~ error", error.message);
       setIsLoading(false);
       message.error("Error creating new verification zone");
     }
+  };
+
+  const _copyLink = async () => {
+    try {
+      const link = queryString.stringifyUrl({
+        url: "https://zkmaps.vercel.app/",
+        query: lastCreated,
+      });
+      navigator.clipboard.writeText(link);
+      message.success("Link copied to clipboard");
+    } catch (error) {
+      message.error("Error creating copying link");
+    }
+  };
+
+  const _goToNewZone = async () => {
+    try {
+      const link = queryString.stringify(lastCreated);
+      history.push(`/?${link}`);
+    } catch (error) {
+      message.error("Error navigating to new zone");
+    }
+  };
+
+  const CreateButton = () => {
+    return (
+      <Button
+        key="generatecreateButtonContract"
+        style={{ verticalAlign: "center", margin: 8, zIndex: 500 }}
+        shape="round"
+        size="large"
+        onClick={_generateZone}
+        type="primary"
+        loading={isLoading}
+      >
+        Create Zone
+      </Button>
+    );
+  };
+
+  const ShareButon = () => {
+    return (
+      <Button
+        key="shareButton"
+        style={{ verticalAlign: "center", margin: 8, zIndex: 500 }}
+        shape="round"
+        size="large"
+        onClick={_copyLink}
+        type="ghost"
+        loading={isLoading}
+      >
+        Share Zone
+      </Button>
+    );
+  };
+
+  const GoToVerify = () => {
+    return (
+      <Button
+        key="shareButton"
+        style={{ verticalAlign: "center", margin: 8, zIndex: 500 }}
+        shape="round"
+        size="large"
+        onClick={_goToNewZone}
+        type="ghost"
+        loading={isLoading}
+      >
+        Go to Verify Zone
+      </Button>
+    );
   };
 
   return (
@@ -146,7 +232,7 @@ const ControlTools = ({ map, draw, geoJson = null }) => {
         }}
       >
         {/* When we only want to populate, we disable controls */}
-        {draw && (
+        {draw ? (
           <EditControl
             position="topleft"
             onEdited={_onEdited}
@@ -166,33 +252,29 @@ const ControlTools = ({ map, draw, geoJson = null }) => {
               circlemarker: false,
             }}
           />
+        ) : (
+          <ShareButon />
         )}
+        {/* TODO: Add Description Privacy QVertices */}
       </FeatureGroup>
-      {polygon?.length && (
+      {lastCreated !== null ? (
         <Card
-          title="Polygon Coords"
+          title={lastCreated?.description}
           bordered={true}
           style={{ position: "absolute", width: 300, zIndex: 500, bottom: 10 }}
         >
-          {polygon.map((vertex, idx) => {
-            return (
-              <p key={idx}>
-                lat: {vertex.lat} - long: {vertex.lng}
-              </p>
-            );
-          })}
-          <Button
-            key="generateContract"
-            style={{ verticalAlign: "center", marginLeft: 8 }}
-            shape="round"
-            size="large"
-            onClick={_generateZone}
-            type="primary"
-            loading={isLoading}
-          >
-            Create Zone
-          </Button>
+          <p>
+            Network: {lastCreated?.network}
+            <br />
+            Privacy: {lastCreated?.privacy}
+            <br />
+          </p>
+          <ShareButon />
+          <GoToVerify />
+          <CreateButton />
         </Card>
+      ) : (
+        polygon?.length && <CreateButton />
       )}
     </>
   );
