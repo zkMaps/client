@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Card, Button, message } from "antd";
+import { Card, Button, message, Tag } from "antd";
 import { FeatureGroup } from "react-leaflet";
 import L from "leaflet";
 import { EditControl } from "react-leaflet-draw";
@@ -41,7 +41,7 @@ const ControlTools = ({ map, draw, geoJson = null, selectedNetwork }) => {
   };
 
   useEffect(() => {
-    draw && message.info("Draw an area to create a verification zone");
+    message.info("Draw an area to create a verification zone");
   }, []);
 
   useEffect(() => {
@@ -232,41 +232,38 @@ const ControlTools = ({ map, draw, geoJson = null, selectedNetwork }) => {
         }}
       >
         {/* When we only want to populate, we disable controls */}
-        {draw ? (
-          <EditControl
-            position="topleft"
-            onEdited={_onEdited}
-            onCreated={_onCreated}
-            onDeleted={_onDeleted}
-            onMounted={_onMounted}
-            onDrawVertex={_onDrawVertex}
-            onEditStart={_onEditStart}
-            onEditStop={_onEditStop}
-            onDeleteStart={_onDeleteStart}
-            onDeleteStop={_onDeleteStop}
-            draw={{
-              polyline: false,
-              rectangle: true,
-              circle: false,
-              marker: false,
-              circlemarker: false,
-            }}
-          />
-        ) : (
-          <ShareButon />
-        )}
+        <EditControl
+          position="topleft"
+          onEdited={_onEdited}
+          onCreated={_onCreated}
+          onDeleted={_onDeleted}
+          onMounted={_onMounted}
+          onDrawVertex={_onDrawVertex}
+          onEditStart={_onEditStart}
+          onEditStop={_onEditStop}
+          onDeleteStart={_onDeleteStart}
+          onDeleteStop={_onDeleteStop}
+          draw={{
+            polyline: false,
+            rectangle: true,
+            circle: false,
+            marker: false,
+            circlemarker: false,
+          }}
+        />
         {/* TODO: Add Description Privacy QVertices */}
       </FeatureGroup>
       {lastCreated !== null ? (
         <Card
           title={lastCreated?.description}
           bordered={true}
-          style={{ position: "absolute", width: 300, zIndex: 500, bottom: 10 }}
+          style={{ position: "absolute", width: 300, zIndex: 500, bottom: 10, left: 10 }}
         >
           <p>
-            Network: {lastCreated?.network}
-            <br />
-            Privacy: {lastCreated?.privacy}
+            Network: <Tag color="#8247e5">{lastCreated?.network}</Tag>
+          </p>
+          <p>
+            Privacy: <Tag color={lastCreated?.privacy === "private" ? "#f50" : "#87d068"}>{lastCreated?.privacy}</Tag>
             <br />
           </p>
           <ShareButon />

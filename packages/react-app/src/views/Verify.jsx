@@ -18,7 +18,7 @@ import { zonesAtom, zonesSelector } from "../recoil/zones";
 // Components
 import ModalIntro from "../components/ModalIntro";
 import LayerSwitch from "../components/LayerSwitch";
-import ControlTools from "../components/ControlTools";
+import MapZone from "../components/MapZone";
 
 // Constants
 import marker from "../logo-black.png";
@@ -71,7 +71,7 @@ function Verify({ address, userSigner, selectedNetwork }) {
 
   useEffect(() => {
     let parsed = queryString.parse(location?.search);
-    if (parsed) {
+    if (parsed?.coordinates) {
       const coords = parsed.coordinates.split(",");
       const coordinates = [];
       for (let index = 0; index < coords.length; index = index + 2) {
@@ -79,7 +79,10 @@ function Verify({ address, userSigner, selectedNetwork }) {
         coordinates.push(current);
       }
       parsed.coordinates = [coordinates];
-      setZones(z => [...z, parsed]);
+      const isSaved = zones.find(zone => (zone.id === parsed.id ? true : false));
+      if (!isSaved) {
+        setZones(z => [...z, parsed]);
+      }
     }
   }, []);
 
@@ -215,6 +218,7 @@ function Verify({ address, userSigner, selectedNetwork }) {
         ],
         polygon: normalizedZoneTenPoints,
       };
+      console.log("🚀 ~ file: Verify.jsx ~ line 218 ~ runProofs ~ proofInput", proofInput);
       const startTime = new Date();
       const { proof: _proof, publicSignals: _public } = await makeProof(
         proofInput,
@@ -330,7 +334,7 @@ function Verify({ address, userSigner, selectedNetwork }) {
         scrollWheelZoom={false}
         dragging={false}
       >
-        <ControlTools map={map} draw={false} geoJson={selectedOption?.geoJson} selectedNetwork={selectedNetwork} />
+        {selectedOption && <MapZone map={map} selectedOption={selectedOption} selectedNetwork={selectedNetwork} />}
         {/* https://stamen-tiles.a.ssl.fastly.net/toner/{z}/{x}/{y}.png */}
         <TileLayer attribution="" url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
         <Marker position={[viewState?.latitude, viewState?.longitude]} icon={customMarkerIcon}>

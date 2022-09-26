@@ -36,6 +36,8 @@ export const zonesSelector = selector({
         zkeyFile: externalFiles.zkeyFile,
         wtns: externalFiles.wtns,
         contract: externalFiles.contract,
+        network,
+        privacy,
         precision: 5,
         protocol: "groth16",
       };
