@@ -1,10 +1,7 @@
-import React, { useState } from "react";
-import { Alert, Button } from "antd";
+import React from "react";
+import { Button } from "antd";
 import { useHistory } from "react-router-dom";
-import { BackwardFilled } from "@ant-design/icons";
-
-// Components
-import CornerButtons from "../components/CornerButtons";
+import { HomeFilled } from "@ant-design/icons";
 
 function Dune() {
   // you can also use hooks locally in your component of choice
@@ -12,11 +9,8 @@ function Dune() {
   // Hooks
   let history = useHistory();
 
-  const [message, setMessage] = useState(null);
-
   return (
     <div>
-      {message && <Alert message={message.text} type={message.type} style={{ padding: 20 }} />}
       <div
         style={{
           textAlign: "center",
@@ -41,7 +35,7 @@ function Dune() {
         ></iframe>
       </div>
       <div style={{ position: "absolute", top: 15, left: 11, zIndex: 200 }}>
-        <Button shape="circle" icon={<BackwardFilled />} onClick={() => history.push("/")} type="primary" />
+        <Button shape="circle" icon={<HomeFilled />} onClick={() => history.push("/")} type="primary" />
       </div>
     </div>
   );

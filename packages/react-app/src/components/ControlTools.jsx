@@ -219,7 +219,7 @@ const ControlTools = ({ map, draw, geoJson = null, selectedNetwork }) => {
         type="ghost"
         loading={isLoading}
       >
-        Go to Verify Zone
+        Go to verify Zone
       </Button>
     );
   };

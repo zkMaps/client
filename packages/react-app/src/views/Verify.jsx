@@ -263,15 +263,16 @@ function Verify({ address, userSigner, selectedNetwork }) {
 
   return (
     <div>
-      <ModalIntro />
-
       {zonesFormatted && (
-        <div style={{ position: "absolute", top: "15px", left: "50%", transform: "translate(-50%)", zIndex: 10 }}>
-          <LayerSwitch
-            layerOptions={zonesFormatted}
-            selectedOption={selectedOption}
-            setSelectedOption={setSelectedOption}
-          />
+        <div>
+          <ModalIntro />
+          <div style={{ position: "absolute", top: "15px", left: "50%", transform: "translate(-50%)", zIndex: 10 }}>
+            <LayerSwitch
+              layerOptions={zonesFormatted}
+              selectedOption={selectedOption}
+              setSelectedOption={setSelectedOption}
+            />
+          </div>
         </div>
       )}
 

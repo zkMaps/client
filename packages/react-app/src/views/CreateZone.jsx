@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { MapContainer, TileLayer } from "react-leaflet";
-import { Alert } from "antd";
 import "leaflet/dist/leaflet.css";
 
 // Hooks
 import useFlyTo from "../hooks/FlyTo";
 
 // Components
+import ModalIntro from "../components/ModalIntro";
 import ControlTools from "../components/ControlTools";
 
 // The following is required to stop "npm build" from transpiling mapbox code.
@@ -14,7 +14,7 @@ import ControlTools from "../components/ControlTools";
 // @ts-ignore
 // eslint-disable-next-line import/no-webpack-loader-syntax, import/no-unresolved
 
-function Polygons({ selectedNetwork }) {
+function CreateZone({ selectedNetwork }) {
   // Hooks
   const [viewState, setViewState] = useState({
     latitude: 0,
@@ -24,7 +24,6 @@ function Polygons({ selectedNetwork }) {
     pitch: 0,
     // padding: { top: 0, bottom: 0, left: 0, right: 0 },
   });
-  const [message, setMessage] = useState(null);
   const [map, setMap] = useState(null);
 
   // custom hooks
@@ -40,7 +39,7 @@ function Polygons({ selectedNetwork }) {
 
   return (
     <div>
-      {message && <Alert message={message.text} type={message.type} style={{ padding: 20 }} />}
+      <ModalIntro />
       <MapContainer
         ref={setMap}
         style={{ width: "100%", height: "100vh", zIndex: 0 }}
@@ -59,4 +58,4 @@ function Polygons({ selectedNetwork }) {
   );
 }
 
-export default Polygons;
+export default CreateZone;

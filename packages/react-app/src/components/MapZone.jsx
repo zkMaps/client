@@ -99,7 +99,7 @@ const MapZone = ({ map, selectedOption = null }) => {
         onClick={_goToNewZone}
         type="ghost"
       >
-        Go to Verify Zone
+        Go to verify Zone
       </Button>
     );
   };

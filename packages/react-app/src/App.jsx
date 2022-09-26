@@ -16,7 +16,7 @@ import externalContracts from "./contracts/external_contracts";
 // contracts
 import deployedContracts from "./contracts/hardhat_contracts.json";
 import { Transactor, Web3ModalSetup } from "./helpers";
-import { Home, Subgraph, Polygons, Verify, Dune } from "./views";
+import { Home, Subgraph, CreateZone, Verify, Dune } from "./views";
 import { useStaticJsonRPC } from "./hooks";
 
 const { ethers } = require("ethers");
@@ -242,8 +242,8 @@ function App(props) {
         <Route exact path="/">
           <Verify {...routeProps} />
         </Route>
-        <Route exact path="/polygons">
-          <Polygons {...routeProps} />
+        <Route exact path="/create">
+          <CreateZone {...routeProps} />
         </Route>
         <Route exact path="/ethdenver">
           <Home {...routeProps} />

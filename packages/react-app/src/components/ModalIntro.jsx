@@ -1,16 +1,63 @@
 import React, { useState } from "react";
 import { Modal, Button, Tooltip } from "antd";
-import { InfoCircleFilled } from "@ant-design/icons";
+import { HistoryOutlined, InfoCircleFilled, PlusCircleFilled, HomeFilled } from "@ant-design/icons";
+import { useHistory, useLocation } from "react-router-dom";
 
 const ModalIntro = props => {
   const [visible, setVisible] = useState(false);
+  const history = useHistory();
+  const location = useLocation();
 
   return (
     <>
-      <div style={{ position: "absolute", top: 90, left: 11, zIndex: 20 }}>
-        <Tooltip title="zkInfo">
-          <Button shape="circle" icon={<InfoCircleFilled />} onClick={() => setVisible(true)} type="primary" />
-        </Tooltip>
+      <div style={{ position: "absolute", top: 90, right: 11, zIndex: 20 }}>
+        <div>
+          <Tooltip title="zkInfo">
+            <Button
+              shape="circle"
+              icon={<InfoCircleFilled />}
+              onClick={() => setVisible(true)}
+              type="primary"
+              style={{ margin: 5 }}
+            />
+          </Tooltip>
+        </div>
+        <div>
+          <Tooltip title="history">
+            <Button
+              shape="circle"
+              icon={<HistoryOutlined />}
+              onClick={() => history.push("/dune")}
+              type="primary"
+              style={{ margin: 5 }}
+            />
+          </Tooltip>
+        </div>
+        {location.pathname === "/create" ? (
+          <div>
+            <Tooltip title="home">
+              <Button
+                shape="circle"
+                icon={<HomeFilled />}
+                onClick={() => history.push("/")}
+                type="primary"
+                style={{ margin: 5 }}
+              />
+            </Tooltip>
+          </div>
+        ) : (
+          <div>
+            <Tooltip title="create">
+              <Button
+                shape="circle"
+                icon={<PlusCircleFilled />}
+                onClick={() => history.push("/create")}
+                type="primary"
+                style={{ margin: 5 }}
+              />
+            </Tooltip>
+          </div>
+        )}
       </div>
 
       <Modal

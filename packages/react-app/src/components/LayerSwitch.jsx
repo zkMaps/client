@@ -9,7 +9,7 @@ function LayerSwitch({ layerOptions, selectedOption, setSelectedOption }) {
 
   const AddButton = ({ type = "text" }) => {
     return (
-      <Button type={type} onClick={() => history.push("/polygons")} icon={<PlusCircleOutlined />}>
+      <Button type={type} onClick={() => history.push("/create")} icon={<PlusCircleOutlined />}>
         <span style={{ textTransform: "capitalize" }}>Add New Zone</span>
       </Button>
     );
