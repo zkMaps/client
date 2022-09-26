@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { utils } from "ffjavascript";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
-import { Button, Alert } from "antd";
+import { Button, message } from "antd";
 import { icon } from "leaflet";
 import { useRecoilValue, useRecoilState } from "recoil";
 import { useLocation } from "react-router-dom";
@@ -44,7 +44,6 @@ function Verify({ address, userSigner, selectedNetwork }) {
   // Recoil
   const [zones, setZones] = useRecoilState(zonesAtom);
   const zonesFormatted = useRecoilValue(zonesSelector);
-  console.log("🚀 ~ file: Verify.jsx ~ line 47 ~ Verify ~ zonesFormatted", zonesFormatted);
 
   // Hooks
   const [viewState, setViewState] = useState({
@@ -59,7 +58,6 @@ function Verify({ address, userSigner, selectedNetwork }) {
   const [signals, setSignals] = useState("");
   const [isValid, setIsValid] = useState(false);
   const [isCtaHovered, setIsCtaHovered] = useState(false);
-  const [message, setMessage] = useState(null);
   const [isVerifying, setIsVerifying] = useState(false);
   const [isGeneratingProof, setIsGeneratingProof] = useState(false);
   const [selectedOption, setSelectedOption] = useState(zonesFormatted[0]);
@@ -122,12 +120,9 @@ function Verify({ address, userSigner, selectedNetwork }) {
       }
     } catch (error) {
       if (error.code === 404) {
-        setMessage({ text: "There was a problem connecting with the server.", type: "error" });
+        message.error("YThere was a problem connecting with the server.");
       }
-      setMessage({ text: "You are outside of the proof zone.", type: "error" });
-      setTimeout(() => {
-        setMessage(null);
-      }, 5000);
+      message.error("You are outside of the proof zone.");
       throw error;
     }
   };
@@ -146,15 +141,9 @@ function Verify({ address, userSigner, selectedNetwork }) {
       setIsGeneratingProof(false);
       if (decodeOutput) {
         setIsValid(true);
-        setMessage({ text: "You have verified your location!", type: "success" });
-        setTimeout(() => {
-          setMessage(null);
-        }, 5000);
+        message.success("You have verified your location!");
       } else {
-        setMessage({ text: "Your location doesn't meet the requirements. Try again.", type: "error" });
-        setTimeout(() => {
-          setMessage(null);
-        }, 5000);
+        message.error("Your location doesn't meet the requirements. Try again.");
         forgetProofs();
       }
     } catch (error) {
@@ -173,10 +162,7 @@ function Verify({ address, userSigner, selectedNetwork }) {
     } else if (normalizedZoneLength > 4) {
       totalPoints = 10;
     } else if (normalizedZoneLength < 3 || normalizedZoneLength > 10) {
-      setMessage({ text: "There was an error with the zone you're trying to verify.", type: "error" });
-      setTimeout(() => {
-        setMessage(null);
-      }, 5000);
+      message.error("There was an error with the zone you're trying to verify.");
       throw new Error("There was an error with the zone.");
     }
     let remaining = totalPoints - normalizedZoneLength;
@@ -192,10 +178,7 @@ function Verify({ address, userSigner, selectedNetwork }) {
   const runProofs = async () => {
     try {
       if (!address) {
-        setMessage({ text: "You need to connect your account.", type: "error" });
-        setTimeout(() => {
-          setMessage(null);
-        }, 5000);
+        message.error("You need to connect your account.");
         return;
       }
 
@@ -226,6 +209,8 @@ function Verify({ address, userSigner, selectedNetwork }) {
         selectedOption?.zkeyFile,
         selectedOption?.wtns,
       );
+      console.log("🚀 ~ file: Verify.jsx ~ line 207 ~ runProofs ~ _public", _public);
+      console.log("🚀 ~ file: Verify.jsx ~ line 207 ~ runProofs ~ _proof", _proof);
       const endTime = new Date();
       const timeDiff = (endTime.getTime() - startTime.getTime()) / 1000;
       console.log("timeDiff", timeDiff);
@@ -278,14 +263,6 @@ function Verify({ address, userSigner, selectedNetwork }) {
 
   return (
     <div>
-      {message && (
-        <Alert
-          message={message.text}
-          type={message.type}
-          style={{ padding: 20, zIndex: 1100, position: "absolute", width: "100%" }}
-        />
-      )}
-
       <ModalIntro />
 
       {zonesFormatted && (

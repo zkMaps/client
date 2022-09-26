@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { utils } from "ffjavascript";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
-import { Row, Button, Alert } from "antd";
+import { Row, Button, message } from "antd";
 import { icon } from "leaflet";
 
 import "leaflet/dist/leaflet.css";
@@ -134,7 +134,6 @@ function Home({ address, userSigner }) {
   const [signals, setSignals] = useState("");
   const [isValid, setIsValid] = useState(false);
   const [isCtaHovered, setIsCtaHovered] = useState(false);
-  const [message, setMessage] = useState(null);
   const [isVerifying, setIsVerifying] = useState(false);
   const [map, setMap] = useState(null);
 
@@ -171,10 +170,7 @@ function Home({ address, userSigner }) {
       const { proof, publicSignals } = await window.snarkjs.groth16.fullProve(_proofInput, _wasm, _zkey);
       return { proof, publicSignals };
     } catch (error) {
-      setMessage({ text: "You are outside of the proof zone.", type: "error" });
-      setTimeout(() => {
-        setMessage(null);
-      }, 5000);
+      message.error("You are outside of the proof zone.");
       throw error;
     }
   };
@@ -182,10 +178,7 @@ function Home({ address, userSigner }) {
   const runProofs = async () => {
     try {
       if (!address) {
-        setMessage({ text: "You need to connect your account.", type: "error" });
-        setTimeout(() => {
-          setMessage(null);
-        }, 5000);
+        message.error("You need to connect your accounttt.");
         return;
       }
       // const proofInput = {
@@ -230,17 +223,15 @@ function Home({ address, userSigner }) {
         if (decodeOutput[0] && localVerification) {
           setIsVerifying(false);
           setIsValid(true);
-          setMessage({ text: "You have verified your location!", type: "success" });
-          setTimeout(() => {
-            setMessage(null);
-          }, 5000);
+          message.success("You have verified your location!");
         } else {
           setIsVerifying(false);
-          setMessage({ text: "Your location doesn't meet the requirements. Try again.", type: "error" });
+          message.error("Your location doesn't meet the requirements. Try again.");
           forgetProofs();
         }
       } else {
-        setMessage({ text: "Your location doesn't meet the requirements. Try again.", type: "error" });
+        message.error("Your location doesn't meet the requirements. Try again.");
+        message.error("You need to connect your account.");
         setIsVerifying(false);
       }
       // console.log({ recipt.past});
@@ -267,8 +258,6 @@ function Home({ address, userSigner }) {
 
   return (
     <div>
-      {message && <Alert message={message.text} type={message.type} style={{ padding: 20 }} />}
-
       <ModalIntro />
 
       <MapContainer

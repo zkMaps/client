@@ -18,7 +18,7 @@ export default {
         zkeyFile: "https://ipfs.io/ipfs/QmcBRvjfDUuQPK499b6pbXyAjqy6rLr8i8quPX3DovQUoc/RayTracing6_0001.zkey",
         // wtns:
       },
-      4: {
+      10: {
         // qVertex
         contract: contracts["0x9d567902eFbceEf419edAC5aa556dDA545A71E68"], // Polygon | 10 Vertex | Public | Emits
         wasmFile: "",
