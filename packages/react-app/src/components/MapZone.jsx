@@ -31,6 +31,11 @@ const MapZone = ({ map, selectedOption = null }) => {
     network,
   };
 
+  const _onFeatureGroupReady = reactFGref => {
+    // store the ref for future access to content
+    _editableFG = reactFGref;
+  };
+
   useEffect(() => {
     if (_editableFG && geoJson && map) {
       console.log("🚀 ~ geoJson", geoJson);
@@ -101,6 +106,11 @@ const MapZone = ({ map, selectedOption = null }) => {
 
   return (
     <>
+      <FeatureGroup
+        ref={reactFGref => {
+          _onFeatureGroupReady(reactFGref);
+        }}
+      />
       <Card
         title={description}
         bordered={true}
