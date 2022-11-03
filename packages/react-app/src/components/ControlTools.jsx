@@ -111,6 +111,12 @@ const ControlTools = ({ map, draw, geoJson = null, selectedNetwork }) => {
 
   const _onDrawVertex = vertex => {
     console.log("vertex:", vertex);
+    const qVertex = Object.keys(vertex.layers._layers).length;
+    if (qVertex == 9) {
+      message.warning("You draw 9 points. Max number of vertex is 10.");
+    } else if (qVertex > 10) {
+      message.error("You exceeded the max limit of vertex.");
+    }
   };
 
   const _onEditStart = e => {
