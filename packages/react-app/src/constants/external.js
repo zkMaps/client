@@ -14,8 +14,8 @@ export default {
       6: {
         // qVertex
         contract: contracts["0xE3A676Fa3087226A5EBDE764fD6536e125273D3D"], // Polygon | 6 Vertex | Public | Emits
-        wasmFile: "https://ipfs.io/ipfs/QmcBRvjfDUuQPK499b6pbXyAjqy6rLr8i8quPX3DovQUoc/RayTracing6_js/RayTracing6.wasm",
-        zkeyFile: "https://ipfs.io/ipfs/QmcBRvjfDUuQPK499b6pbXyAjqy6rLr8i8quPX3DovQUoc/RayTracing6_0001.zkey",
+        wasmFile: "./files/public/RayTracing6.wasm",
+        zkeyFile: "./files/public/RayTracing6_0001.zkey",
         // wtns:
       },
       10: {
