@@ -163,7 +163,7 @@ const ControlTools = ({ map, draw, geoJson = null, selectedNetwork }) => {
   const _copyLink = async () => {
     try {
       const link = queryString.stringifyUrl({
-        url: "https://zkmaps.vercel.app/",
+        url: window.location.origin + "/",
         query: lastCreated,
       });
       navigator.clipboard.writeText(link);

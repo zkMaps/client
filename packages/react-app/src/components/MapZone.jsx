@@ -53,7 +53,7 @@ const MapZone = ({ map, selectedOption = null }) => {
   const _copyLink = async () => {
     try {
       const link = queryString.stringifyUrl({
-        url: "https://zkmaps.vercel.app/",
+        url: window.location.origin + "/",
         query: currentZone,
       });
       navigator.clipboard.writeText(link);
