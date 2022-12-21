@@ -54,7 +54,6 @@ function Verify({ address, userSigner, selectedNetwork }) {
     pitch: 0,
     // padding: { top: 0, bottom: 0, left: 0, right: 0 },
   });
-  const [proof, setProof] = useState("");
   const [signals, setSignals] = useState("");
   const [isValid, setIsValid] = useState(false);
   const [isCtaHovered, setIsCtaHovered] = useState(false);
@@ -93,6 +92,11 @@ function Verify({ address, userSigner, selectedNetwork }) {
   });
 
   // Handlers
+  const _setSelectedOption = option => {
+    forgetProofs();
+    setSelectedOption(option);
+  };
+
   const zkeyExportSolidityCalldata = async (_proof, options, _publicConstraint) => {
     const pub = unstringifyBigInts(_publicConstraint);
     const proof = unstringifyBigInts(_proof);
@@ -127,7 +131,6 @@ function Verify({ address, userSigner, selectedNetwork }) {
     }
   };
 
-  console.log("🚀 ~ file: Verify.jsx ~ line 113 ~ onChainVerification ~ selectedOption", selectedOption);
   const onChainVerification = async (_proof, pub, _signal) => {
     try {
       const callData = await zkeyExportSolidityCalldata(_proof, {}, pub);
@@ -181,6 +184,10 @@ function Verify({ address, userSigner, selectedNetwork }) {
         message.error("You need to connect your account.");
         return;
       }
+      if (!selectedOption) {
+        message.error("You need to select or create a new zone.");
+        return;
+      }
 
       setIsGeneratingProof(true);
 
@@ -201,7 +208,7 @@ function Verify({ address, userSigner, selectedNetwork }) {
         ],
         polygon: normalizedZoneTenPoints,
       };
-      console.log("🚀 ~ file: Verify.jsx ~ line 218 ~ runProofs ~ proofInput", proofInput);
+      console.log("proofInput", proofInput);
       const startTime = new Date();
       const { proof: _proof, publicSignals: _public } = await makeProof(
         proofInput,
@@ -209,35 +216,18 @@ function Verify({ address, userSigner, selectedNetwork }) {
         selectedOption?.zkeyFile,
         selectedOption?.wtns,
       );
-      console.log("🚀 ~ file: Verify.jsx ~ line 207 ~ runProofs ~ _public", _public);
-      console.log("🚀 ~ file: Verify.jsx ~ line 207 ~ runProofs ~ _proof", _proof);
+      console.log("_public", _public);
+      console.log("_proof", _proof);
       const endTime = new Date();
       const timeDiff = (endTime.getTime() - startTime.getTime()) / 1000;
       console.log("timeDiff", timeDiff);
       setIsGeneratingProof(false);
       setIsVerifying(true);
       _proof.protocol = "groth16";
-      // _proof.protocol = "plonk";
-      setProof(JSON.stringify(_proof, null, 2));
       setSignals(JSON.stringify(_public, null, 2));
 
-      // const vkey = await fetch(selectedOption?.verification_key).then(res => {
-      //   return res.json();
-      // });
-
-      // TODO: Check if we end up checking proof locally
       await onChainVerification(_proof, _public, signals);
       return;
-
-      // const localVerification = await window.snarkjs.groth16.verify(vkey, pub, _proof);
-
-      // if (localVerification) {
-      //   onChainVerification(_proof, pub);
-      // } else {
-      //   setMessage({ text: "Your location doesn't meet the requirements. Try again.", type: "error" });
-      //   setIsVerifying(false);
-      // }
-      // console.log({ recipt.past});
     } catch (error) {
       console.log({ error });
       setIsVerifying(false);
@@ -248,7 +238,6 @@ function Verify({ address, userSigner, selectedNetwork }) {
   };
 
   const forgetProofs = async () => {
-    setProof(null);
     setSignals(null);
     setIsValid(false);
   };
@@ -270,7 +259,7 @@ function Verify({ address, userSigner, selectedNetwork }) {
             <LayerSwitch
               layerOptions={zonesFormatted}
               selectedOption={selectedOption}
-              setSelectedOption={setSelectedOption}
+              setSelectedOption={_setSelectedOption}
             />
           </div>
         </div>

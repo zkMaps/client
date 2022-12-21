@@ -10,7 +10,7 @@ import {
 import React, { useCallback, useEffect, useState } from "react";
 import { Route, Switch } from "react-router-dom";
 import "./App.css";
-import { Account, NetworkDisplay, FaucetHint, NetworkSwitch } from "./components";
+import { Account, NetworkDisplay, NetworkSwitch } from "./components";
 import { NETWORKS, ALCHEMY_KEY } from "./constants/ethereum";
 import externalContracts from "./contracts/external_contracts";
 // contracts
@@ -287,9 +287,6 @@ function App(props) {
             blockExplorer={blockExplorer}
           />
         </div>
-        {yourLocalBalance.lte(ethers.BigNumber.from("0")) && (
-          <FaucetHint localProvider={localProvider} targetNetwork={targetNetwork} address={address} />
-        )}
       </div>
     </div>
   );
