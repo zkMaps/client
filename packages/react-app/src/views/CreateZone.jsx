@@ -51,9 +51,6 @@ function CreateZone({ selectedNetwork }) {
         <TileLayer attribution="OpenStreetMap" url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
         <ControlTools selectedNetwork={selectedNetwork} />
       </MapContainer>
-      <div
-        style={{ position: "fixed", textAlign: "center", alignItems: "center", bottom: 20, padding: 10, width: "100%" }}
-      ></div>
     </div>
   );
 }

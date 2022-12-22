@@ -9,9 +9,10 @@ function LayerSwitch({ layerOptions, selectedOption, setSelectedOption }) {
 
   const AddButton = ({ type = "text" }) => {
     return (
-      <Button type={type} onClick={() => history.push("/create")} icon={<PlusCircleOutlined />}>
-        <span style={{ textTransform: "capitalize" }}>Add New Zone</span>
-      </Button>
+      <span style={{ textTransform: "capitalize", fontWeight: "bolder", color: "rgb(135, 208, 104)" }}>
+        <PlusCircleOutlined />
+        Add New Zone
+      </span>
     );
   };
 
@@ -26,7 +27,7 @@ function LayerSwitch({ layerOptions, selectedOption, setSelectedOption }) {
             </Button>
           </Menu.Item>
         ))}
-      <Menu.Item key={9}>
+      <Menu.Item key={9} onClick={() => history.push("/create")} style={{ textAlign: "center" }}>
         <AddButton />
       </Menu.Item>
     </Menu>

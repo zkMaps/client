@@ -61,6 +61,7 @@ function Verify({ address, userSigner, selectedNetwork }) {
   const [isGeneratingProof, setIsGeneratingProof] = useState(false);
   const [selectedOption, setSelectedOption] = useState(zonesFormatted[0]);
   const [map, setMap] = useState(null);
+  console.log("🚀 ~ file: Verify.jsx:63 ~ Verify ~ selectedOption", selectedOption);
 
   // custom hooks
   let location = useLocation();
@@ -115,6 +116,7 @@ function Verify({ address, userSigner, selectedNetwork }) {
     try {
       if (selectedOption.protocol === "groth16") {
         const { proof, publicSignals } = await window.snarkjs.groth16.fullProve(_proofInput, _wasm, _zkey);
+        console.log("🚀 ~ file: Verify.jsx:118 ~ makeProof ~ publicSignals", publicSignals);
         return { proof, publicSignals };
       } else if (selectedOption.protocol === "plonk") {
         const { proof, publicSignals } = await window.snarkjs.plonk.prove(_zkey, _wtns);

@@ -88,22 +88,6 @@ const MapZone = ({ map, selectedOption = null }) => {
     );
   };
 
-  // TODO: Componentisize
-  const GoToVerify = () => {
-    return (
-      <Button
-        key="shareButton"
-        style={{ verticalAlign: "center", margin: 8, zIndex: 500 }}
-        shape="round"
-        size="large"
-        onClick={_goToNewZone}
-        type="ghost"
-      >
-        Go to verify Zone
-      </Button>
-    );
-  };
-
   return (
     <>
       <FeatureGroup
@@ -124,7 +108,6 @@ const MapZone = ({ map, selectedOption = null }) => {
           <br />
         </p>
         <ShareButon />
-        <GoToVerify />
       </Card>
     </>
   );

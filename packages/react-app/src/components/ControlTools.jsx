@@ -3,16 +3,13 @@ import { Card, Button, message, Tag } from "antd";
 import { FeatureGroup } from "react-leaflet";
 import L from "leaflet";
 import { EditControl } from "react-leaflet-draw";
-import { useRecoilState } from "recoil";
-import { v4 as uuidv4 } from "uuid";
 import { useHistory } from "react-router-dom";
 import queryString from "query-string";
 
+import CreateControls from "./CreateControls";
+
 // work around broken icons when using webpack, see https://github.com/PaulLeCam/react-leaflet/issues/255
 import "antd/dist/antd.css";
-
-// Recoil
-import { zonesAtom } from "../recoil/zones.js";
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -25,13 +22,9 @@ const ControlTools = ({ map, draw, geoJson = null, selectedNetwork }) => {
   // Hooks
   const [polygon, setPolygon] = useState([]);
   const [lastCreated, setLastCreated] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
   // see http://leaflet.github.io/Leaflet.draw/docs/leaflet-draw-latest.html#l-draw-event for leaflet-draw events doc
 
   let history = useHistory();
-
-  // Recoil
-  const [zones, setZones] = useRecoilState(zonesAtom);
 
   let _editableFG = null;
 
@@ -111,7 +104,7 @@ const ControlTools = ({ map, draw, geoJson = null, selectedNetwork }) => {
 
   const _onDrawVertex = vertex => {
     console.log("vertex:", vertex);
-    const qVertex = Object.keys(vertex.layers._layers).length;
+    const qVertex = Object.keys(vertex.layers._layers).length + 1;
     if (qVertex == 9) {
       message.warning("You draw 9 points. Max number of vertex is 10.");
     } else if (qVertex > 10) {
@@ -135,29 +128,8 @@ const ControlTools = ({ map, draw, geoJson = null, selectedNetwork }) => {
     console.log("_onDeleteStop", e);
   };
 
-  const _generateZone = async () => {
-    try {
-      setIsLoading(true);
-      const inverted = polygon.map(coord => [coord.lng, coord.lat]);
-      const id = uuidv4();
-      const newZone = {
-        id,
-        description: `Zone ${id}`,
-        coordinates: [inverted],
-        privacy: "public", //"private"
-        qVertex: inverted.length,
-        network: selectedNetwork,
-      };
-      setZones(z => [...z, newZone]);
-      setLastCreated(newZone);
-      setIsLoading(false);
-      // TODO: add Share zone
-      message.success("Zone created");
-    } catch (error) {
-      console.log("🚀 ~ file: DrawTools.jsx ~ line 131 ~ const_generateContract= ~ error", error.message);
-      setIsLoading(false);
-      message.error("Error creating new verification zone");
-    }
+  const _resetZones = () => {
+    setLastCreated(null);
   };
 
   const _copyLink = async () => {
@@ -182,18 +154,17 @@ const ControlTools = ({ map, draw, geoJson = null, selectedNetwork }) => {
     }
   };
 
-  const CreateButton = () => {
+  const CreateNewButton = () => {
     return (
       <Button
         key="generatecreateButtonContract"
         style={{ verticalAlign: "center", margin: 8, zIndex: 500 }}
         shape="round"
         size="large"
-        onClick={_generateZone}
+        onClick={_resetZones}
         type="primary"
-        loading={isLoading}
       >
-        Create Zone
+        Create Another Zone
       </Button>
     );
   };
@@ -207,7 +178,6 @@ const ControlTools = ({ map, draw, geoJson = null, selectedNetwork }) => {
         size="large"
         onClick={_copyLink}
         type="ghost"
-        loading={isLoading}
       >
         Share Zone
       </Button>
@@ -223,7 +193,6 @@ const ControlTools = ({ map, draw, geoJson = null, selectedNetwork }) => {
         size="large"
         onClick={_goToNewZone}
         type="ghost"
-        loading={isLoading}
       >
         Go to verify Zone
       </Button>
@@ -274,10 +243,12 @@ const ControlTools = ({ map, draw, geoJson = null, selectedNetwork }) => {
           </p>
           <ShareButon />
           <GoToVerify />
-          <CreateButton />
+          <CreateNewButton />
         </Card>
       ) : (
-        polygon?.length && <CreateButton />
+        polygon?.length && (
+          <CreateControls polygon={polygon} selectedNetwork={selectedNetwork} setLastCreated={setLastCreated} />
+        )
       )}
     </>
   );
