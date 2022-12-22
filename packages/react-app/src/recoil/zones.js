@@ -36,7 +36,6 @@ export const zonesSelector = selector({
             throw new Error("Invalid zone.");
         }
       };
-      console.log("🚀 ~ file: zones.js:23 ~ formZones ~ qVertex", qVertex, contractVertex());
 
       const externalFiles = exernal[network][privacy][contractVertex()];
       const zone = {

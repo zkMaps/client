@@ -61,7 +61,6 @@ function Verify({ address, userSigner, selectedNetwork }) {
   const [isGeneratingProof, setIsGeneratingProof] = useState(false);
   const [selectedOption, setSelectedOption] = useState(zonesFormatted[0]);
   const [map, setMap] = useState(null);
-  console.log("🚀 ~ file: Verify.jsx:63 ~ Verify ~ selectedOption", selectedOption);
 
   // custom hooks
   let location = useLocation();
