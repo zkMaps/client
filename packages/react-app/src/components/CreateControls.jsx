@@ -74,7 +74,7 @@ const CreateControls = ({ polygon, selectedNetwork, setLastCreated }) => {
         type="primary"
         loading={isLoading}
       >
-        Create Zonee
+        Create Zone
       </Button>
 
       <div
