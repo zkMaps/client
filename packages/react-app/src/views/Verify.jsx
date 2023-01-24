@@ -112,6 +112,8 @@ function Verify({ address, userSigner, selectedNetwork }) {
   };
 
   const makeProof = async (_proofInput, _wasm, _zkey, _wtns = null) => {
+    console.log("🚀 ~ file: Verify.jsx:118 ~ makeProof ~ _proofInput, _wasm, _zkey", _proofInput, _wasm, _zkey);
+    console.log("🚀 ~ file: Verify.jsx:118 ~ makeProof ~ selectedOption.protocol", selectedOption.protocol);
     try {
       if (selectedOption.protocol === "groth16") {
         const { proof, publicSignals } = await window.snarkjs.groth16.fullProve(_proofInput, _wasm, _zkey);
@@ -157,18 +159,27 @@ function Verify({ address, userSigner, selectedNetwork }) {
     }
   };
 
+  const getTotalPoints = qVertex => {
+    switch (true) {
+      case qVertex <= 2:
+        throw new Error("Zone must have at least three coordinates.");
+      case qVertex <= 4:
+        return 4;
+      case qVertex <= 6:
+        return 6;
+      case qVertex <= 10:
+        return 10;
+      case qVertex > 10:
+        throw new Error("Zone must have 10 coordinates at max.");
+      default:
+        throw new Error("Invalid zone.");
+    }
+  };
+
   const _normalizedZoneTenPoints = normalizedZone => {
     let normalizedZoneTen = normalizedZone;
     let normalizedZoneLength = normalizedZone.length;
-    let totalPoints = 4;
-    if (normalizedZoneLength == 6) {
-      totalPoints = 6;
-    } else if (normalizedZoneLength > 4) {
-      totalPoints = 10;
-    } else if (normalizedZoneLength < 3 || normalizedZoneLength > 10) {
-      message.error("There was an error with the zone you're trying to verify.");
-      throw new Error("There was an error with the zone.");
-    }
+    const totalPoints = getTotalPoints(normalizedZoneLength);
     let remaining = totalPoints - normalizedZoneLength;
     while (remaining > 0) {
       remaining--;
