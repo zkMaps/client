@@ -3,6 +3,7 @@ import React from "react";
 import { ThemeSwitcherProvider } from "react-css-theme-switcher";
 import { BrowserRouter } from "react-router-dom";
 import ReactDOM from "react-dom";
+import { RecoilRoot } from "recoil";
 import App from "./App";
 import "./index.css";
 
@@ -23,9 +24,11 @@ const client = new ApolloClient({
 ReactDOM.render(
   <ApolloProvider client={client}>
     <ThemeSwitcherProvider themeMap={themes} defaultTheme={prevTheme || "dark"}>
-      <BrowserRouter>
-        <App subgraphUri={subgraphUri} />
-      </BrowserRouter>
+      <RecoilRoot>
+        <BrowserRouter>
+          <App subgraphUri={subgraphUri} />
+        </BrowserRouter>
+      </RecoilRoot>
     </ThemeSwitcherProvider>
   </ApolloProvider>,
   document.getElementById("root"),

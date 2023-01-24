@@ -10,17 +10,17 @@ import {
 import React, { useCallback, useEffect, useState } from "react";
 import { Route, Switch } from "react-router-dom";
 import "./App.css";
-import { Account, NetworkDisplay, FaucetHint, NetworkSwitch } from "./components";
-import { NETWORKS, ALCHEMY_KEY } from "./constants";
+import { Account, NetworkDisplay, NetworkSwitch } from "./components";
+import { NETWORKS, ALCHEMY_KEY } from "./constants/ethereum";
 import externalContracts from "./contracts/external_contracts";
 // contracts
 import deployedContracts from "./contracts/hardhat_contracts.json";
 import { Transactor, Web3ModalSetup } from "./helpers";
-import { Home, Subgraph, Polygons } from "./views";
+import { Subgraph, CreateZone, Verify, Dune } from "./views";
 import { useStaticJsonRPC } from "./hooks";
 
 const { ethers } = require("ethers");
-const initialNetwork = NETWORKS.mumbai; // <------- select your target frontend network (localhost, rinkeby, xdai, mainnet)
+const initialNetwork = NETWORKS.polygon; // <------- select your target frontend network (localhost, rinkeby, xdai, mainnet)
 
 // 😬 Sorry for all the console logging
 const DEBUG = true;
@@ -40,10 +40,11 @@ const providers = [
 function App(props) {
   // specify all the chains your app is available on. Eg: ['localhost', 'mainnet', ...otherNetworks ]
   // reference './constants.js' for other networks
-  const networkOptions = [initialNetwork.name, "mainnet", "testnetHarmony"];
+  const networkOptions = [initialNetwork.name, "mainnet", "ropsten", "testnetHarmony", "mumbai"];
 
   const [injectedProvider, setInjectedProvider] = useState();
   const [address, setAddress] = useState();
+  // TODO: Add to recoil
   const [selectedNetwork, setSelectedNetwork] = useState(networkOptions[0]);
 
   // recent verification
@@ -213,6 +214,19 @@ function App(props) {
     }
   }, [loadWeb3Modal]);
 
+  {
+    /* pass in any web3 props to this Home component. For example, yourLocalBalance */
+  }
+  const routeProps = {
+    yourLocalBalance,
+    writeContracts,
+    readContracts,
+    address,
+    injectedProvider,
+    userSigner,
+    selectedNetwork,
+  };
+
   return (
     <div className="App">
       <NetworkDisplay
@@ -226,26 +240,13 @@ function App(props) {
 
       <Switch>
         <Route exact path="/">
-          {/* pass in any web3 props to this Home component. For example, yourLocalBalance */}
-          <Home
-            yourLocalBalance={yourLocalBalance}
-            writeContracts={writeContracts}
-            readContracts={readContracts}
-            address={address}
-            injectedProvider={injectedProvider}
-            userSigner={userSigner}
-          />
+          <Verify {...routeProps} />
         </Route>
-        <Route exact path="/polygons">
-          {/* pass in any web3 props to this Home component. For example, yourLocalBalance */}
-          <Polygons
-            yourLocalBalance={yourLocalBalance}
-            writeContracts={writeContracts}
-            readContracts={readContracts}
-            address={address}
-            injectedProvider={injectedProvider}
-            userSigner={userSigner}
-          />
+        <Route exact path="/create">
+          <CreateZone {...routeProps} />
+        </Route>
+        <Route exact path="/dune">
+          <Dune {...routeProps} />
         </Route>
         <Route path="/history">
           <Subgraph
@@ -283,9 +284,6 @@ function App(props) {
             blockExplorer={blockExplorer}
           />
         </div>
-        {yourLocalBalance.lte(ethers.BigNumber.from("0")) && (
-          <FaucetHint localProvider={localProvider} targetNetwork={targetNetwork} address={address} />
-        )}
       </div>
     </div>
   );

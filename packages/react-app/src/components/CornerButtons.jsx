@@ -1,7 +1,7 @@
 import { Button, Tooltip } from "antd";
 import React from "react";
 import { useHistory } from "react-router-dom";
-import { ClockCircleFilled, BackwardFilled } from "@ant-design/icons";
+import { ClockCircleFilled, BackwardFilled, HistoryOutlined } from "@ant-design/icons";
 
 export default function CornerButtons() {
   const isHome = window.location.pathname === "/";

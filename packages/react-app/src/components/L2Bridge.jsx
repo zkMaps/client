@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { utils, ethers } from "ethers";
 import { useContractLoader, useOnBlock } from "eth-hooks";
 
-import { NETWORKS } from "../constants";
+import { NETWORKS } from "../constants/ethereum";
 import { Transactor } from "../helpers";
 
 /** 

@@ -1,6 +1,6 @@
 import { notification } from "antd";
 import Notify from "bnc-notify";
-import { BLOCKNATIVE_DAPPID } from "../constants";
+import { BLOCKNATIVE_DAPPID } from "../constants/ethereum";
 
 const { ethers } = require("ethers");
 

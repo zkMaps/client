@@ -1,7 +1,7 @@
 import { Alert, Button } from "antd";
 import React from "react";
 
-import { NETWORK } from "../constants";
+import { NETWORK } from "../constants/ethereum";
 
 function NetworkDisplay({
   NETWORKCHECK,
